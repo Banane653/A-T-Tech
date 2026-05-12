@@ -7,14 +7,61 @@ datasource db {
   // Fini les url et directUrl ici !
 }
 
+// 1. On définit les deux rôles possibles
+enum Role {
+  FOUNDER
+  ADMIN
+  EMPLOYEE
+}
+
+enum LoyaltyType {
+  STAMPS
+  POINTS
+}
+
+// 2. La table des Commerces (Les locataires de ton SaaS)
+model Company {
+  id        String         @id @default(uuid())
+  name      String         // Ex: "Le Café de Paris"
+  users     MerchantUser[] // Les employés de ce commerce
+  customers Customer[]     // Les clients de ce commerce
+  createdAt DateTime       @default(now())
+  systemType LoyaltyType   @default(POINTS) 
+
+  @@map("companies")
+}
+
+// 3. La table des Utilisateurs (Toi, les patrons, les employés)
+model MerchantUser {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(EMPLOYEE)
+  
+  // Relation avec la Company (Optionnel car le FOUNDER n'a pas forcément de commerce)
+  companyId String?  
+  company   Company? @relation(fields: [companyId], references: [id])
+  
+  createdAt DateTime @default(now())
+
+  @@map("merchant_users")
+}
+
+// 4. La table des Clients (Ceux qui ont la carte Google Wallet)
 model Customer {
   id        String   @id @default(uuid())
   email     String   @unique
   firstName String
   lastName  String?
-  birthDate String?  
+  birthDate String?
   points    Int      @default(0)
   walletId  String   @unique
+  
+  // Le client est désormais lié au commerce où il s'est inscrit
+  companyId String?  
+  company   Company? @relation(fields: [companyId], references: [id])
+  
   createdAt DateTime @default(now())
 
   @@map("customers")

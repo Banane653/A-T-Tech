@@ -5,9 +5,9 @@ import { generateGoogleWalletPass } from '@/services/googleWallet.service';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { firstName, lastName, email, birthDate } = body;
+        const { firstName, lastName, email, birthDate, companyId } = body; 
 
-        if (!firstName || !email) {
+        if (!firstName || !email || !companyId) {
             return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
         }
 
@@ -17,11 +17,19 @@ export async function POST(request: Request) {
         if (!customer) {
             const walletId = `WLT-${Date.now()}`;
             customer = await prisma.customer.create({
-                data: { firstName, lastName, email, birthDate, walletId, points: 0 }
+                data: { 
+                    firstName, 
+                    lastName, 
+                    email, 
+                    birthDate, 
+                    walletId, 
+                    points: 0,
+                    companyId 
+                }
             });
         }
 
-        // 2. On génère le lien magique
+        // 2. Génération du pass Google Wallet
         const saveUrl = generateGoogleWalletPass(customer.firstName, customer.walletId, customer.points);
 
         return NextResponse.json({ saveUrl });

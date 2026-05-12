@@ -12,6 +12,7 @@ model Customer {
   email     String   @unique
   firstName String
   lastName  String?
+  birthDate String?  
   points    Int      @default(0)
   walletId  String   @unique
   createdAt DateTime @default(now())

@@ -20,7 +20,7 @@ export default function ScannerPage() {
 
     useEffect(() => {
         // 1. On récupère les infos du commerce
-        fetch('/api/admin/employees').then(res => res.json()).then(data => {
+        fetch('/api/scanner/config').then(res => res.json()).then(data => {
             if (data.company) {
                 setCompanyInfo(data.company);
                 companyInfoRef.current = data.company; // 👈 On met à jour la boîte secrète

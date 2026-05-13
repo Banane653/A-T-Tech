@@ -7,6 +7,10 @@ import { useRouter } from 'next/navigation';
 export default function ScannerPage() {
     const [status, setStatus] = useState<'scanning' | 'amount_entry' | 'loading' | 'result'>('scanning');
     const [companyInfo, setCompanyInfo] = useState<{name: string, systemType: string} | null>(null);
+    
+    // 👈 LE CORRECTIF EST ICI : Une référence qui sera TOUJOURS à jour pour le scanner
+    const companyInfoRef = useRef<{name: string, systemType: string} | null>(null);
+    
     const [scannedId, setScannedId] = useState<string | null>(null);
     const [amount, setAmount] = useState('');
     const [message, setMessage] = useState<{ text: string, type: 'success' | 'reward' | 'error' } | null>(null);
@@ -15,11 +19,15 @@ export default function ScannerPage() {
     const router = useRouter();
 
     useEffect(() => {
-        // On récupère les infos du commerce au chargement
+        // 1. On récupère les infos du commerce
         fetch('/api/admin/employees').then(res => res.json()).then(data => {
-            if (data.company) setCompanyInfo(data.company);
+            if (data.company) {
+                setCompanyInfo(data.company);
+                companyInfoRef.current = data.company; // 👈 On met à jour la boîte secrète
+            }
         });
 
+        // 2. On allume le scanner
         const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 }, false);
         scannerRef.current = scanner;
 
@@ -27,17 +35,18 @@ export default function ScannerPage() {
             scanner.pause(true);
             setScannedId(decodedText);
             
-            // Si c'est un système de points, on demande le montant
-            if (companyInfo?.systemType === 'POINTS') {
+            // 👈 On lit la boîte secrète (qui a forcément la bonne info)
+            if (companyInfoRef.current?.systemType === 'POINTS') {
                 setStatus('amount_entry');
             } else {
-                // Si c'est des tampons, on envoie direct
                 handleAction(decodedText);
             }
         }, () => {});
 
-        return () => { scanner.clear(); };
-    }, [companyInfo?.systemType]);
+        return () => { 
+            scanner.clear().catch(e => console.log(e)); 
+        };
+    }, []);
 
     const handleAction = async (walletId: string, val?: string) => {
         setStatus('loading');
@@ -45,7 +54,10 @@ export default function ScannerPage() {
             const res = await fetch('/api/wallet/scan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ walletId, amount: val, systemType: companyInfo?.systemType })
+                body: JSON.stringify({ 
+                    walletId, 
+                    amount: val 
+                })
             });
             const data = await res.json();
             if (res.ok) {
@@ -68,15 +80,26 @@ export default function ScannerPage() {
         scannerRef.current?.resume();
     };
 
+    const handleLogout = () => {
+        document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        router.push('/login');
+    };
+
     return (
         <main className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-4 font-sans">
             <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
                 <div className="bg-black text-white p-6 flex justify-between items-center">
                     <h1 className="font-bold text-lg">{companyInfo?.name || 'Scanner'}</h1>
-                    <span className="text-[10px] bg-white/20 px-2 py-1 rounded uppercase tracking-widest font-bold">
-                        {companyInfo?.systemType}
-                    </span>
+                    <button onClick={handleLogout} className="text-xs bg-red-600 hover:bg-red-700 px-3 py-1 rounded-lg font-bold">
+                        Quitter
+                    </button>
                 </div>
+
+                {companyInfo && (
+                    <div className="bg-gray-100 text-center py-2 text-xs font-bold text-gray-500 uppercase tracking-widest border-b">
+                        Mode {companyInfo.systemType === 'STAMPS' ? 'TAMPONS' : 'POINTS'}
+                    </div>
+                )}
 
                 <div className="p-4 relative min-h-[350px] flex flex-col items-center justify-center">
                     {/* ZONE CAMERA */}
@@ -98,9 +121,9 @@ export default function ScannerPage() {
                                 onClick={() => handleAction(scannedId!, amount)}
                                 className="w-full bg-black text-white py-4 rounded-2xl font-black text-xl hover:bg-gray-800 transition"
                             >
-                                VALIDER LE SCAN
+                                VALIDER L'AJOUT
                             </button>
-                            <button onClick={resetScanner} className="w-full text-gray-400 font-bold">Annuler</button>
+                            <button onClick={resetScanner} className="w-full text-gray-400 font-bold p-2">Annuler</button>
                         </div>
                     )}
 

@@ -1,31 +1,65 @@
-import jwt from 'jsonwebtoken';
 import { google } from 'googleapis';
+import jwt from 'jsonwebtoken';
 
-// ❌ Fini le import credentials from '../../credentials.json' !
+// ------------------------------------------------------------------
+// 1. CRÉATION DU MOULE (Google Class - Type Loyalty)
+// ------------------------------------------------------------------
+export async function createCompanyGoogleClass(company: { id: string, name: string, primaryColor: string, logoUrl: string | null }) {
+    try {
+        const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
+        const auth = new google.auth.GoogleAuth({
+            credentials,
+            scopes: ['https://www.googleapis.com/auth/wallet_object.issuer'],
+        });
+        const client = await auth.getClient();
+        const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
+        const classId = `${issuerId}.${company.id.replace(/-/g, '')}`; 
 
-/**
- * Génère le lien d'ajout à Google Wallet (Pour le client)
- */
-export const generateGoogleWalletPass = (firstName: string, walletId: string, points: number) => {
-    // ✅ On récupère les clés depuis les variables d'environnement (Sécurisé !)
-    const issuerId = process.env.GOOGLE_ISSUER_ID;
-    const classId = process.env.GOOGLE_CLASS_ID;
-    const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+        // On utilise bien une LoyaltyClass (et plus GenericClass)
+        const loyaltyClass = {
+            id: classId,
+            issuerName: company.name,
+            programName: company.name, // Nom du programme affiché sur la carte
+            reviewStatus: "UNDER_REVIEW",
+            hexBackgroundColor: company.primaryColor,
+            ...(company.logoUrl ? {
+                programLogo: {
+                    sourceUri: { uri: company.logoUrl },
+                    contentDescription: { defaultValue: { language: "fr-FR", value: `Logo ${company.name}` } }
+                }
+            } : {})
+        };
 
-    if (!issuerId || !classId || !clientEmail || !privateKey) {
-        throw new Error("Variables d'environnement Google manquantes.");
+        await client.request({
+            url: 'https://walletobjects.googleapis.com/walletobjects/v1/loyaltyClass', // 👈 Modifié ici
+            method: 'POST',
+            data: loyaltyClass,
+        });
+
+        console.log("✅ Moule Fidélité créé :", classId);
+        return classId;
+    } catch (error) {
+        console.error("❌ Erreur création Google Class:", error);
+        throw new Error("Impossible de créer le modèle");
     }
+}
+
+// ------------------------------------------------------------------
+// 2. CRÉATION DE LA CARTE DU CLIENT (Google Object - Type Loyalty)
+// ------------------------------------------------------------------
+export const generateGoogleWalletPass = (firstName: string, walletId: string, points: number, classId: string) => {
+    const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
+    const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
 
     const claims = {
-        iss: clientEmail,
+        iss: credentials.client_email,
         aud: 'google',
         typ: 'savetowallet',
         origins: [],
         payload: {
-            loyaltyObjects: [{
-                id: `${issuerId}.${walletId}`,
-                classId: `${issuerId}.${classId}`,
+            loyaltyObjects: [{ // 👈 On garde bien TON format original
+                id: `${issuerId}.${walletId}`, 
+                classId: classId, // 👈 On lie au moule dynamique !
                 state: 'ACTIVE',
                 loyaltyPoints: {
                     label: 'Points',
@@ -42,27 +76,26 @@ export const generateGoogleWalletPass = (firstName: string, walletId: string, po
         }
     };
 
-    const token = jwt.sign(claims, privateKey, { algorithm: 'RS256' });
+    const token = jwt.sign(claims, credentials.private_key, { algorithm: 'RS256' });
     return `https://pay.google.com/gp/v/save/${token}`;
 };
 
-/**
- * Met à jour les points d'une carte déjà installée (Pour le commerçant)
- */
+// ------------------------------------------------------------------
+// 3. MISE À JOUR DES POINTS
+// ------------------------------------------------------------------
 export const updateWalletPoints = async (walletId: string, newPoints: number): Promise<boolean> => {
     try {
-        const issuerId = process.env.GOOGLE_ISSUER_ID;
-        const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
-        const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-
-        if (!issuerId || !clientEmail || !privateKey) throw new Error("Variables Google manquantes");
+        const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
+        const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
 
         const auth = new google.auth.GoogleAuth({
-            credentials: { client_email: clientEmail, private_key: privateKey },
+            credentials,
             scopes: ['https://www.googleapis.com/auth/wallet_object.issuer'],
         });
 
         const client = await auth.getClient();
+        
+        // On met à jour un loyaltyObject
         const url = `https://walletobjects.googleapis.com/walletobjects/v1/loyaltyObject/${issuerId}.${walletId}`;
         
         await client.request({
@@ -78,7 +111,7 @@ export const updateWalletPoints = async (walletId: string, newPoints: number): P
 
         return true;
     } catch (error) {
-        console.error("❌ Erreur lors de la mise à jour Google Wallet :", error);
+        console.error("❌ Erreur màj Wallet :", error);
         return false;
     }
 };

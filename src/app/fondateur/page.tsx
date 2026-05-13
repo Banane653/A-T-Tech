@@ -6,7 +6,9 @@ import { useState, useEffect } from 'react';
 type Company = {
     id: string;
     name: string;
-    systemType: string; // 👈 Nouveau champ
+    systemType: string;
+    primaryColor: string; // 👈 Nouveau
+    logoUrl: string | null; // 👈 Nouveau
     users: { name: string; email: string }[];
     _count: { customers: number };
 };
@@ -16,8 +18,17 @@ export default function FondateurDashboard() {
     const [companies, setCompanies] = useState<Company[]>([]);
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(false);
-    // 👈 On ajoute systemType au formData par défaut
-    const [formData, setFormData] = useState({ companyName: '', adminName: '', adminEmail: '', adminPassword: '', systemType: 'STAMPS' });
+    
+    // 👈 Ajout de primaryColor et logoUrl par défaut
+    const [formData, setFormData] = useState({ 
+        companyName: '', 
+        adminName: '', 
+        adminEmail: '', 
+        adminPassword: '', 
+        systemType: 'STAMPS',
+        primaryColor: '#000000', 
+        logoUrl: '' 
+    });
 
     const fetchCompanies = async () => {
         const res = await fetch('/api/admin/companies');
@@ -48,7 +59,7 @@ export default function FondateurDashboard() {
 
         if (res.ok) {
             setShowForm(false);
-            setFormData({ companyName: '', adminName: '', adminEmail: '', adminPassword: '', systemType: 'STAMPS' });
+            setFormData({ companyName: '', adminName: '', adminEmail: '', adminPassword: '', systemType: 'STAMPS', primaryColor: '#000000', logoUrl: '' });
             fetchCompanies();
         } else {
             const data = await res.json();
@@ -82,15 +93,14 @@ export default function FondateurDashboard() {
                     </div>
 
                     {showForm && (
-                        <form onSubmit={handleSubmit} className="bg-gray-100 p-6 rounded-xl space-y-4">
-                            <h3 className="font-bold text-lg mb-2">Créer un nouveau compte</h3>
+                        <form onSubmit={handleSubmit} className="bg-gray-100 p-6 rounded-xl space-y-6">
+                            <h3 className="font-bold text-lg border-b pb-2">1. Informations du Commerce</h3>
                             
-                            <div className="grid grid-cols-2 gap-4">
-                                <input type="text" placeholder="Nom du Commerce (ex: La Boulangerie du coin)" required
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="text" placeholder="Nom du Commerce" required
                                     className="w-full p-3 border rounded-lg outline-none focus:border-black"
                                     value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} />
                                 
-                                {/* 👈 LA NOUVELLE LISTE DÉROULANTE */}
                                 <select 
                                     className="w-full p-3 border rounded-lg bg-white outline-none focus:border-black"
                                     value={formData.systemType} 
@@ -101,19 +111,41 @@ export default function FondateurDashboard() {
                                 </select>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            {/* 🎨 NOUVELLE ZONE DESIGN */}
+                            <h3 className="font-bold text-lg border-b pb-2 pt-4">2. Design de la Carte</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                                <div className="flex flex-col">
+                                    <label className="text-sm text-gray-600 mb-1 font-semibold">Couleur principale de la carte</label>
+                                    <div className="flex items-center gap-3 bg-white p-2 border rounded-lg">
+                                        <input type="color" 
+                                            className="w-10 h-10 rounded cursor-pointer border-0 p-0"
+                                            value={formData.primaryColor} onChange={e => setFormData({...formData, primaryColor: e.target.value})} />
+                                        <span className="text-gray-500 font-mono uppercase">{formData.primaryColor}</span>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <label className="text-sm text-gray-600 mb-1 font-semibold">Lien du Logo (URL Image)</label>
+                                    <input type="url" placeholder="https://site.com/logo.png" 
+                                        className="w-full p-3 border rounded-lg outline-none focus:border-black"
+                                        value={formData.logoUrl} onChange={e => setFormData({...formData, logoUrl: e.target.value})} />
+                                </div>
+                            </div>
+
+                            <h3 className="font-bold text-lg border-b pb-2 pt-4">3. Compte Gérant</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <input type="text" placeholder="Nom du Gérant" required
                                     className="w-full p-3 border rounded-lg outline-none focus:border-black"
                                     value={formData.adminName} onChange={e => setFormData({...formData, adminName: e.target.value})} />
-                                <input type="email" placeholder="Email de connexion du Gérant" required
+                                <input type="email" placeholder="Email de connexion" required
                                     className="w-full p-3 border rounded-lg outline-none focus:border-black"
                                     value={formData.adminEmail} onChange={e => setFormData({...formData, adminEmail: e.target.value})} />
                             </div>
                             <input type="password" placeholder="Mot de passe provisoire" required
                                 className="w-full p-3 border rounded-lg outline-none focus:border-black"
                                 value={formData.adminPassword} onChange={e => setFormData({...formData, adminPassword: e.target.value})} />
-                            <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">
-                                {loading ? "Création..." : "Valider et Créer"}
+                            
+                            <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white font-bold py-4 rounded-lg hover:bg-blue-700 mt-4">
+                                {loading ? "Création du commerce et des moules..." : "Créer le commerce"}
                             </button>
                         </form>
                     )}
@@ -126,19 +158,32 @@ export default function FondateurDashboard() {
                         <div className="space-y-4">
                             {companies.map(company => (
                                 <div key={company.id} className="border p-4 rounded-xl flex justify-between items-center shadow-sm">
-                                    <div>
-                                        <div className="flex items-center gap-3">
-                                            <h3 className="font-bold text-lg">{company.name}</h3>
-                                            {/* 👈 Affichage du badge selon le système */}
-                                            <span className={`text-xs font-bold px-2 py-1 rounded-md ${company.systemType === 'STAMPS' ? 'bg-orange-100 text-orange-800' : 'bg-purple-100 text-purple-800'}`}>
-                                                {company.systemType === 'STAMPS' ? 'TAMPONS' : 'POINTS'}
-                                            </span>
+                                    <div className="flex items-center gap-4">
+                                        {/* 👈 Affichage de la pastille de couleur et du logo */}
+                                        <div 
+                                            className="w-12 h-12 rounded-full flex items-center justify-center border shadow-inner"
+                                            style={{ backgroundColor: company.primaryColor || '#000000' }}
+                                        >
+                                            {company.logoUrl ? (
+                                                <img src={company.logoUrl} alt="logo" className="w-8 h-8 object-contain bg-white rounded-full p-1" />
+                                            ) : (
+                                                <span className="text-white font-bold text-xs">IMG</span>
+                                            )}
                                         </div>
-                                        <p className="text-sm text-gray-500">Gérant : {company.users[0]?.name} ({company.users[0]?.email})</p>
+                                        
+                                        <div>
+                                            <div className="flex items-center gap-3">
+                                                <h3 className="font-bold text-lg">{company.name}</h3>
+                                                <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${company.systemType === 'STAMPS' ? 'bg-orange-100 text-orange-800' : 'bg-purple-100 text-purple-800'}`}>
+                                                    {company.systemType === 'STAMPS' ? 'TAMPONS' : 'POINTS'}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-500">Gérant : {company.users[0]?.name} ({company.users[0]?.email})</p>
+                                        </div>
                                     </div>
                                     <div className="text-right">
                                         <span className="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full">
-                                            {company._count.customers} clients fidèles
+                                            {company._count.customers} clients
                                         </span>
                                     </div>
                                 </div>

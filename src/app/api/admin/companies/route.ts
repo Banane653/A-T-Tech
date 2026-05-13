@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
+import { createCompanyGoogleClass } from '@/services/googleWallet.service';
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret_pour_dev');
 
@@ -43,34 +44,50 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        // 👈 On récupère le systemType envoyé par le formulaire
-        const { companyName, adminName, adminEmail, adminPassword, systemType } = body;
+        const { companyName, adminName, adminEmail, adminPassword, systemType, primaryColor, logoUrl } = body;
 
         if (!companyName || !adminName || !adminEmail || !adminPassword) {
             return NextResponse.json({ error: "Tous les champs sont requis" }, { status: 400 });
         }
 
-        // On vérifie si l'email existe déjà
         const existingUser = await prisma.merchantUser.findUnique({ where: { email: adminEmail } });
         if (existingUser) return NextResponse.json({ error: "Cet email est déjà utilisé" }, { status: 400 });
 
         const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
-        // On crée l'entreprise avec son systemType
-        const newCompany = await prisma.company.create({
+        // 1. On crée d'abord le commerce dans NOTRE base de données (sans l'ID Google)
+        let newCompany = await prisma.company.create({
             data: {
                 name: companyName,
-                systemType: systemType || 'STAMPS', // 👈 On sauvegarde le choix (ou STAMPS par défaut)
+                systemType: systemType || 'STAMPS',
+                primaryColor: primaryColor || '#000000',
+                logoUrl: logoUrl || null,
                 users: {
-                    create: {
-                        name: adminName,
-                        email: adminEmail,
-                        password: hashedPassword,
-                        role: "ADMIN"
-                    }
+                    create: { name: adminName, email: adminEmail, password: hashedPassword, role: "ADMIN" }
                 }
             }
         });
+
+        // 2. 🪄 MAGIE : On demande à Google de créer le moule avec le design !
+        try {
+            const googleClassId = await createCompanyGoogleClass({
+                id: newCompany.id,
+                name: newCompany.name,
+                primaryColor: newCompany.primaryColor,
+                logoUrl: newCompany.logoUrl
+            });
+
+            // 3. On met à jour notre base de données avec l'ID du moule Google
+            newCompany = await prisma.company.update({
+                where: { id: newCompany.id },
+                data: { googleClassId: googleClassId }
+            });
+            
+        } catch (googleError) {
+            // Si Google plante (ex: problème de connexion), le commerce est créé, 
+            // mais on prévient que la carte n'est pas configurée.
+            console.error("Échec de création de la Google Class, mais le commerce est créé.");
+        }
 
         return NextResponse.json({ success: true, company: newCompany });
     } catch (error) {

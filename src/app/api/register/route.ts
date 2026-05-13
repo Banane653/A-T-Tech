@@ -11,9 +11,13 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
         }
 
-        // 1. On cherche ou on crée le client
-        let customer = await prisma.customer.findUnique({ where: { email } });
+        // 1. On cherche le client, ET on demande à inclure son entreprise
+        let customer = await prisma.customer.findUnique({ 
+            where: { email },
+            include: { company: true } // 👈 NOUVEAU : On charge l'entreprise avec
+        });
 
+        // Si le client n'existe pas, on le crée ET on inclut son entreprise en retour
         if (!customer) {
             const walletId = `WLT-${Date.now()}`;
             customer = await prisma.customer.create({
@@ -25,13 +29,24 @@ export async function POST(request: Request) {
                     walletId, 
                     points: 0,
                     companyId 
-                }
+                },
+                include: { company: true } // 👈 NOUVEAU : On demande à Prisma de nous renvoyer l'entreprise
             });
         }
 
-        // 2. Génération du pass Google Wallet
-        const saveUrl = generateGoogleWalletPass(customer.firstName, customer.walletId, customer.points);
+        // Sécurité : On vérifie que l'entreprise a bien un modèle Google Wallet configuré
+        if (!customer.company?.googleClassId) {
+             return NextResponse.json({ error: "Ce commerce n'a pas encore configuré ses cartes Wallet." }, { status: 400 });
+        }
 
+        // 2. Génération du pass Google Wallet personnalisé
+        const saveUrl = generateGoogleWalletPass(
+            customer.firstName, 
+            customer.walletId, 
+            customer.points, 
+            customer.company.googleClassId // Maintenant, ça marche sans erreur rouge !
+        );
+        
         return NextResponse.json({ saveUrl });
 
     } catch (error) {

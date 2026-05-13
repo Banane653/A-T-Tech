@@ -21,12 +21,22 @@ enum LoyaltyType {
 
 // 2. La table des Commerces (Les locataires de ton SaaS)
 model Company {
-  id        String         @id @default(uuid())
-  name      String         // Ex: "Le Café de Paris"
-  users     MerchantUser[] // Les employés de ce commerce
-  customers Customer[]     // Les clients de ce commerce
-  createdAt DateTime       @default(now())
-  systemType LoyaltyType   @default(POINTS) 
+  id             String         @id @default(uuid())
+  name           String
+  systemType     LoyaltyType    @default(STAMPS)
+  
+  // --- Nouveaux champs pour la personnalisation ---
+  primaryColor   String         @default("#000000") // Couleur hexadécimale (ex: #FF5733)
+  logoUrl        String?        // Lien vers l'image du logo
+  
+  // --- Identifiants techniques des "Moules" (Templates) ---
+  googleClassId  String?        // L'ID du modèle chez Google Wallet
+  applePassId    String?        // Réservé pour la future intégration Apple Wallet
+  // ------------------------------------------------
+  
+  users          MerchantUser[]
+  customers      Customer[]
+  createdAt      DateTime       @default(now())
 
   @@map("companies")
 }

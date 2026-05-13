@@ -44,7 +44,9 @@ export async function POST(request: Request) {
             customer.firstName, 
             customer.walletId, 
             customer.points, 
-            customer.company.googleClassId // Maintenant, ça marche sans erreur rouge !
+            customer.company.googleClassId,
+            customer.company.systemType,   
+            customer.company.primaryColor
         );
         
         return NextResponse.json({ saveUrl });

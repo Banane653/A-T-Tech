@@ -47,9 +47,45 @@ export async function createCompanyGoogleClass(company: { id: string, name: stri
 // ------------------------------------------------------------------
 // 2. CRÉATION DE LA CARTE DU CLIENT (Google Object - Type Loyalty)
 // ------------------------------------------------------------------
-export const generateGoogleWalletPass = (firstName: string, walletId: string, points: number, classId: string) => {
+export const generateGoogleWalletPass = (
+    firstName: string, 
+    walletId: string, 
+    points: number, 
+    classId: string,
+    systemType: string, // 👈 NOUVEAU : On a besoin de savoir si c'est POINTS ou TAMPONS
+    primaryColor: string // 👈 NOUVEAU : Pour colorer les tampons
+) => {
     const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
     const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
+
+    // 🌟 L'AIGUILLAGE DU DESIGN 🌟
+    let textModules = [];
+    let heroImage = undefined;
+
+    if (systemType === 'STAMPS') {
+        // MODE TAMPONS
+        textModules = [{ id: "stamps", header: "TAMPONS RÉCOLTÉS", body: `${points} / 10` }];
+        
+        // On récupère l'adresse du site configurée dans Vercel ou dans le .env local
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        
+        let imageUrl;
+        if (baseUrl.startsWith('https')) {
+            // 🚀 ON EST SUR VERCEL : On donne la VRAIE image dynamique à Google !
+            imageUrl = `${baseUrl}/api/images/stamps?count=${points}&color=${encodeURIComponent(primaryColor)}`;
+        } else {
+            // 💻 ON EST SUR LE PC : Google ne peut pas voir notre PC, on donne une image provisoire
+            imageUrl = `https://placehold.co/600x280/${primaryColor.replace('#', '')}/FFFFFF/png?text=${points}+TAMPONS`;
+        }
+
+        heroImage = {
+            sourceUri: { uri: imageUrl },
+            contentDescription: { defaultValue: { language: "fr-FR", value: `Carte avec ${points} tampons` } }
+        };
+    } else {
+        // MODE POINTS CLASSIQUE
+        textModules = [{ id: "points", header: "SOLDE FIDÉLITÉ", body: `${points} points` }];
+    }
 
     const claims = {
         iss: credentials.client_email,
@@ -57,21 +93,17 @@ export const generateGoogleWalletPass = (firstName: string, walletId: string, po
         typ: 'savetowallet',
         origins: [],
         payload: {
-            loyaltyObjects: [{ // 👈 On garde bien TON format original
+            loyaltyObjects: [{
                 id: `${issuerId}.${walletId}`, 
-                classId: classId, // 👈 On lie au moule dynamique !
+                classId: classId,
                 state: 'ACTIVE',
-                loyaltyPoints: {
-                    label: 'Points',
-                    balance: { int: points }
-                },
+                // On cache la ligne "points" native si c'est des tampons, sinon Google s'embrouille
+                ...(systemType === 'POINTS' ? { loyaltyPoints: { label: 'Points', balance: { int: points } } } : {}),
+                heroImage: heroImage, // 👈 On injecte l'image (sera ignorée si undefined)
+                textModulesData: textModules, // 👈 On injecte le bon texte
                 accountId: walletId,
                 accountName: firstName,
-                barcode: {
-                    type: 'QR_CODE',
-                    value: walletId,
-                    alternateText: walletId
-                }
+                barcode: { type: 'QR_CODE', value: walletId, alternateText: walletId }
             }]
         }
     };

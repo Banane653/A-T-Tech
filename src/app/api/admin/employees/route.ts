@@ -34,7 +34,7 @@ export async function GET() {
         // On récupère aussi le nom de la boite pour le dashboard
         const company = await prisma.company.findUnique({
             where: { id: admin.companyId },
-            select: { id: true, name: true, _count: { select: { customers: true } } }
+            select: { id: true, systemType: true, name: true, _count: { select: { customers: true } } }
         });
 
         return NextResponse.json({ employees, company });

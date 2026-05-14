@@ -55,8 +55,15 @@ export async function POST(request: Request) {
 
         // 4. Mise à jour DB et Google Wallet
         await prisma.customer.update({ where: { walletId }, data: { points: newPoints } });
-        await updateWalletPoints(walletId, newPoints);
-
+        // Mise à jour de la carte Google Wallet
+        if (customer.company) {
+            await updateWalletPoints(
+                walletId, 
+                newPoints, 
+                customer.company.systemType,   
+                customer.company.primaryColor  
+            );
+        }
         return NextResponse.json({ success: true, message, newBalance: newPoints });
 
     } catch (error) {

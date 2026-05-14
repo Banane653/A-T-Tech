@@ -115,7 +115,12 @@ export const generateGoogleWalletPass = (
 // ------------------------------------------------------------------
 // 3. MISE À JOUR DES POINTS
 // ------------------------------------------------------------------
-export const updateWalletPoints = async (walletId: string, newPoints: number): Promise<boolean> => {
+export const updateWalletPoints = async (
+    walletId: string, 
+    newPoints: number, 
+    systemType: string,    // 👈 NOUVEAU
+    primaryColor: string   // 👈 NOUVEAU
+): Promise<boolean> => {
     try {
         const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
         const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
@@ -126,19 +131,42 @@ export const updateWalletPoints = async (walletId: string, newPoints: number): P
         });
 
         const client = await auth.getClient();
+        const objectId = `${issuerId}.${walletId}`;
         
-        // On met à jour un loyaltyObject
-        const url = `https://walletobjects.googleapis.com/walletobjects/v1/loyaltyObject/${issuerId}.${walletId}`;
-        
-        await client.request({
-            url,
-            method: 'PATCH',
-            data: {
+        // 🌟 PRÉPARATION DES DONNÉES À METTRE À JOUR 🌟
+        let updateData: any = {};
+
+        if (systemType === 'STAMPS') {
+            // MODE TAMPONS : On met à jour le texte ET la fameuse image !
+            const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+            const imageUrl = baseUrl.startsWith('https') 
+                ? `${baseUrl}/api/images/stamps?count=${newPoints}&color=${encodeURIComponent(primaryColor)}`
+                : `https://placehold.co/600x280/${primaryColor.replace('#', '')}/FFFFFF/png?text=${newPoints}+TAMPONS`;
+
+            updateData = {
+                textModulesData: [{ id: "stamps", header: "TAMPONS RÉCOLTÉS", body: `${newPoints} / 10` }],
+                heroImage: {
+                    sourceUri: { uri: imageUrl },
+                    contentDescription: { defaultValue: { language: "fr-FR", value: `Carte avec ${newPoints} tampons` } }
+                }
+            };
+        } else {
+            // MODE POINTS : On met juste à jour le solde numérique
+            updateData = {
                 loyaltyPoints: {
                     label: "Points",
                     balance: { int: newPoints }
                 }
-            }
+            };
+        }
+
+        console.log(`🚀 Mise à jour Google Wallet pour ${walletId}:`, updateData);
+
+        // On envoie l'ordre de modification à Google
+        await client.request({
+            url: `https://walletobjects.googleapis.com/walletobjects/v1/loyaltyObject/${objectId}`,
+            method: 'PATCH',
+            data: updateData
         });
 
         return true;

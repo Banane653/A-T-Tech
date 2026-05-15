@@ -46,7 +46,8 @@ export async function POST(request: Request) {
             customer.points, 
             customer.company.googleClassId,
             customer.company.systemType,   
-            customer.company.primaryColor
+            customer.company.primaryColor,
+            customer.company.cardTemplate
         );
         
         return NextResponse.json({ saveUrl });

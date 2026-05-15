@@ -2,13 +2,15 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { CARD_TEMPLATES, TemplateType } from '@/config/templates'; // 👈 NOUVEAU : On importe le catalogue
 
 type Company = {
     id: string;
     name: string;
     systemType: string;
-    primaryColor: string; // 👈 Nouveau
-    logoUrl: string | null; // 👈 Nouveau
+    primaryColor: string;
+    logoUrl: string | null;
+    cardTemplate: string; // 👈 NOUVEAU
     users: { name: string; email: string }[];
     _count: { customers: number };
 };
@@ -19,15 +21,18 @@ export default function FondateurDashboard() {
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(false);
     
-    // 👈 Ajout de primaryColor et logoUrl par défaut
+    // 👈 Ajout de cardTemplate par défaut (on prend le premier modèle TAMPONS)
+    const defaultTemplate = CARD_TEMPLATES.find(t => t.type === 'STAMPS')?.id || 'default';
+
     const [formData, setFormData] = useState({ 
         companyName: '', 
         adminName: '', 
         adminEmail: '', 
         adminPassword: '', 
-        systemType: 'STAMPS',
+        systemType: 'STAMPS' as TemplateType,
         primaryColor: '#000000', 
-        logoUrl: '' 
+        logoUrl: '',
+        cardTemplate: defaultTemplate // 👈 NOUVEAU
     });
 
     const fetchCompanies = async () => {
@@ -59,7 +64,11 @@ export default function FondateurDashboard() {
 
         if (res.ok) {
             setShowForm(false);
-            setFormData({ companyName: '', adminName: '', adminEmail: '', adminPassword: '', systemType: 'STAMPS', primaryColor: '#000000', logoUrl: '' });
+            setFormData({ 
+                companyName: '', adminName: '', adminEmail: '', adminPassword: '', 
+                systemType: 'STAMPS', primaryColor: '#000000', logoUrl: '', 
+                cardTemplate: CARD_TEMPLATES.find(t => t.type === 'STAMPS')?.id || 'default' 
+            });
             fetchCompanies();
         } else {
             const data = await res.json();
@@ -67,6 +76,9 @@ export default function FondateurDashboard() {
         }
         setLoading(false);
     };
+
+    // 👈 NOUVEAU : On filtre les modèles selon le système choisi
+    const availableTemplates = CARD_TEMPLATES.filter(t => t.type === formData.systemType);
 
     return (
         <main className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
@@ -104,15 +116,22 @@ export default function FondateurDashboard() {
                                 <select 
                                     className="w-full p-3 border rounded-lg bg-white outline-none focus:border-black"
                                     value={formData.systemType} 
-                                    onChange={e => setFormData({...formData, systemType: e.target.value})}
+                                    onChange={e => {
+                                        const newType = e.target.value as TemplateType;
+                                        // Si on change de système, on auto-sélectionne le 1er modèle disponible
+                                        const firstTemplateId = CARD_TEMPLATES.find(t => t.type === newType)?.id || 'default';
+                                        setFormData({...formData, systemType: newType, cardTemplate: firstTemplateId});
+                                    }}
                                 >
                                     <option value="STAMPS">☕ Système à Tampons (10 tampons = Cadeau)</option>
                                     <option value="POINTS">🛍️ Système à Points (Lié au montant payé)</option>
                                 </select>
                             </div>
 
-                            {/* 🎨 NOUVELLE ZONE DESIGN */}
-                            <h3 className="font-bold text-lg border-b pb-2 pt-4">2. Design de la Carte</h3>
+                            {/* 🎨 ZONE DESIGN MISE À JOUR */}
+                            <h3 className="font-bold text-lg border-b pb-2 pt-4">2. Design de la Carte Premium</h3>
+                            
+                            {/* Choix des couleurs et logo */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                                 <div className="flex flex-col">
                                     <label className="text-sm text-gray-600 mb-1 font-semibold">Couleur principale de la carte</label>
@@ -131,6 +150,27 @@ export default function FondateurDashboard() {
                                 </div>
                             </div>
 
+                            {/* 🌟 NOUVEAU : LA GALERIE DE MODÈLES */}
+                            <div className="mt-4">
+                                <label className="text-sm text-gray-600 mb-2 font-semibold block">Modèle du programme de fidélité</label>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    {availableTemplates.map(tpl => (
+                                        <div 
+                                            key={tpl.id}
+                                            onClick={() => setFormData({...formData, cardTemplate: tpl.id})}
+                                            className={`cursor-pointer border-2 rounded-xl p-4 flex flex-col items-center text-center transition-all ${
+                                                formData.cardTemplate === tpl.id 
+                                                    ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-200' 
+                                                    : 'border-gray-200 bg-white hover:border-gray-400'
+                                            }`}
+                                        >
+                                            <div className="font-bold text-sm mb-1">{tpl.name}</div>
+                                            <div className="text-xs text-gray-500">{tpl.description}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
                             <h3 className="font-bold text-lg border-b pb-2 pt-4">3. Compte Gérant</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <input type="text" placeholder="Nom du Gérant" required
@@ -145,7 +185,7 @@ export default function FondateurDashboard() {
                                 value={formData.adminPassword} onChange={e => setFormData({...formData, adminPassword: e.target.value})} />
                             
                             <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white font-bold py-4 rounded-lg hover:bg-blue-700 mt-4">
-                                {loading ? "Création du commerce et des moules..." : "Créer le commerce"}
+                                {loading ? "Création du commerce..." : "Créer le commerce"}
                             </button>
                         </form>
                     )}
@@ -159,7 +199,6 @@ export default function FondateurDashboard() {
                             {companies.map(company => (
                                 <div key={company.id} className="border p-4 rounded-xl flex justify-between items-center shadow-sm">
                                     <div className="flex items-center gap-4">
-                                        {/* 👈 Affichage de la pastille de couleur et du logo */}
                                         <div 
                                             className="w-12 h-12 rounded-full flex items-center justify-center border shadow-inner"
                                             style={{ backgroundColor: company.primaryColor || '#000000' }}
@@ -178,7 +217,9 @@ export default function FondateurDashboard() {
                                                     {company.systemType === 'STAMPS' ? 'TAMPONS' : 'POINTS'}
                                                 </span>
                                             </div>
-                                            <p className="text-sm text-gray-500">Gérant : {company.users[0]?.name} ({company.users[0]?.email})</p>
+                                            <p className="text-sm text-gray-500">
+                                                Modèle: <span className="font-semibold text-gray-700">{CARD_TEMPLATES.find(t => t.id === company.cardTemplate)?.name || 'Standard'}</span>
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="text-right">

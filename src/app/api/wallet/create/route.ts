@@ -43,7 +43,8 @@ export async function GET(request: Request) {
             customer.points,
             customer.company.googleClassId,
             customer.company.systemType,
-            customer.company.primaryColor
+            customer.company.primaryColor,
+            customer.company.cardTemplate
         );
 
         // On renvoie du HTML pur

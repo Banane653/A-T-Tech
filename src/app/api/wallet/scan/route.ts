@@ -61,7 +61,8 @@ export async function POST(request: Request) {
                 walletId, 
                 newPoints, 
                 customer.company.systemType,   
-                customer.company.primaryColor  
+                customer.company.primaryColor,  
+                customer.company.cardTemplate
             );
         }
         return NextResponse.json({ success: true, message, newBalance: newPoints });

@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { companyName, adminName, adminEmail, adminPassword, systemType, primaryColor, logoUrl } = body;
+        const { companyName, adminName, adminEmail, adminPassword, systemType, primaryColor, logoUrl, cardTemplate } = body;
 
         if (!companyName || !adminName || !adminEmail || !adminPassword) {
             return NextResponse.json({ error: "Tous les champs sont requis" }, { status: 400 });
@@ -62,6 +62,7 @@ export async function POST(request: Request) {
                 systemType: systemType || 'STAMPS',
                 primaryColor: primaryColor || '#000000',
                 logoUrl: logoUrl || null,
+                cardTemplate: cardTemplate || 'default',
                 users: {
                     create: { name: adminName, email: adminEmail, password: hashedPassword, role: "ADMIN" }
                 }

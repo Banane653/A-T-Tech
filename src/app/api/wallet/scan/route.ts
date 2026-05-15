@@ -1,74 +1,189 @@
 import { NextResponse } from 'next/server';
 import { updateWalletPoints } from '@/services/googleWallet.service';
 import { prisma } from '@/lib/prisma';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
+import { getScannerAuth } from '@/lib/auth';
 
-const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret_pour_dev');
+const STAMP_LIMIT = 10;
+
+type ScanAction = 'lookup' | 'add_stamp' | 'add_points' | 'spend_points';
+
+async function syncWallet(
+    walletId: string,
+    newPoints: number,
+    company: { systemType: string; primaryColor: string; cardTemplate: string }
+) {
+    await updateWalletPoints(
+        walletId,
+        newPoints,
+        company.systemType,
+        company.primaryColor,
+        company.cardTemplate
+    );
+}
 
 export async function POST(request: Request) {
     try {
+        const auth = await getScannerAuth();
+        if (!auth) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+
         const body = await request.json();
-        const { walletId, amount } = body; // amount est optionnel (utilisé pour les points)
+        const {
+            walletId,
+            action = 'lookup',
+            amount,
+            description,
+            rewardId,
+        } = body as {
+            walletId: string;
+            action?: ScanAction;
+            amount?: number;
+            description?: string;
+            rewardId?: string;
+        };
 
-        // 1. Sécurité : On vérifie quel employé scanne
-        const cookieStore = await cookies();
-        const token = cookieStore.get('auth_token')?.value;
-        if (!token) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-        
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        const companyId = payload.companyId as string;
+        if (!walletId) {
+            return NextResponse.json({ error: 'walletId requis' }, { status: 400 });
+        }
 
-        // 2. On récupère le client ET son entreprise
-        const customer = await prisma.customer.findUnique({ 
+        const customer = await prisma.customer.findUnique({
             where: { walletId },
-            include: { company: true }
+            include: { company: true },
         });
 
-        if (!customer) return NextResponse.json({ error: "Carte non reconnue" }, { status: 404 });
-        
-        // Sécurité : On vérifie que le client appartient bien à la même entreprise que l'employé
-        if (customer.companyId !== companyId) {
+        if (!customer) return NextResponse.json({ error: 'Carte non reconnue' }, { status: 404 });
+        if (customer.companyId !== auth.companyId) {
             return NextResponse.json({ error: "Ce client n'appartient pas à votre commerce" }, { status: 403 });
+        }
+        if (!customer.company) {
+            return NextResponse.json({ error: 'Commerce introuvable' }, { status: 500 });
+        }
+
+        const company = customer.company;
+        const customerLabel = `${customer.firstName}${customer.lastName ? ` ${customer.lastName}` : ''}`;
+
+        if (action === 'lookup') {
+            const rewards =
+                company.systemType === 'POINTS'
+                    ? await prisma.reward.findMany({
+                          where: { companyId: auth.companyId },
+                          orderBy: { cost: 'asc' },
+                          select: { id: true, name: true, cost: true },
+                      })
+                    : [];
+
+            return NextResponse.json({
+                success: true,
+                customer: {
+                    id: customer.id,
+                    firstName: customer.firstName,
+                    lastName: customer.lastName,
+                    points: customer.points,
+                },
+                systemType: company.systemType,
+                stampLimit: STAMP_LIMIT,
+                rewards,
+            });
         }
 
         let newPoints = customer.points;
-        let message = "";
+        let transactionType = 'EARN';
+        let transactionAmount = 0;
+        let transactionDescription = description?.trim() || '';
+        let message = '';
+        let wasReset = false;
 
-        // 3. Logique selon le système de l'entreprise
-        if (customer.company?.systemType === "STAMPS") {
-            newPoints += 1;
-            if (newPoints >= 10) {
-                newPoints = 0;
-                message = "🎉 CARTE DE TAMPONS PLEINE ! Offrez la récompense !";
-            } else {
-                message = `✅ +1 Tampon ajouté. (${newPoints}/10)`;
+        if (company.systemType === 'STAMPS') {
+            if (action !== 'add_stamp') {
+                return NextResponse.json({ error: 'Action invalide pour le mode tampons' }, { status: 400 });
             }
-        } else {
-            // SYSTÈME DE POINTS (ex: 1€ = 1 point)
-            const pointsToAdd = Math.floor(Number(amount) || 0);
-            if (pointsToAdd <= 0) return NextResponse.json({ error: "Montant invalide" }, { status: 400 });
-            
-            newPoints += pointsToAdd;
-            message = `✅ +${pointsToAdd} points ajoutés. Nouveau solde : ${newPoints}`;
+
+            if (customer.points >= STAMP_LIMIT) {
+                newPoints = 0;
+                transactionType = 'RESET';
+                transactionAmount = STAMP_LIMIT;
+                transactionDescription =
+                    transactionDescription || 'Carte complétée - Cadeau offert';
+                message = '🎉 BRAVO ! Donnez le cadeau au client !';
+                wasReset = true;
+            } else {
+                newPoints = customer.points + 1;
+                transactionType = 'EARN';
+                transactionAmount = 1;
+                transactionDescription = transactionDescription || '+1 tampon';
+                if (newPoints >= STAMP_LIMIT) {
+                    message = `🎉 Carte pleine ! (${STAMP_LIMIT}/${STAMP_LIMIT}) — Au prochain scan, offrez le cadeau.`;
+                } else {
+                    message = `✅ +1 tampon. (${newPoints}/${STAMP_LIMIT})`;
+                }
+            }
+        } else if (company.systemType === 'POINTS') {
+            if (action === 'add_points') {
+                const pointsToAdd = Math.floor(Number(amount) || 0);
+                if (pointsToAdd <= 0) {
+                    return NextResponse.json({ error: 'Montant invalide' }, { status: 400 });
+                }
+                newPoints = customer.points + pointsToAdd;
+                transactionType = 'EARN';
+                transactionAmount = pointsToAdd;
+                transactionDescription =
+                    transactionDescription || `Achat de ${pointsToAdd} point(s)`;
+                message = `✅ +${pointsToAdd} points. Nouveau solde : ${newPoints}`;
+            } else if (action === 'spend_points') {
+                if (!rewardId) {
+                    return NextResponse.json({ error: 'Récompense requise' }, { status: 400 });
+                }
+                const reward = await prisma.reward.findFirst({
+                    where: { id: rewardId, companyId: auth.companyId },
+                });
+                if (!reward) {
+                    return NextResponse.json({ error: 'Récompense introuvable' }, { status: 404 });
+                }
+                if (customer.points < reward.cost) {
+                    return NextResponse.json(
+                        { error: 'Solde insuffisant pour cette récompense' },
+                        { status: 400 }
+                    );
+                }
+                newPoints = customer.points - reward.cost;
+                transactionType = 'SPEND';
+                transactionAmount = reward.cost;
+                transactionDescription =
+                    transactionDescription || `Récompense : ${reward.name}`;
+                message = `✅ Récompense offerte : ${reward.name}. Solde : ${newPoints}`;
+            } else {
+                return NextResponse.json({ error: 'Action invalide pour le mode points' }, { status: 400 });
+            }
         }
 
-        // 4. Mise à jour DB et Google Wallet
-        await prisma.customer.update({ where: { walletId }, data: { points: newPoints } });
-        // Mise à jour de la carte Google Wallet
-        if (customer.company) {
-            await updateWalletPoints(
-                walletId, 
-                newPoints, 
-                customer.company.systemType,   
-                customer.company.primaryColor,  
-                customer.company.cardTemplate
-            );
-        }
-        return NextResponse.json({ success: true, message, newBalance: newPoints });
+        await prisma.$transaction([
+            prisma.customer.update({
+                where: { walletId },
+                data: { points: newPoints },
+            }),
+            prisma.transaction.create({
+                data: {
+                    type: transactionType,
+                    amount: transactionAmount,
+                    description: transactionDescription,
+                    customerId: customer.id,
+                    companyId: auth.companyId,
+                },
+            }),
+        ]);
 
+        await syncWallet(walletId, newPoints, company);
+
+        return NextResponse.json({
+            success: true,
+            message,
+            newBalance: newPoints,
+            wasReset,
+            systemType: company.systemType,
+            customerName: customerLabel,
+            stampLimit: STAMP_LIMIT,
+        });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+        return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
     }
 }

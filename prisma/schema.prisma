@@ -37,6 +37,8 @@ model Company {
   
   users          MerchantUser[]
   customers      Customer[]
+  rewards        Reward[]
+  transactions   Transaction[]
   createdAt      DateTime       @default(now())
 
   @@map("companies")
@@ -72,8 +74,34 @@ model Customer {
   // Le client est désormais lié au commerce où il s'est inscrit
   companyId String?  
   company   Company? @relation(fields: [companyId], references: [id])
+  transactions Transaction[]
   
   createdAt DateTime @default(now())
 
   @@map("customers")
+}
+
+model Reward {
+  id        String   @id @default(uuid())
+  name      String
+  cost      Int
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("rewards")
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  type        String
+  amount      Int
+  description String
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@map("transactions")
 }

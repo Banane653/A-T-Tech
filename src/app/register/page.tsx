@@ -102,7 +102,7 @@ function RegisterForm() {
                     
                     <a href={saveUrl} target="_blank" rel="noreferrer" className="inline-block transition transform hover:scale-105 mt-4">
                         <img 
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Wallet_badge.svg/512px-Google_Wallet_badge.svg.png" 
+                            src="https://img.magnific.com/premium-vector/google-wallet-logo_689336-957.jpg?w=360" 
                             alt="Add to Google Wallet" 
                             className="h-16"
                         />

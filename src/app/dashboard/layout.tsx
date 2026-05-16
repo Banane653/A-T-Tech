@@ -8,6 +8,8 @@ const navItems = [
     { href: '/scanner', label: 'Scanner', icon: '📷' },
     { href: '/dashboard/rewards', label: 'Catalogue Cadeaux', icon: '🎁' },
     { href: '/dashboard/history', label: 'Historique', icon: '📋' },
+    { href: '/dashboard/stats', label: 'Statistiques', icon: '📊' },
+    { href: '/dashboard/customers', label: 'Mes Clients', icon: '🤝' },
     { href: '/dashboard', label: 'Mon Équipe', icon: '👥', exact: true },
 ];
 

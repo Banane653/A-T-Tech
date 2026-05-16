@@ -29,6 +29,9 @@ model Company {
   primaryColor   String         @default("#000000") // Couleur hexadécimale (ex: #FF5733)
   logoUrl        String?        // Lien vers l'image du logo
   cardTemplate   String         @default("default") 
+
+  //Le taux de conversion pour le système de points (ex: 1 € = X points)
+  pointsRatio    Float            @default(1)
   
   // --- Identifiants techniques des "Moules" (Templates) ---
   googleClassId  String?        // L'ID du modèle chez Google Wallet

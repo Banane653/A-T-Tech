@@ -239,25 +239,33 @@ export default function ScannerPage() {
 
                                     {pointsTab === 'earn' ? (
                                         <div className="space-y-3">
-                                            <input
-                                                type="number"
-                                                autoFocus
-                                                placeholder="Points à ajouter"
-                                                className="w-full text-3xl font-black text-center py-4 text-black outline-none border-b-4 border-black"
-                                                value={amount}
-                                                onChange={(e) => setAmount(e.target.value)}
-                                            />
+                                            {/* 👉 CHANGEMENT : On indique qu'on saisit un montant en euros */}
+                                            <div className="relative">
+                                                <input
+                                                    type="number"
+                                                    autoFocus
+                                                    step="0.01" // Permet d'entrer des centimes (ex: 15.50)
+                                                    placeholder="Montant du ticket"
+                                                    className="w-full text-3xl font-black text-center py-4 pr-8 text-black outline-none border-b-4 border-black"
+                                                    value={amount}
+                                                    onChange={(e) => setAmount(e.target.value)}
+                                                />
+                                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-400">
+                                                    €
+                                                </span>
+                                            </div>
                                             <button
                                                 onClick={() =>
                                                     handleAction({
                                                         action: 'add_points',
                                                         amount: Number(amount),
-                                                        description: `Achat de ${amount}€`,
+                                                        // La description envoyée est maintenant plus précise
+                                                        description: `Achat de ${Number(amount).toFixed(2)}€`, 
                                                     })
                                                 }
                                                 className="w-full bg-black text-white py-4 rounded-2xl font-black text-lg hover:bg-gray-800"
                                             >
-                                                VALIDER L&apos;AJOUT
+                                                VALIDER L'ACHAT
                                             </button>
                                         </div>
                                     ) : (

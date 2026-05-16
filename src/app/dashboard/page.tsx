@@ -7,18 +7,33 @@ export default function AdminDashboard() {
     const [companyName, setCompanyName] = useState('');
     const [customerCount, setCustomerCount] = useState(0);
     const [companyId, setCompanyId] = useState('');
+    
+    // Nouveaux états pour le système de points
+    const [systemType, setSystemType] = useState('STAMPS');
+    const [pointsRatio, setPointsRatio] = useState(1);
+    const [isSavingRatio, setIsSavingRatio] = useState(false);
+
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
     const [loading, setLoading] = useState(false);
 
     const fetchData = async () => {
-        const res = await fetch('/api/admin/employees');
-        if (res.ok) {
-            const data = await res.json();
+        // Récupère l'équipe et les infos basiques
+        const resEmployees = await fetch('/api/admin/employees');
+        if (resEmployees.ok) {
+            const data = await resEmployees.json();
             setEmployees(data.employees);
             setCompanyName(data.company.name);
             setCustomerCount(data.company._count.customers);
             setCompanyId(data.company.id);
+        }
+
+        // Récupère les paramètres du commerce (notamment le ratio)
+        const resCompany = await fetch('/api/admin/company');
+        if (resCompany.ok) {
+            const data = await resCompany.json();
+            setPointsRatio(data.company.pointsRatio);
+            setSystemType(data.company.systemType);
         }
     };
 
@@ -54,12 +69,28 @@ export default function AdminDashboard() {
         });
 
         if (res.ok) {
-            // On met à jour la liste instantanément en retirant l'employé supprimé
             setEmployees(prev => prev.filter((emp: { id: string }) => emp.id !== id));
         } else {
             const data = await res.json();
             alert('Erreur : ' + data.error);
         }
+    };
+
+    // Nouvelle fonction pour sauvegarder le ratio
+    const handleSaveRatio = async () => {
+        setIsSavingRatio(true);
+        const res = await fetch('/api/admin/company', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pointsRatio }),
+        });
+
+        if (res.ok) {
+            alert('Taux de conversion mis à jour !');
+        } else {
+            alert('Erreur lors de la mise à jour.');
+        }
+        setIsSavingRatio(false);
     };
 
     const registerLink =
@@ -70,7 +101,7 @@ export default function AdminDashboard() {
     return (
         <div className="p-8 max-w-4xl">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">{companyName || 'Mon Commerce'}</h1>
-            <p className="text-gray-500 mb-8">Gestion de votre équipe et lien d&apos;inscription</p>
+            <p className="text-gray-500 mb-8">Gestion de votre équipe et paramètres</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                 <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
@@ -84,6 +115,36 @@ export default function AdminDashboard() {
                     <p className="text-3xl font-bold text-gray-800 mt-1">{employees.length} employé(s)</p>
                 </div>
             </div>
+
+            {/* 👉 NOUVEAU BLOC : Configuration du Taux de Conversion (Affiché uniquement si en mode POINTS) */}
+            {systemType === 'POINTS' && (
+                <div className="bg-amber-50 border border-amber-200 p-6 rounded-xl shadow-sm mb-8">
+                    <h3 className="font-bold text-amber-900 mb-2">⚙️ Règle de fidélité</h3>
+                    <p className="text-sm text-amber-800 mb-4">
+                        Combien de points un client gagne-t-il pour 1 € dépensé ?
+                    </p>
+                    <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-amber-200">
+                            <span className="font-bold text-gray-700">1 € =</span>
+                            <input
+                                type="number"
+                                min="1"
+                                className="w-20 text-center font-bold text-xl outline-none text-black bg-transparent"
+                                value={pointsRatio}
+                                onChange={(e) => setPointsRatio(Number(e.target.value))}
+                            />
+                            <span className="font-bold text-gray-700">points</span>
+                        </div>
+                        <button
+                            onClick={handleSaveRatio}
+                            disabled={isSavingRatio}
+                            className="bg-amber-500 text-white px-5 py-3 rounded-lg font-bold hover:bg-amber-600 transition"
+                        >
+                            {isSavingRatio ? 'Enregistrement...' : 'Sauvegarder'}
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {companyId && (
                 <div className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm space-y-3 mb-8">
@@ -110,6 +171,7 @@ export default function AdminDashboard() {
                 </div>
             )}
 
+            {/* Le reste de ton code (Mon Équipe) est inchangé ci-dessous */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center border-b pb-4">
                     <h2 className="text-xl font-bold text-gray-800">Mon Équipe</h2>
@@ -168,7 +230,6 @@ export default function AdminDashboard() {
                             key={emp.id}
                             className="p-4 border rounded-xl flex items-center justify-between hover:bg-gray-50 transition bg-white"
                         >
-                            {/* Infos de l'employé à gauche */}
                             <div className="flex items-center space-x-4">
                                 <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold">
                                     {emp.name.charAt(0).toUpperCase()}
@@ -179,7 +240,6 @@ export default function AdminDashboard() {
                                 </div>
                             </div>
                             
-                            {/* Rôle et Bouton Supprimer à droite */}
                             <div className="flex items-center space-x-4">
                                 <span className="text-xs font-bold text-gray-400 hidden sm:inline-block">Rôle : Serveur</span>
                                 

@@ -110,7 +110,7 @@ export async function POST(request: Request) {
                 transactionType = 'EARN';
                 transactionAmount = 1;
                 transactionDescription = transactionDescription || '+1 tampon';
-                if (newPoints >= STAMP_LIMIT) {
+                if (newPoints > STAMP_LIMIT) {
                     message = `🎉 Carte pleine ! (${STAMP_LIMIT}/${STAMP_LIMIT}) — Au prochain scan, offrez le cadeau.`;
                 } else {
                     message = `✅ +1 tampon. (${newPoints}/${STAMP_LIMIT})`;
@@ -118,16 +118,29 @@ export async function POST(request: Request) {
             }
         } else if (company.systemType === 'POINTS') {
             if (action === 'add_points') {
-                const pointsToAdd = Math.floor(Number(amount) || 0);
-                if (pointsToAdd <= 0) {
-                    return NextResponse.json({ error: 'Montant invalide' }, { status: 400 });
+                // 1. amount représente désormais les EUROS dépensés par le client
+                const eurosSpent = Number(amount) || 0;
+                if (eurosSpent <= 0) {
+                    return NextResponse.json({ error: 'Montant en euros invalide' }, { status: 400 });
                 }
+
+                // 2. Calcul du nombre de points à ajouter selon le ratio du commerce
+                const ratio = company.pointsRatio || 1;
+                const pointsToAdd = Math.floor(eurosSpent * ratio);
+
+                if (pointsToAdd <= 0) {
+                    return NextResponse.json({ error: 'Le montant est trop faible pour générer au moins 1 point.' }, { status: 400 });
+                }
+
                 newPoints = customer.points + pointsToAdd;
                 transactionType = 'EARN';
                 transactionAmount = pointsToAdd;
-                transactionDescription =
-                    transactionDescription || `Achat de ${pointsToAdd} point(s)`;
-                message = `✅ +${pointsToAdd} points. Nouveau solde : ${newPoints}`;
+                
+                // 3. Description plus complète pour la comptabilité du gérant
+                transactionDescription = 
+                    transactionDescription || `Achat de ${eurosSpent.toFixed(2)}€ (+${pointsToAdd} pts)`;
+                
+                message = `✅ +${pointsToAdd} points ajoutés (Achat: ${eurosSpent.toFixed(2)}€). Nouveau solde : ${newPoints}`;
             } else if (action === 'spend_points') {
                 if (!rewardId) {
                     return NextResponse.json({ error: 'Récompense requise' }, { status: 400 });

@@ -13,6 +13,9 @@ export async function GET() {
                 customer: {
                     select: { firstName: true, lastName: true, email: true },
                 },
+                merchantUser: {
+                    select: { name: true }
+                }
             },
             orderBy: { createdAt: 'desc' },
         });

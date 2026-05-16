@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
+// 👉 NOUVEAU : On ajoute merchantUser dans le type
 type Transaction = {
     id: string;
     type: string;
@@ -9,6 +10,7 @@ type Transaction = {
     description: string;
     createdAt: string;
     customer: { firstName: string; lastName: string | null; email: string };
+    merchantUser: { name: string } | null; 
 };
 
 const typeLabels: Record<string, string> = {
@@ -65,6 +67,8 @@ export default function HistoryPage() {
                                 <tr className="bg-gray-50 border-b border-gray-200">
                                     <th className="text-left p-4 font-semibold text-gray-600">Date</th>
                                     <th className="text-left p-4 font-semibold text-gray-600">Client</th>
+                                    {/* 👉 NOUVEAU : En-tête de la colonne Employé */}
+                                    <th className="text-left p-4 font-semibold text-gray-600">Employé</th>
                                     <th className="text-left p-4 font-semibold text-gray-600">Action</th>
                                     <th className="text-left p-4 font-semibold text-gray-600">Montant</th>
                                     <th className="text-left p-4 font-semibold text-gray-600">Description</th>
@@ -78,6 +82,14 @@ export default function HistoryPage() {
                                         </td>
                                         <td className="p-4 font-medium text-gray-800">
                                             {customerName(tx)}
+                                        </td>
+                                        {/* 👉 NOUVEAU : Affichage du nom de l'employé ou du fallback */}
+                                        <td className="p-4 font-medium text-blue-600">
+                                            {tx.merchantUser ? (
+                                                tx.merchantUser.name
+                                            ) : (
+                                                <span className="text-gray-400 italic font-normal">Ancien employé</span>
+                                            )}
                                         </td>
                                         <td className="p-4">
                                             <span

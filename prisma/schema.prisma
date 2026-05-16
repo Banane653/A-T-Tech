@@ -55,6 +55,8 @@ model MerchantUser {
   // Relation avec la Company (Optionnel car le FOUNDER n'a pas forcément de commerce)
   companyId String?  
   company   Company? @relation(fields: [companyId], references: [id])
+
+  transactions Transaction[]
   
   createdAt DateTime @default(now())
 
@@ -101,6 +103,8 @@ model Transaction {
   customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   companyId   String
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  merchantUserId String?
+  merchantUser   MerchantUser? @relation(fields: [merchantUserId], references: [id], onDelete: SetNull)
   createdAt   DateTime @default(now())
 
   @@map("transactions")

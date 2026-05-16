@@ -167,6 +167,7 @@ export async function POST(request: Request) {
                     description: transactionDescription,
                     customerId: customer.id,
                     companyId: auth.companyId,
+                    merchantUserId: auth.userId,
                 },
             }),
         ]);

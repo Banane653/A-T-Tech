@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 const navItems = [
     { href: '/scanner', label: 'Scanner', icon: '📷' },
@@ -13,6 +14,20 @@ const navItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
+    const [systemType, setSystemType] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetch('/api/admin/company')
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.company) {
+                    setSystemType(data.company.systemType);
+                }
+            })
+            .catch(() => {
+                // En cas d'erreur silencieuse, on ne fait rien
+            });
+    }, []);
 
     const handleLogout = () => {
         document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -29,6 +44,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                 <nav className="flex-1 p-4 space-y-1">
                     {navItems.map((item) => {
+                        if (item.href === '/dashboard/rewards' && systemType !== 'POINTS') {
+                            return null;
+                        }
                         const linkActive = item.exact
                             ? pathname === item.href
                             : pathname.startsWith(item.href);

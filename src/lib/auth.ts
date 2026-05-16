@@ -36,3 +36,15 @@ export async function getScannerAuth(): Promise<AuthPayload | null> {
     if (!auth || (auth.role !== 'ADMIN' && auth.role !== 'EMPLOYEE')) return null;
     return auth;
 }
+
+export async function verifyFounder(): Promise<boolean> {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth_token')?.value;
+    if (!token) return false;
+    try {
+        const { payload } = await jwtVerify(token, SECRET_KEY);
+        return payload.role === 'FOUNDER';
+    } catch {
+        return false;
+    }
+}

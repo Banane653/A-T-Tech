@@ -29,7 +29,7 @@ export default function LoginPage() {
             if (res.ok) {
                 // 🚀 REDIRECTION INTELLIGENTE SELON LE RÔLE
                 if (data.role === 'FOUNDER') {
-                    router.push('/fondateur');
+                    router.push('/founder');
                 } else if (data.role === 'ADMIN') {
                     router.push('/dashboard');
                 } else {

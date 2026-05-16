@@ -34,8 +34,8 @@ export async function middleware(request: NextRequest) {
         const role = payload.role as string;
 
         // 4. Règles de sécurité strictes (Le bon rôle pour la bonne page)
-        if (pathname.startsWith('/fondateur') && role !== 'FOUNDER') {
-            return NextResponse.redirect(new URL('/scanner', request.url)); // Seul le fondateur entre ici
+        if (pathname.startsWith('/founder') && role !== 'FOUNDER') {
+            return NextResponse.redirect(new URL('/scanner', request.url));
         }
 
         if (pathname.startsWith('/dashboard') && role === 'EMPLOYEE') {

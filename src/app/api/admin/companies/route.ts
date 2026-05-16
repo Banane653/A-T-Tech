@@ -1,24 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
+import { verifyFounder } from '@/lib/auth';
 import { createCompanyGoogleClass } from '@/services/googleWallet.service';
-
-const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret_pour_dev');
-
-// Petit agent de sécurité interne à l'API pour être sûr que c'est bien toi
-async function verifyFounder() {
-    const cookieStore = await cookies(); 
-    const token = cookieStore.get('auth_token')?.value;
-    if (!token) return false;
-    try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        return payload.role === 'FOUNDER';
-    } catch {
-        return false;
-    }
-}
 
 // Récupérer la liste des commerces
 export async function GET() {

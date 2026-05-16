@@ -70,3 +70,38 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Erreur lors de la création" }, { status: 500 });
     }
 }
+
+export async function DELETE(request: Request) {
+    // 1. On vérifie que c'est bien l'admin qui fait la demande
+    const admin = await getAdminData();
+    if (!admin) return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+
+    try {
+        // 2. On récupère l'ID envoyé dans l'URL (ex: /api/admin/employees?id=123)
+        const { searchParams } = new URL(request.url);
+        const employeeId = searchParams.get('id');
+
+        if (!employeeId) {
+            return NextResponse.json({ error: "ID de l'employé manquant" }, { status: 400 });
+        }
+
+        // 3. SÉCURITÉ : On vérifie que l'employé existe ET qu'il appartient bien à l'entreprise de cet admin
+        const employee = await prisma.merchantUser.findUnique({
+            where: { id: employeeId }
+        });
+
+        if (!employee || employee.companyId !== admin.companyId) {
+            return NextResponse.json({ error: "Employé introuvable ou vous n'avez pas les droits" }, { status: 404 });
+        }
+
+        // 4. Suppression définitive
+        await prisma.merchantUser.delete({
+            where: { id: employeeId }
+        });
+
+        return NextResponse.json({ success: true, message: "Employé supprimé avec succès" });
+    } catch (error) {
+        console.error("❌ Erreur lors de la suppression :", error);
+        return NextResponse.json({ error: "Erreur serveur lors de la suppression" }, { status: 500 });
+    }
+}

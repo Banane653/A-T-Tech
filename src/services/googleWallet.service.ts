@@ -65,7 +65,7 @@ export const generateGoogleWalletPass = (
     let textModules = [];
     let heroImage = undefined;
 
-    if (template.type === 'STAMPS') {
+    if (systemType === 'STAMPS') {
         // MODE TAMPONS
         textModules = [{ id: "stamps", header: "TAMPONS RÉCOLTÉS", body: `${points} / 10` }];
         
@@ -146,7 +146,7 @@ export const updateWalletPoints = async (
         
         let updateData: any = {};
 
-        if (template.type === 'STAMPS') {
+        if (systemType === 'STAMPS') {
             const shape = template.stampShape || 'star';
             const imageUrl = baseUrl.startsWith('https') 
                 ? `${baseUrl}/api/images/stamps?count=${newPoints}&color=${encodeURIComponent(primaryColor)}&shape=${shape}`

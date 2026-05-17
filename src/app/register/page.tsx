@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Footer from '@/components/Footer';
 
 function RegisterForm() {
     const searchParams = useSearchParams();
@@ -119,6 +120,9 @@ export default function RegisterPage() {
             <Suspense fallback={<div className="text-black">Chargement du formulaire...</div>}>
                 <RegisterForm />
             </Suspense>
+
+            {/* FOOTER */}
+            <Footer />
         </main>
     );
 }

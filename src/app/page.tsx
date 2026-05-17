@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Footer from '@/components/Footer';
 
 export default function LandingPage() {
   return (
@@ -95,9 +96,7 @@ export default function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-white border-t border-gray-200 py-8 text-center text-gray-500 text-sm">
-        <p>© {new Date().getFullYear()} A-T-Tech Fidélité. Tous droits réservés.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

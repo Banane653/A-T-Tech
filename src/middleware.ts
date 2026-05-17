@@ -6,7 +6,7 @@ import { jwtVerify } from 'jose';
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret_pour_dev');
 
 // Les routes "ouvertes au public"
-const publicRoutes = ['/', '/login', '/register'];
+const publicRoutes = ['/', '/login', '/register', '/privacy'];
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;

@@ -20,7 +20,7 @@ export default function PrivacyPage() {
                     <section>
                         <h2 className="text-lg font-bold text-gray-900 mb-2">1. Responsable du traitement</h2>
                         <p>
-                            Les données personnelles collectées sur ce service sont traitées par <strong>Tristan Hourman de Tobel</strong>, agissant en tant qu'indépendant, créateur et gestionnaire de la solution A-T-Tech Fidelity. Pour toute question relative à la protection de vos données, vous pouvez nous contacter à l'adresse suivante : <a href="mailto:admin@a-t-tech.be" className="text-blue-600 hover:underline">admin@a-t-tech.be</a>.
+                            Les données personnelles collectées sur ce service sont traitées par <strong>Tristan Hourman de Tobel</strong>, agissant en tant qu'indépendant, créateur et gestionnaire de la solution A-T-Tech Fidelity. Pour toute question relative à la protection de vos données, vous pouvez nous contacter à l'adresse suivante : <a href="mailto:tristanhdtb@hotmail.com" className="text-blue-600 hover:underline">tristanhdtb@hotmail.com</a>.
                         </p>
                     </section>
 
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
                     <section>
                         <h2 className="text-lg font-bold text-gray-900 mb-2">5. Vos droits (RGPD)</h2>
                         <p>
-                            Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de portabilité et d'effacement de vos données personnelles. Vous pouvez exercer ces droits à tout moment, ou demander la suppression définitive de votre carte de fidélité, en envoyant un e-mail à : <a href="mailto:admin@a-t-tech.be" className="text-blue-600 hover:underline font-semibold">admin@a-t-tech.be</a>.
+                            Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de portabilité et d'effacement de vos données personnelles. Vous pouvez exercer ces droits à tout moment, ou demander la suppression définitive de votre carte de fidélité, en envoyant un e-mail à : <a href="mailto:tristanhdtb@hotmail.com" className="text-blue-600 hover:underline font-semibold">tristanhdtb@hotmail.com</a>.
                         </p>
                     </section>
                 </div>

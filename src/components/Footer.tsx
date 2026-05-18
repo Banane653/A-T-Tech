@@ -8,6 +8,9 @@ export default function Footer() {
                 <Link href="/privacy" className="hover:text-black font-semibold transition">
                     Politique de Confidentialité
                 </Link>
+                <Link href="/contact" className="hover:text-black font-semibold transition">
+                    Contact
+                </Link>
             </div>
         </footer>
     );

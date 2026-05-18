@@ -143,19 +143,6 @@ export default function HomePage() {
             </div>
           </Tilt>
 
-          {/* === BOUTON D'INTERACTION === */}
-          <div className="absolute top-1/2 -right-4 md:-right-12 transform -translate-y-1/2 z-30 animate-float">
-              {/* Au clic, on déclenche la fonction handleAddPoints */}
-              <button 
-                  onClick={handleAddPoints}
-                  className="bg-white border-2 border-black text-black p-4 rounded-2xl shadow-xl flex flex-col gap-1 items-center hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
-              >
-                  <span className="text-2xl group-hover:rotate-12 transition-transform">🪄</span>
-                  <p className="text-sm font-bold whitespace-nowrap">Scanner le client</p>
-                  <p className="text-xs text-green-600 font-bold bg-green-100 px-2 py-0.5 rounded-full">+ 100 points</p>
-              </button>
-          </div>
-
           {/* === ÉLÉMENTS FLOTTANTS (Badges) === */}
           
           {/* Badge 1 : "Café offert débloqué" (Faut style iOS Notification) */}

@@ -21,42 +21,26 @@ type PLAN = {
     link: string;
 };
 
+// 👉 Une seule offre, tout en illimité !
 export const PLANS: PLAN[] = [
   {
-    id: "starter",
-    title: "Starter",
-    desc: "L'offre idéale pour lancer son programme de fidélité numérique rapidement et sans effort.",
+    id: "pro",
+    title: "Pro Illimité",
+    desc: "La solution complète pour fidéliser vos clients, sans aucune limite de volume.",
     monthlyPrice: 10,
-    annuallyPrice: 100, // 2 mois offerts !
-    badge: "Recommandée",
-    buttonText: "Commencer l'essai gratuit",
-    features: [
-      "Jusqu'à 5 000 cartes actives",
-      "Jusqu'à 5 comptes employés",
-      "Apple Wallet & Google Pay",
-      "Statistiques de base",
-      "Outil de scan web inclus",
-      "Support par email"
-    ],
-    link: "/register"
-  },
-  {
-    id: "team",
-    title: "Team",
-    desc: "Conçu pour les commerces avec un grand volume de clients ou les petites franchises.",
-    monthlyPrice: 40,
-    annuallyPrice: 400,
-    buttonText: "Passer à l'offre Team",
+    annuallyPrice: 100, // 100€ au lieu de 120€ (2 mois offerts)
+    badge: "Offre de Lancement",
+    buttonText: "Démarrer l'essai gratuit",
     features: [
       "Cartes actives illimitées",
-      "Comptes employés illimités",
-      "Statistiques avancées en temps réel",
-      "Marque blanche (Sans logo A-T-Tech)",
-      "Accès API personnalisé",
-      "Support prioritaire 7j/7"
+      "Comptes gérants et employés illimités",
+      "Apple Wallet & Google Pay",
+      "Statistiques en temps réel",
+      "Outil de scan web inclus",
+      "Support prioritaire"
     ],
     link: "/register"
-  },
+  }
 ];
 
 export default function PricingSection() {
@@ -68,13 +52,14 @@ export default function PricingSection() {
 
     return (
         <div className="relative flex flex-col items-center justify-center max-w-5xl py-24 mx-auto px-6">
-            <div className="flex flex-col items-center justify-center max-w-2xl mx-auto">
+            <div className="flex flex-col items-center justify-center w-full mx-auto">
+                    
                     <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-6">
-                            Des tarifs simples et clairs.
+                            Simple. Basique. Illimité.
                         </h2>
                         <p className="text-base md:text-lg text-center text-gray-500 mt-6 max-w-lg">
-                            Une fidélité qui se rembourse dès le premier mois. Choisissez l'offre qui correspond à la taille de votre commerce.
+                            Une fidélité qui se rembourse dès votre premier client fidèle. Sans frais cachés, sans limite de volume.
                         </p>
                     </div>
                     
@@ -94,39 +79,35 @@ export default function PricingSection() {
                     </div>
             </div>
 
-            <div className="grid w-full grid-cols-1 lg:grid-cols-2 pt-12 gap-6 max-w-4xl mx-auto">
-                {PLANS.map((plan) => (
-                    <PlanCard key={plan.id} plan={plan} billPlan={billPlan} />
-                ))}
+            {/* 👉 Conteneur centré pour une seule carte */}
+            <div className="w-full flex justify-center pt-12">
+                <div className="w-full max-w-md">
+                    {PLANS.map((plan) => (
+                        <PlanCard key={plan.id} plan={plan} billPlan={billPlan} />
+                    ))}
+                </div>
             </div>
         </div>
     );
-};
+}
 
 const PlanCard = ({ plan, billPlan }: { plan: PLAN, billPlan: Plan }) => {
-    const isHighlighted = plan.badge === "Recommandée";
-
     return (
-        <div className={cn(
-            "flex flex-col relative rounded-3xl transition-all bg-white items-start w-full border overflow-hidden",
-            isHighlighted ? "border-black shadow-xl shadow-black/5 transform md:-translate-y-2" : "border-gray-200"
-        )}>
-            {/* Effet lumineux (Glow) sur la carte recommandée */}
-            {isHighlighted && (
-                <div className="absolute top-1/2 inset-x-0 mx-auto h-12 w-full bg-gray-200 rounded-3xl blur-[5rem] -z-10"></div>
-            )}
+        <div className="flex flex-col relative rounded-3xl transition-all bg-white items-start w-full border border-black shadow-2xl shadow-black/10 overflow-hidden transform hover:-translate-y-1 duration-300">
+            
+            {/* Effet lumineux (Glow) en arrière-plan */}
+            <div className="absolute top-1/2 inset-x-0 mx-auto h-12 w-full bg-gray-200 rounded-3xl blur-[5rem] -z-10"></div>
 
-            {isHighlighted && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] font-bold px-4 py-1 rounded-b-xl uppercase tracking-widest z-10">
-                    {plan.badge}
-                </div>
-            )}
+            {/* Badge */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] font-bold px-4 py-1 rounded-b-xl uppercase tracking-widest z-10">
+                {plan.badge}
+            </div>
 
-            <div className="p-8 flex flex-col items-start w-full relative">
+            <div className="p-8 flex flex-col items-center text-center w-full relative">
                 <h2 className="font-bold text-2xl text-gray-900 pt-3">
                     {plan.title}
                 </h2>
-                <h3 className="mt-3 text-4xl font-black md:text-5xl text-black tracking-tight">
+                <h3 className="mt-4 text-5xl font-black text-black tracking-tight flex items-center justify-center">
                     <NumberFlow
                         value={billPlan === "monthly" ? plan.monthlyPrice : plan.annuallyPrice}
                         suffix={billPlan === "monthly" ? "€/mois" : "€/an"}
@@ -138,17 +119,17 @@ const PlanCard = ({ plan, billPlan }: { plan: PLAN, billPlan: Plan }) => {
                         }}
                     />
                 </h3>
-                <p className="text-sm text-gray-500 mt-4 leading-relaxed min-h-[40px]">
+                <p className="text-sm text-gray-500 mt-4 leading-relaxed">
                     {plan.desc}
                 </p>
             </div>
             
-            <div className="flex flex-col items-start w-full px-8 pb-4">
-                <Button variant={isHighlighted ? "default" : "outline"} size="lg" className="w-full text-base font-bold">
+            <div className="flex flex-col items-center w-full px-8 pb-4">
+                <Button variant="default" size="lg" className="w-full text-base font-bold bg-black text-white hover:bg-gray-800 py-6 rounded-xl">
                     {plan.buttonText}
                 </Button>
                 
-                <div className="h-8 overflow-hidden w-full mx-auto mt-2">
+                <div className="h-8 overflow-hidden w-full mx-auto mt-3">
                     <AnimatePresence mode="wait">
                         <motion.span
                             key={billPlan}
@@ -161,24 +142,24 @@ const PlanCard = ({ plan, billPlan }: { plan: PLAN, billPlan: Plan }) => {
                             {billPlan === "monthly" ? (
                                 "Facturé mensuellement. Sans engagement."
                             ) : (
-                                "Facturé en un seul paiement annuel."
+                                "Facturé en un seul paiement de 100€ chaque année."
                             )}
                         </motion.span>
                     </AnimatePresence>
                 </div>
             </div>
 
-            <div className="flex flex-col items-start w-full px-8 pb-8 pt-4 bg-gray-50/50 flex-1 border-t border-gray-100">
-                <span className="text-sm font-semibold text-gray-900 mb-4">
-                    Ce qui est inclus : 
+            <div className="flex flex-col items-start w-full px-8 pb-8 pt-6 bg-gray-50/50 flex-1 border-t border-gray-100">
+                <span className="text-sm font-bold text-gray-900 mb-4 tracking-wide uppercase">
+                    Tout est inclus :
                 </span>
-                <div className="space-y-3">
+                <div className="space-y-4 w-full">
                     {plan.features.map((feature, index) => (
-                        <div key={index} className="flex items-start justify-start gap-3">
-                            <div className="flex items-center justify-center mt-0.5 text-black">
-                                <CheckIcon className="w-5 h-5" />
+                        <div key={index} className="flex items-center justify-start gap-3">
+                            <div className="flex items-center justify-center text-black bg-white rounded-full p-1 shadow-sm border border-gray-100">
+                                <CheckIcon className="w-4 h-4" />
                             </div>
-                            <span className="text-sm text-gray-600 leading-snug">{feature}</span>
+                            <span className="text-sm text-gray-700 font-medium">{feature}</span>
                         </div>
                     ))}
                 </div>

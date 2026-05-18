@@ -27,6 +27,7 @@ model Company {
   
   // --- Nouveaux champs pour la personnalisation ---
   primaryColor   String         @default("#000000") // Couleur hexadécimale (ex: #FF5733)
+  textColor      String?        // Couleur du texte sur les boutons (ex: #FFFFFF)
   logoUrl        String?        // Lien vers l'image du logo
   cardTemplate   String         @default("default") 
 

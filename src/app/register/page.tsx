@@ -4,27 +4,111 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Footer from '@/components/Footer';
 
+type PublicCompany = {
+    name: string;
+    logoUrl: string | null;
+    primaryColor: string;
+    textColor: string | null;
+};
+
+function RegisterSkeleton() {
+    return (
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 animate-pulse">
+            <div className="h-16 w-16 bg-gray-200 rounded-full mx-auto mb-4" />
+            <div className="h-7 bg-gray-200 rounded w-3/4 mx-auto mb-2" />
+            <div className="h-4 bg-gray-100 rounded w-1/2 mx-auto mb-8" />
+            <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="h-12 bg-gray-100 rounded-lg" />
+                    <div className="h-12 bg-gray-100 rounded-lg" />
+                </div>
+                <div className="h-12 bg-gray-100 rounded-lg" />
+                <div className="h-12 bg-gray-100 rounded-lg" />
+                <div className="h-12 bg-gray-200 rounded-lg mt-2" />
+            </div>
+        </div>
+    );
+}
+
 function RegisterForm() {
     const searchParams = useSearchParams();
     const companyId = searchParams.get('companyId');
-    
+
     const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', birthDate: '' });
     const [saveUrl, setSaveUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [today, setToday] = useState(''); // 👈 On prépare la date du jour à vide
+    const [today, setToday] = useState('');
+    const [company, setCompany] = useState<PublicCompany | null>(null);
+    const [companyLoading, setCompanyLoading] = useState(true);
+    const [companyError, setCompanyError] = useState<string | null>(null);
 
-    // 👈 Le calcul de la date se fait uniquement côté client pour éviter l'erreur d'hydratation
     useEffect(() => {
         setToday(new Date().toISOString().split('T')[0]);
     }, []);
 
+    useEffect(() => {
+        if (!companyId) {
+            setCompanyLoading(false);
+            return;
+        }
+
+        let cancelled = false;
+
+        const fetchCompany = async () => {
+            setCompanyLoading(true);
+            setCompanyError(null);
+            try {
+                const res = await fetch(`/api/public/company?companyId=${encodeURIComponent(companyId)}`);
+                const data = await res.json();
+                if (cancelled) return;
+
+                if (!res.ok) {
+                    setCompany(null);
+                    setCompanyError(data.error || 'Commerce introuvable');
+                    return;
+                }
+
+                setCompany(data.company);
+            } catch {
+                if (!cancelled) {
+                    setCompany(null);
+                    setCompanyError('Impossible de charger les informations du commerce.');
+                }
+            } finally {
+                if (!cancelled) setCompanyLoading(false);
+            }
+        };
+
+        fetchCompany();
+        return () => {
+            cancelled = true;
+        };
+    }, [companyId]);
+
     if (!companyId) {
         return (
             <div className="text-center p-10 text-red-600 font-bold">
-                ❌ Lien invalide. Veuillez scanner le QR code du commerce.
+                Lien invalide. Veuillez scanner le QR code du commerce.
             </div>
         );
     }
+
+    if (companyLoading) {
+        return <RegisterSkeleton />;
+    }
+
+    if (companyError || !company) {
+        return (
+            <div className="text-center p-10 text-red-600 font-bold max-w-md">
+                {companyError || 'Commerce introuvable.'}
+            </div>
+        );
+    }
+
+    const buttonStyle = {
+        backgroundColor: company.primaryColor || '#000000',
+        color: company.textColor || '#ffffff',
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,14 +120,14 @@ function RegisterForm() {
                 body: JSON.stringify({ ...formData, companyId }),
             });
             const data = await res.json();
-            
+
             if (res.ok && data.saveUrl) {
                 setSaveUrl(data.saveUrl);
             } else {
-                alert("Erreur : " + (data.error || "Inscription refusée"));
+                alert('Erreur : ' + (data.error || 'Inscription refusée'));
             }
-        } catch (err) {
-            alert("Erreur de connexion au serveur.");
+        } catch {
+            alert('Erreur de connexion au serveur.');
         } finally {
             setLoading(false);
         }
@@ -51,60 +135,86 @@ function RegisterForm() {
 
     return (
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-            <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">A-T-Tech Fidelity</h1>
+            {company.logoUrl && (
+                <img
+                    src={company.logoUrl}
+                    alt={`Logo ${company.name}`}
+                    className="h-16 w-auto mx-auto mb-4 object-contain"
+                />
+            )}
+            <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">{company.name}</h1>
             <p className="text-center text-gray-500 mb-8">Inscrivez-vous pour obtenir votre carte</p>
 
             {!saveUrl ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                        <input 
-                            type="text" placeholder="Prénom" required
+                        <input
+                            type="text"
+                            placeholder="Prénom"
+                            required
                             value={formData.firstName}
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
-                            onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                         />
-                        <input 
-                            type="text" placeholder="Nom" required
+                        <input
+                            type="text"
+                            placeholder="Nom"
+                            required
                             value={formData.lastName}
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
-                            onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                         />
                     </div>
-                    <input 
-                        type="email" placeholder="Adresse Email" required
+                    <input
+                        type="email"
+                        placeholder="Adresse Email"
+                        required
                         value={formData.email}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
                     <div className="flex flex-col">
                         <label className="text-xs text-gray-500 ml-1 mb-1">Date de naissance</label>
-                        <input 
-                            type="date" required max={today || undefined}
+                        <input
+                            type="date"
+                            required
+                            max={today || undefined}
                             value={formData.birthDate}
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
-                            onChange={(e) => setFormData({...formData, birthDate: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
                         />
                     </div>
-                    
-                    <button 
-                        type="submit" disabled={loading} 
-                        className="w-full bg-black text-white font-bold py-3 rounded-lg hover:bg-gray-800 transition duration-200 disabled:bg-gray-400 mt-2"
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        style={buttonStyle}
+                        className="w-full font-bold py-3 rounded-lg transition duration-200 disabled:opacity-50 mt-2"
                     >
-                        {loading ? "Création en cours..." : "Obtenir ma carte"}
+                        {loading ? 'Création en cours...' : 'Obtenir ma carte'}
                     </button>
                 </form>
             ) : (
                 <div className="text-center space-y-6 py-10 flex flex-col items-center">
                     <div className="bg-green-100 text-green-700 p-4 rounded-full inline-block">
-                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
                     </div>
                     <h2 className="text-xl font-bold text-black">Inscription réussie !</h2>
-                    <p className="text-gray-500">Cliquez ci-dessous pour enregistrer votre carte dans votre téléphone.</p>
-                    
-                    <a href={saveUrl} target="_blank" rel="noreferrer" className="inline-block transition transform hover:scale-105 mt-4">
-                        <img 
-                            src="https://img.magnific.com/premium-vector/google-wallet-logo_689336-957.jpg?w=360" 
-                            alt="Add to Google Wallet" 
+                    <p className="text-gray-500">
+                        Cliquez ci-dessous pour enregistrer votre carte dans votre téléphone.
+                    </p>
+
+                    <a
+                        href={saveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-block transition transform hover:scale-105 mt-4"
+                    >
+                        <img
+                            src="https://img.magnific.com/premium-vector/google-wallet-logo_689336-957.jpg?w=360"
+                            alt="Add to Google Wallet"
                             className="h-16"
                         />
                     </a>
@@ -117,11 +227,10 @@ function RegisterForm() {
 export default function RegisterPage() {
     return (
         <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-            <Suspense fallback={<div className="text-black">Chargement du formulaire...</div>}>
+            <Suspense fallback={<RegisterSkeleton />}>
                 <RegisterForm />
             </Suspense>
 
-            {/* FOOTER */}
             <Footer />
         </main>
     );

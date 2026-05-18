@@ -72,7 +72,7 @@ export default function HomePage() {
             Transformez chaque visite en raison de revenir. Créez une carte de fidélité à votre image en quelques minutes, sans aucune application à télécharger.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="/register" className="px-8 py-4 text-base font-bold text-white bg-black hover:bg-gray-800 rounded-full text-center transition shadow-lg shadow-black/20 hover:shadow-black/30">
+            <Link href="/contact" className="px-8 py-4 text-base font-bold text-white bg-black hover:bg-gray-800 rounded-full text-center transition shadow-lg shadow-black/20 hover:shadow-black/30">
               Démarrer gratuitement
             </Link>
             <a href="#how-it-works" className="px-8 py-4 text-base font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full text-center transition">
@@ -201,7 +201,6 @@ export default function HomePage() {
 
         <div className="grid md:grid-cols-3 gap-10">
           <FeatureCard icon="📱" title="Apple & Google Wallet" desc="Une carte, deux plateformes. Les clients l'ajoutent en deux clics, sans application à télécharger." />
-          <FeatureCard icon="🔔" title="Offres sur écran verrouillé" desc="Envoyez des offres qui s'affichent directement sur l'écran verrouillé. 5x plus efficace qu'un SMS." />
           <FeatureCard icon="⭐" title="Tampons ou Points" desc="Choisissez le programme qui vous correspond. Les récompenses se mettent à jour en direct." />
           <FeatureCard icon="📊" title="Des statistiques utiles" desc="Voyez qui revient et qui décroche. Analysez votre activité sans avoir besoin d'un doctorat." />
           <FeatureCard icon="⚡" title="Prêt en 10 minutes" desc="Téléchargez votre logo, choisissez vos couleurs. Aucun code ni développeur requis." />
@@ -234,7 +233,7 @@ export default function HomePage() {
       <section className="py-24 bg-black text-white text-center px-6">
         <h2 className="text-4xl md:text-5xl font-bold mb-6 max-w-2xl mx-auto">Vos meilleurs clients n'attendent qu'une raison de revenir.</h2>
         <p className="text-gray-400 mb-10 max-w-lg mx-auto">Gratuit, à vos couleurs, en ligne en quelques minutes. Sans carte bancaire, sans engagement.</p>
-        <Link href="/register" className="inline-block px-8 py-4 text-base font-bold text-black bg-white hover:bg-gray-100 rounded-full transition shadow-lg shadow-white/10">
+        <Link href="/contact" className="inline-block px-8 py-4 text-base font-bold text-black bg-white hover:bg-gray-100 rounded-full transition shadow-lg shadow-white/10">
           Créer ma première carte
         </Link>
       </section>

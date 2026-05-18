@@ -48,12 +48,12 @@ export default function HomePage() {
           <a href="#pricing" className="hover:text-black transition">Tarifs</a>
         </nav>
         <div className="flex gap-4">
-          <Link href="/login" className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-full transition">
-            Se connecter
-          </Link>
-          <Link href="/register" className="inline-flex items-center justify-center px-5 py-2 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-full transition">
-            Essai gratuit
-          </Link>
+            <Link 
+            href="/login" 
+            className="inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-semibold rounded-lg text-white bg-black hover:bg-gray-800 transition-colors shadow-sm"
+            >
+            Espace Gérant 🔒
+            </Link>
         </div>
       </header>
 

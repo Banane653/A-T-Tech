@@ -24,3 +24,48 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Scanner — masquer l’UI par défaut de html5-qrcode */
+.scanner-reader {
+  border: none !important;
+  padding: 0 !important;
+  width: 100% !important;
+  min-height: 100% !important;
+}
+
+.scanner-reader > div:first-child {
+  display: none !important;
+}
+
+.scanner-reader #reader__dashboard {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.scanner-reader #reader__scan_region {
+  width: 100% !important;
+  min-height: 100% !important;
+  padding: 0 !important;
+}
+
+.scanner-reader #reader__scan_region img {
+  display: none !important;
+}
+
+.scanner-reader #reader__scan_region video {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 280px !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: 1rem;
+}
+
+.scanner-reader #qr-shaded-region {
+  display: none !important;
+}

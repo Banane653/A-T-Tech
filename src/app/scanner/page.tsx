@@ -183,7 +183,8 @@ export default function ScannerPage() {
                 },
                 aspectRatio: 1,
                 supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-                rememberLastUsedCamera: true,
+                videoConstraints: { facingMode: "environment" },
+                rememberLastUsedCamera: false,
             },
             false
         );

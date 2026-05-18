@@ -121,6 +121,7 @@ export default function ScannerPage() {
             setTimeout(resetScanner, 3000);
         }
     }, []);
+    
 
     const syncCameraUi = useCallback(() => {
         const permissionBtn = document.getElementById(

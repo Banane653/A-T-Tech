@@ -209,13 +209,13 @@ function RegisterForm() {
                     <a
                         href={saveUrl}
                         target="_blank"
-                        rel="noreferrer"
-                        className="inline-block transition transform hover:scale-105 mt-4"
+                        rel="noopener noreferrer"
+                        className="inline-block transition-transform hover:scale-105 active:scale-95 mt-4"
                     >
                         <img
-                            src="https://img.magnific.com/premium-vector/google-wallet-logo_689336-957.jpg?w=360"
-                            alt="Add to Google Wallet"
-                            className="h-16"
+                            src="/assets/google-wallet-badge-fr.svg"
+                            alt="Ajouter à Google Wallet"
+                            className="h-12 w-auto" 
                         />
                     </a>
                 </div>

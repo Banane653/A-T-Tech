@@ -6,7 +6,7 @@ import { jwtVerify } from 'jose';
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret_pour_dev');
 
 // Les routes "ouvertes au public"
-const publicRoutes = ['/', '/login', '/register', '/privacy', '/contact', '/assets', '/templates'];
+const publicRoutes = ['/', '/login', '/register', '/privacy', '/contact'];
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
@@ -15,6 +15,8 @@ export async function middleware(request: NextRequest) {
     if (
         pathname.startsWith('/api') || 
         pathname.startsWith('/_next') || 
+        pathname.startsWith('/assets') ||
+        pathname.startsWith('/templates') ||
         publicRoutes.includes(pathname)
     ) {
         return NextResponse.next();

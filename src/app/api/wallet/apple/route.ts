@@ -12,8 +12,8 @@ const FALLBACK_PIXEL_PNG_BASE64 =
 const FALLBACK_PIXEL_BUFFER = Buffer.from(FALLBACK_PIXEL_PNG_BASE64, 'base64');
 
 // 👇 NOS VRAIS FICHIERS PNG PAR DÉFAUT 👇
-const FALLBACK_LOGO_PATH = path.join(process.cwd(), 'public', 'assets', 'default-logo.png');
-const FALLBACK_ICON_PATH = path.join(process.cwd(), 'public', 'assets', 'default-icon.png');
+const FALLBACK_LOGO_PATH = path.join(process.cwd(), 'public', 'assets', 'default_logo.png');
+const FALLBACK_ICON_PATH = path.join(process.cwd(), 'public', 'assets', 'default_icon.png');
 
 function requireEnv(name: string) {
   const value = process.env[name];
@@ -92,7 +92,7 @@ export async function GET(request: Request) {
     try {
       iconBuffer = await readFile(FALLBACK_ICON_PATH);
     } catch (e) {
-      console.error("Fichier default-icon.png introuvable...");
+      console.error("Fichier default_icon.png introuvable...");
     }
 
     const signerCert = requireEnv('APPLE_WALLET_CERT');
@@ -106,7 +106,7 @@ export async function GET(request: Request) {
       passTypeIdentifier,
       teamIdentifier,
       serialNumber,
-      webServiceURL: `${protocol}://${host}/api/wallet/apple/v1`,
+      webServiceURL: `${protocol}://${host}/api/wallet/apple`,
       authenticationToken: customer.walletId,
       // 👇 DISPOSITION PARFAITE DU HAUT 👇
       organizationName: "CARTE FIDÉLITÉ", // Titre en haut à gauche

@@ -113,3 +113,19 @@ model Transaction {
 
   @@map("transactions")
 }
+
+// 5. La table des appareils Apple (Pour les mises à jour Push Apple Wallet)
+model ApplePassRegistration {
+  id                      String   @id @default(uuid())
+  deviceLibraryIdentifier String   // L'identifiant unique de l'iPhone
+  pushToken               String   // Le jeton pour envoyer la notification
+  serialNumber            String   // Le walletId du client (ex: WLT-123456)
+  passTypeIdentifier      String   // L'identifiant de ta carte Apple (ex: pass.com.ton-saas)
+  
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  // Un iPhone ne peut s'enregistrer qu'une seule fois pour une même carte
+  @@unique([deviceLibraryIdentifier, serialNumber])
+  @@map("apple_pass_registrations")
+}

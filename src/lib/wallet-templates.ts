@@ -132,9 +132,10 @@ export function getCardTemplateData(
     level = user.points >= 10 ? "Gold" : "Standard";
     pointsToReward = `${stampsNeeded} pour la récompense`;
   } else {
+    const pointsNeeded = 500 - user.points;
     // Si c'est un système de points classique
-    level = user.points >= 500 ? "VIP" : "Membre";
-    pointsToReward = `Voir le catalogue`; 
+    level = user.points >= 500 ? "Gold" : "Standard";
+    pointsToReward = `${pointsNeeded} points avant Gold`; 
   }
 
   return {

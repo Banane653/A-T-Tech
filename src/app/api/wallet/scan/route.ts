@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { updateWalletPoints } from '@/services/googleWallet.service';
+import { sendAppleWalletPush } from '@/services/appleWallet.service';
 import { prisma } from '@/lib/prisma';
 import { getScannerAuth } from '@/lib/auth';
+
 
 const STAMP_LIMIT = 10;
 
@@ -12,13 +14,24 @@ async function syncWallet(
     newPoints: number,
     company: { systemType: string; primaryColor: string; cardTemplate: string }
 ) {
-    await updateWalletPoints(
-        walletId,
-        newPoints,
-        company.systemType,
-        company.primaryColor,
-        company.cardTemplate
-    );
+    try {
+        await updateWalletPoints(
+            walletId,
+            newPoints,
+            company.systemType,
+            company.primaryColor,
+            company.cardTemplate
+        );
+    } catch (googleError) {
+        console.error('❌ Erreur synchro Google Wallet:', googleError);
+    }
+
+    // 👇 2. Le déclencheur pour Apple Wallet 👇
+    try {
+        await sendAppleWalletPush(walletId);
+    } catch (appleError) {
+        console.error('❌ Erreur synchro Apple Wallet Push:', appleError);
+    }
 }
 
 export async function POST(request: Request) {

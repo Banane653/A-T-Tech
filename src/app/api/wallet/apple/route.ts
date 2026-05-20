@@ -57,6 +57,8 @@ export async function GET(request: Request) {
     if (!name || !email || !companyId) {
       return new NextResponse("Nom, Email et ID de l'entreprise requis", { status: 400 });
     }
+    const host = request.headers.get('host') || 'localhost:3000';
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
     let customer = await prisma.customer.findUnique({
       where: { email },
@@ -104,6 +106,8 @@ export async function GET(request: Request) {
       passTypeIdentifier,
       teamIdentifier,
       serialNumber,
+      webServiceURL: `${protocol}://${host}/api/wallet/apple/v1`,
+      authenticationToken: customer.walletId,
       // 👇 DISPOSITION PARFAITE DU HAUT 👇
       organizationName: "CARTE FIDÉLITÉ", // Titre en haut à gauche
       logoText: templateData.merchant.name,     // Logo "Goodly" en haut à gauche
@@ -168,8 +172,6 @@ export async function GET(request: Request) {
       if (templateData.images.stripUrl) {
         let finalStripUrl = templateData.images.stripUrl;
         if (finalStripUrl.startsWith('/')) {
-           const host = request.headers.get('host') || 'localhost:3000';
-           const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
            finalStripUrl = `${protocol}://${host}${finalStripUrl}`; 
         }
 

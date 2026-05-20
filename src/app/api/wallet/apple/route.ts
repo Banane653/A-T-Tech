@@ -5,10 +5,10 @@ import { NextResponse } from 'next/server';
 import { PKPass } from 'passkit-generator';
 import { prisma } from '@/lib/prisma';
 import { getCardTemplateData } from '@/lib/wallet-templates';
-import sharp from 'sharp'; // 👈 1. ON IMPORTE LA LIBRAIRIE MAGIQUE ICI
+import sharp from 'sharp';
 
 const FALLBACK_PIXEL_PNG_BASE64 =
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9s5Vn6QAAAAASUVORK5CYII=';
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9s5Vn6QAAAAASUVORK5CYII=';
 const FALLBACK_PIXEL_BUFFER = Buffer.from(FALLBACK_PIXEL_PNG_BASE64, 'base64');
 
 // 👇 NOS VRAIS FICHIERS PNG PAR DÉFAUT 👇
@@ -84,23 +84,19 @@ export async function GET(request: Request) {
     const templateData = getCardTemplateData(customer.company, customer);
     const serialNumber = `${templateData.customer.walletId}-${Date.now()}`;
     
-    // On charge le logo (distant ou local par défaut)
     const logoBuffer = await getMerchantLogoBuffer(templateData.images.logoUrl);
     
-    // 👇 On charge l'icône obligatoire 👇
     let iconBuffer = FALLBACK_PIXEL_BUFFER;
     try {
       iconBuffer = await readFile(FALLBACK_ICON_PATH);
     } catch (e) {
-      console.error("Fichier default-icon.png introuvable, utilisation du pixel de secours.");
+      console.error("Fichier default-icon.png introuvable...");
     }
 
     const signerCert = requireEnv('APPLE_WALLET_CERT');
     const signerKey = requireEnv('APPLE_WALLET_KEY');
     const teamIdentifier = requireEnv('APPLE_TEAM_IDENTIFIER');
     const passTypeIdentifier = requireEnv('APPLE_PASS_TYPE_IDENTIFIER');
-    
-    // Sécurité: utiliser signerCert en fallback pour wwdr n'est pas idéal, mais passons si APPLE_WALLET_WWDR est bien défini.
     const wwdr = process.env.APPLE_WALLET_WWDR || signerCert;
 
     const passJson = {
@@ -108,56 +104,48 @@ export async function GET(request: Request) {
       passTypeIdentifier,
       teamIdentifier,
       serialNumber,
-      organizationName: templateData.merchant.name,
+      // 👇 DISPOSITION PARFAITE DU HAUT 👇
+      organizationName: "CARTE FIDÉLITÉ", // Titre en haut à gauche
+      logoText: templateData.merchant.name,     // Logo "Goodly" en haut à gauche
       description: `${templateData.merchant.name} - Carte de fidelite`,
-      logoText: templateData.merchant.name,
-      foregroundColor: `rgb(${parseInt(templateData.colors.text.slice(1, 3), 16)}, ${parseInt(
-        templateData.colors.text.slice(3, 5),
-        16,
-      )}, ${parseInt(templateData.colors.text.slice(5, 7), 16)})`,
-      backgroundColor: `rgb(${parseInt(templateData.colors.background.slice(1, 3), 16)}, ${parseInt(
-        templateData.colors.background.slice(3, 5),
-        16,
-      )}, ${parseInt(templateData.colors.background.slice(5, 7), 16)})`,
-      labelColor: `rgb(${parseInt(templateData.colors.label.slice(1, 3), 16)}, ${parseInt(
-        templateData.colors.label.slice(3, 5),
-        16,
-      )}, ${parseInt(templateData.colors.label.slice(5, 7), 16)})`,
+      foregroundColor: `rgb(${parseInt(templateData.colors.text.slice(1, 3), 16)}, ${parseInt(templateData.colors.text.slice(3, 5), 16)}, ${parseInt(templateData.colors.text.slice(5, 7), 16)})`,
+      backgroundColor: `rgb(${parseInt(templateData.colors.background.slice(1, 3), 16)}, ${parseInt(templateData.colors.background.slice(3, 5), 16)}, ${parseInt(templateData.colors.background.slice(5, 7), 16)})`,
+      labelColor: `rgb(${parseInt(templateData.colors.label.slice(1, 3), 16)}, ${parseInt(templateData.colors.label.slice(3, 5), 16)}, ${parseInt(templateData.colors.label.slice(5, 7), 16)})`,
       storeCard: {
-        // En haut à droite (à côté du nom du client)
+        // En haut à droite
         primaryFields: [
           {
-            key: 'customer',
-            label: 'CLIENT',
-            value: templateData.customer.firstName,
-          },
+            key: "points",
+            label: "POINTS", // Petit titre
+            // 👇 Condition : Masquer le texte si c'est un système de tampons 👇
+            value: templateData.loyalty.systemType === "POINTS" ? String(templateData.loyalty.points) : "", // Gros texte
+          }
         ],
-        // ❌ ON SUPPRIME SECONDARYFIELDS ICI : Cela évite que le texte "0/10" s'écrive par-dessus tes tampons !
+        // ❌ ON SUPPRIME SECONDARYFIELDS pour laisser respirer l'image
         secondaryFields: [], 
         
-        // 👇 ON MET LES TEXTES TOUT EN BAS (Juste au-dessus du QR Code, là où il y a de la place) 👇
+        // 👇 DISPOSITION PARFAITE DU BAS 👇
+        // Deux colonnes proprement organisées juste au-dessus du QR Code
         auxiliaryFields: [
           {
-            key: 'balance',
-            label: templateData.loyalty.balanceLabel, // Ex: "TAMPONS"
-            value: templateData.loyalty.progressText,  // Ex: "0 / 10"
+            key: "member",
+            label: "MEMBRE",
+            value: templateData.customer.fullName, // "Sophie Moreau"
           },
+          {
+            key: "level",
+            label: "NIVEAU",
+            value: `${templateData.loyalty.level} - ${templateData.loyalty.pointsToReward}`, // "Gold - 3 pour la récompense"
+          }
         ],
         backFields: [
-          {
-            key: 'email',
-            label: 'Email',
-            value: templateData.customer.email,
-          },
-          {
-            key: 'walletId',
-            label: 'Identifiant',
-            value: templateData.customer.walletId,
-          },
+          { key: "email", label: "Email", value: templateData.customer.email },
+          { key: "walletId", label: "Identifiant", value: templateData.customer.walletId }
         ],
       },
       barcodes: [
         {
+          // 👇 ON REMPLACE LE BARCODE PAR UN QR CODE 👇
           format: 'PKBarcodeFormatQR',
           message: templateData.qr.value,
           messageEncoding: 'iso-8859-1',
@@ -172,45 +160,44 @@ export async function GET(request: Request) {
         'icon.png': iconBuffer,
         'icon@2x.png': iconBuffer,
       },
-      {
-        wwdr,
-        signerCert,
-        signerKey,
-      },
+      { wwdr, signerCert, signerKey }
     );
 
-    // On injecte le logo au runtime
     pass.addBuffer('logo.png', logoBuffer);
     pass.addBuffer('logo@2x.png', logoBuffer);
 
-    console.log("Tentative de téléchargement du stripUrl :", templateData.images.stripUrl);
+    // 👇 INJECTION DE LA GRILLE DE TAMPONS PARFAITE (En PNG Transparent) 👇
     try {
       if (templateData.images.stripUrl) {
         let finalStripUrl = templateData.images.stripUrl;
-        
-        // Si l'URL est relative (commence par /), on reconstruit l'URL absolue intelligemment
         if (finalStripUrl.startsWith('/')) {
            const host = request.headers.get('host') || 'localhost:3000';
            const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
            finalStripUrl = `${protocol}://${host}${finalStripUrl}`; 
         }
 
-        console.log("👉 URL finale utilisée pour le fetch :", finalStripUrl);
+        console.log("👉 URL finale pour strip :", finalStripUrl);
 
         const stripRes = await fetch(finalStripUrl, { cache: 'no-store' });
         
         if (!stripRes.ok) {
-           console.error("❌ Erreur HTTP lors du fetch du strip :", stripRes.status, stripRes.statusText);
+           console.error("❌ Erreur fetch strip :", stripRes.status);
         } else {
            const stripArrayBuffer = await stripRes.arrayBuffer();
            const rawBuffer = Buffer.from(stripArrayBuffer);
            
-           // 👇 2. ON CONVERTIT LE SVG EN VRAI PNG ICI 👇
-           const pngBuffer = await sharp(rawBuffer).png().toBuffer();
+           // 👇 Conversion PNG avec proportions parfaites 👇
+           const pngBuffer = await sharp(rawBuffer)
+             .resize(1125, 369, {
+               fit: 'contain',
+               background: { r: 0, g: 0, b: 0, alpha: 0 } // Fond transparent obligatoire
+             })
+             .png()
+             .toBuffer();
            
            pass.addBuffer('strip.png', pngBuffer);
            pass.addBuffer('strip@2x.png', pngBuffer);
-           console.log("✅ Image strip.png convertie en PNG et injectée avec succès !");
+           console.log("✅ Image strip.png parfaite générée et injectée !");
         }
       }
     } catch (stripError) {

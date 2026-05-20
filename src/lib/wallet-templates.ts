@@ -6,7 +6,8 @@ type CompanyWithWalletConfig = Pick<
   'id' | 'name' | 'systemType' | 'primaryColor' | 'textColor' | 'logoUrl' | 'cardTemplate'
 >;
 
-type CustomerForWallet = Pick<Customer, 'id' | 'firstName' | 'email' | 'walletId' | 'points'>;
+// 👇 1. ON AJOUTE LE 'lastName' ICI 👇
+type CustomerForWallet = Pick<Customer, 'id' | 'firstName' | 'lastName' | 'email' | 'walletId' | 'points'>;
 
 export type WalletTemplateData = {
   colors: {
@@ -29,6 +30,9 @@ export type WalletTemplateData = {
     progressText: string;
     balanceLabel: string;
     balanceValue: string;
+    // 👇 2. ON DÉCLARE LES NOUVELLES VARIABLES POUR APPLE WALLET 👇
+    level: string; 
+    pointsToReward: string;
   };
   merchant: {
     id: string;
@@ -39,6 +43,8 @@ export type WalletTemplateData = {
     firstName: string;
     email: string;
     walletId: string;
+    // 👇 3. LE NOM COMPLET DU CLIENT 👇
+    fullName: string;
   };
 };
 
@@ -86,6 +92,7 @@ export function getCardTemplateData(
 ): WalletTemplateData {
   const baseUrl = resolveBaseUrl();
   const template = getTemplateById(merchant.cardTemplate);
+  
   const colors = {
     background: normalizeHexColor(merchant.primaryColor, DEFAULT_BACKGROUND),
     text: normalizeHexColor(merchant.textColor, DEFAULT_TEXT),
@@ -108,6 +115,28 @@ export function getCardTemplateData(
     heroImageUrl = `${baseUrl}${template.backgroundImage}`;
   }
 
+  // 👇 4. LOGIQUE DE CALCUL DU NOM COMPLET 👇
+  const fullName = user.lastName 
+    ? `${user.firstName} ${user.lastName}` 
+    : user.firstName;
+
+  // 👇 5. LOGIQUE DE CALCUL DU NIVEAU ET DES RÉCOMPENSES 👇
+  let level = "Standard";
+  let pointsToReward = "";
+
+  if (merchant.systemType === 'STAMPS') {
+    // Calcul mathématique : Combien de tampons manquent avant la prochaine dizaine ?
+    const stampsNeeded = 10 - (user.points % 10); 
+    
+    // Si le client a déjà rempli une carte (10 points ou plus), il devient Gold !
+    level = user.points >= 10 ? "Gold" : "Standard";
+    pointsToReward = `${stampsNeeded} pour la récompense`;
+  } else {
+    // Si c'est un système de points classique
+    level = user.points >= 500 ? "VIP" : "Membre";
+    pointsToReward = `Voir le catalogue`; 
+  }
+
   return {
     colors,
     qr: {
@@ -125,6 +154,8 @@ export function getCardTemplateData(
       progressText: merchant.systemType === 'STAMPS' ? `${user.points} / 10` : `${user.points} points`,
       balanceLabel: merchant.systemType === 'STAMPS' ? 'TAMPONS RÉCOLTÉS' : 'SOLDE FIDÉLITÉ',
       balanceValue: merchant.systemType === 'STAMPS' ? `${user.points} / 10` : `${user.points}`,
+      level,
+      pointsToReward,
     },
     merchant: {
       id: merchant.id,
@@ -135,6 +166,7 @@ export function getCardTemplateData(
       firstName: user.firstName,
       email: user.email,
       walletId: user.walletId,
+      fullName,
     },
   };
 }

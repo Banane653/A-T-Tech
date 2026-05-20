@@ -19,46 +19,40 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     
     const count = parseInt(searchParams.get('count') || '0');
-    const color = searchParams.get('color') || '#000000';
+    // On n'utilise plus la couleur du commerçant pour le badge, mais pour le cercle actif
+    const merchantColor = searchParams.get('color') || '#000000';
     const shape = searchParams.get('shape') || 'star';
+    const isDebug = searchParams.get('debug') === 'true';
     const total = 10;
 
     const iconPath = getIconPath(shape);
 
-    // 👇 NOUVELLES DIMENSIONS RÉTINA POUR APPLE WALLET (Ratio 375x123) 👇
+    // 👇 DIMENSIONS RÉTINA PANORAMIQUES PARFAITES (1125x369) 👇
     const WIDTH = 1125;
     const HEIGHT = 369;
 
     // Construction de la grille SVG
     let icons = '';
     for (let i = 0; i < total; i++) {
-        // Nouveau calcul de la grille pour espacer parfaitement les 10 badges
+        // Nouveau calcul mathématique pour une grille 5x2 parfaite et aérée
         const x = 112.5 + (i % 5) * 225;
         const y = 92.25 + Math.floor(i / 5) * 184.5;
         const isFilled = i < count;
 
         icons += `
             <g transform="translate(${x}, ${y})">
-                <circle cx="0" cy="0" r="65" fill="${isFilled ? 'white' : 'rgba(255,255,255,0.2)'}" />
-                <g transform="scale(1.5)">
-                    <path d="${iconPath}" 
-                          fill="${isFilled ? color : 'white'}" 
-                          fill-rule="evenodd" /> 
-                </g>
+                ${isFilled 
+                    ? `<circle cx="0" cy="0" r="65" fill="rgba(255,255,255,0.2)" />
+                       <g transform="scale(1.5)"><path d="${iconPath}" fill="white" fill-rule="evenodd" /></g>`
+                    : `<circle cx="0" cy="0" r="65" fill="none" stroke-dasharray="10 10" stroke="rgba(255,255,255,0.4)" stroke-width="3" />`
+                }
             </g>
         `;
     }
 
     const svg = `
         <svg width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:${color};stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:${color};stop-opacity:0.8" />
-                </linearGradient>
-            </defs>
-            
-            <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#grad)" />
+            ${isDebug ? `<rect width="${WIDTH}" height="${HEIGHT}" fill="#04442A" />` : ''}
             ${icons}
         </svg>
     `;

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { generateGoogleWalletPass } from '@/services/googleWallet.service';
 import { prisma } from '@/lib/prisma';
+import { getCardTemplateData } from '@/lib/wallet-templates';
 
 export async function GET(request: Request) {
     try {
@@ -36,14 +37,15 @@ export async function GET(request: Request) {
              return new NextResponse("Le commerce n'a pas configuré sa carte Google Wallet", { status: 400 });
         }
 
-        // 👉 LA CORRECTION EST ICI : On passe les 6 arguments attendus
+        const templateData = getCardTemplateData(customer.company, customer);
+
         const saveUrl = generateGoogleWalletPass(
-            customer.firstName, 
-            customer.walletId, 
-            customer.points,
+            templateData.customer.firstName, 
+            templateData.customer.walletId, 
+            templateData.loyalty.points,
             customer.company.googleClassId,
-            customer.company.systemType,
-            customer.company.primaryColor,
+            templateData.loyalty.systemType,
+            templateData.colors.background,
             customer.company.cardTemplate
         );
 

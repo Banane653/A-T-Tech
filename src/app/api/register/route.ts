@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateGoogleWalletPass } from '@/services/googleWallet.service';
+import { getCardTemplateData } from '@/lib/wallet-templates';
 
 export async function POST(request: Request) {
     try {
@@ -39,14 +40,16 @@ export async function POST(request: Request) {
              return NextResponse.json({ error: "Ce commerce n'a pas encore configuré ses cartes Wallet." }, { status: 400 });
         }
 
+        const templateData = getCardTemplateData(customer.company, customer);
+
         // 2. Génération du pass Google Wallet personnalisé
         const saveUrl = generateGoogleWalletPass(
-            customer.firstName, 
-            customer.walletId, 
-            customer.points, 
+            templateData.customer.firstName, 
+            templateData.customer.walletId, 
+            templateData.loyalty.points, 
             customer.company.googleClassId,
-            customer.company.systemType,   
-            customer.company.primaryColor,
+            templateData.loyalty.systemType,   
+            templateData.colors.background,
             customer.company.cardTemplate
         );
         

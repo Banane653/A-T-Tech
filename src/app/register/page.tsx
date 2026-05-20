@@ -36,6 +36,8 @@ function RegisterForm() {
 
     const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', birthDate: '' });
     const [saveUrl, setSaveUrl] = useState<string | null>(null);
+    const [registeredIdentity, setRegisteredIdentity] = useState<{ name: string; email: string } | null>(null);
+    const [appleLoading, setAppleLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [today, setToday] = useState('');
     const [company, setCompany] = useState<PublicCompany | null>(null);
@@ -123,6 +125,10 @@ function RegisterForm() {
 
             if (res.ok && data.saveUrl) {
                 setSaveUrl(data.saveUrl);
+                setRegisteredIdentity({
+                    name: formData.firstName,
+                    email: formData.email,
+                });
             } else {
                 alert('Erreur : ' + (data.error || 'Inscription refusée'));
             }
@@ -130,6 +136,49 @@ function RegisterForm() {
             alert('Erreur de connexion au serveur.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleAppleWalletClick = async () => {
+        if (!registeredIdentity || !companyId) return;
+
+        setAppleLoading(true);
+        try {
+            const params = new URLSearchParams({
+                name: registeredIdentity.name,
+                email: registeredIdentity.email,
+                companyId,
+            });
+
+            const response = await fetch(`/api/wallet/apple?${params.toString()}`, {
+                method: 'GET',
+            });
+
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || 'Impossible de générer le pass Apple Wallet.');
+            }
+
+            const passBlob = await response.blob();
+            const objectUrl = URL.createObjectURL(passBlob);
+
+            // Mobile Safari handles Apple Wallet passes better when we trigger a real file download link.
+            // This ensures iOS can open the .pkpass and show the native "Add to Wallet" modal.
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = 'loyalty.pkpass';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            setTimeout(() => {
+                URL.revokeObjectURL(objectUrl);
+            }, 1000);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Erreur Apple Wallet inconnue.';
+            alert(`Erreur : ${message}`);
+        } finally {
+            setAppleLoading(false);
         }
     };
 
@@ -206,18 +255,33 @@ function RegisterForm() {
                         Cliquez ci-dessous pour enregistrer votre carte dans votre téléphone.
                     </p>
 
-                    <a
-                        href={saveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block transition-transform hover:scale-105 active:scale-95 mt-4"
-                    >
-                        <img
-                            src="/assets/google-wallet-badge-fr.svg"
-                            alt="Ajouter à Google Wallet"
-                            className="h-12 w-auto" 
-                        />
-                    </a>
+                    <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a
+                            href={saveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex h-12 items-center transition-transform hover:scale-105 active:scale-95"
+                        >
+                            <img
+                                src="/assets/google-wallet-badge-fr.svg"
+                                alt="Ajouter à Google Wallet"
+                                className="h-12 w-auto"
+                            />
+                        </a>
+
+                        <button
+                            type="button"
+                            onClick={handleAppleWalletClick}
+                            disabled={appleLoading}
+                            className="inline-flex h-12 items-center transition-transform hover:scale-105 active:scale-95 disabled:opacity-60"
+                        >
+                            <img
+                                src="/assets/apple-wallet-badge-fr.svg"
+                                alt="Ajouter a Apple Wallet"
+                                className="h-12 w-auto"
+                            />
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

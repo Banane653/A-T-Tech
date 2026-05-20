@@ -84,7 +84,7 @@ export async function GET(request: Request) {
     }
 
     const templateData = getCardTemplateData(customer.company, customer);
-    const serialNumber = `${templateData.customer.walletId}-${Date.now()}`;
+    const serialNumber = templateData.customer.walletId;
     
     const logoBuffer = await getMerchantLogoBuffer(templateData.images.logoUrl);
     

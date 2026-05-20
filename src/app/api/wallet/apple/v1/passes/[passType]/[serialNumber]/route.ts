@@ -15,7 +15,7 @@ export async function GET(
     const { serialNumber } = await params;
 
     // Le serialNumber ressemble à : WLT-123456-7891011
-    const walletId = serialNumber.split('-')[0] + '-' + serialNumber.split('-')[1];
+    const walletId = serialNumber;
 
     const customer = await prisma.customer.findUnique({
       where: { walletId },

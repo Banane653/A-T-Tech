@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 
-// Dictionnaire des formes mathématiques SVG (centrées sur 0,0)
 const getIconPath = (shape: string) => {
     switch(shape) {
         case 'coffee':
@@ -19,23 +18,19 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     
     const count = parseInt(searchParams.get('count') || '0');
-    // On n'utilise plus la couleur du commerçant pour le badge, mais pour le cercle actif
-    const merchantColor = searchParams.get('color') || '#000000';
+    const color = searchParams.get('color') || '#000000';
     const shape = searchParams.get('shape') || 'star';
-    const isDebug = searchParams.get('debug') === 'true';
+    const isDebug = searchParams.get('debug') === 'true'; 
     const total = 10;
 
     const iconPath = getIconPath(shape);
-
-    // 👇 DIMENSIONS RÉTINA PANORAMIQUES PARFAITES (1125x369) 👇
     const WIDTH = 1125;
     const HEIGHT = 369;
 
-    // Construction de la grille SVG
     let icons = '';
     for (let i = 0; i < total; i++) {
-        // Nouveau calcul mathématique pour une grille 5x2 parfaite et aérée
-        const x = 112.5 + (i % 5) * 225;
+        // 👇 CALCUL MODIFIÉ : On resserre l'écart à 170px (au lieu de 225px) et on commence à 222px pour centrer le bloc 👇
+        const x = 222.5 + (i % 5) * 170;
         const y = 92.25 + Math.floor(i / 5) * 184.5;
         const isFilled = i < count;
 

@@ -112,30 +112,27 @@ export async function GET(request: Request) {
       backgroundColor: `rgb(${parseInt(templateData.colors.background.slice(1, 3), 16)}, ${parseInt(templateData.colors.background.slice(3, 5), 16)}, ${parseInt(templateData.colors.background.slice(5, 7), 16)})`,
       labelColor: `rgb(${parseInt(templateData.colors.label.slice(1, 3), 16)}, ${parseInt(templateData.colors.label.slice(3, 5), 16)}, ${parseInt(templateData.colors.label.slice(5, 7), 16)})`,
       storeCard: {
-        // En haut à droite
-        primaryFields: [
+        // 👇 CORRECTION : Si c'est POINTS on affiche le bloc, si c'est STAMPS on envoie un tableau vide [] pour que rien n'apparaisse 👇
+        primaryFields: templateData.loyalty.systemType === "POINTS" ? [
           {
             key: "points",
-            label: "POINTS", // Petit titre
-            // 👇 Condition : Masquer le texte si c'est un système de tampons 👇
-            value: templateData.loyalty.systemType === "POINTS" ? String(templateData.loyalty.points) : "", // Gros texte
+            label: "POINTS",
+            value: String(templateData.loyalty.points),
           }
-        ],
-        // ❌ ON SUPPRIME SECONDARYFIELDS pour laisser respirer l'image
+        ] : [],
+        
         secondaryFields: [], 
         
-        // 👇 DISPOSITION PARFAITE DU BAS 👇
-        // Deux colonnes proprement organisées juste au-dessus du QR Code
         auxiliaryFields: [
           {
             key: "member",
             label: "MEMBRE",
-            value: templateData.customer.fullName, // "Sophie Moreau"
+            value: templateData.customer.fullName,
           },
           {
             key: "level",
             label: "NIVEAU",
-            value: `${templateData.loyalty.level} - ${templateData.loyalty.pointsToReward}`, // "Gold - 3 pour la récompense"
+            value: `${templateData.loyalty.level} - ${templateData.loyalty.pointsToReward}`,
           }
         ],
         backFields: [

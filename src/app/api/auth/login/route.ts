@@ -9,14 +9,22 @@ const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { email, password } = body;
+        const identifier = body.identifier || body.email;
+        const password = body.password;
 
-        if (!email || !password) {
-            return NextResponse.json({ error: "Email et mot de passe requis" }, { status: 400 });
+        if (!identifier || !password) {
+            return NextResponse.json({ error: "Identifiant et mot de passe requis" }, { status: 400 });
         }
 
-        // 1. On cherche l'utilisateur dans la base de données
-        const user = await prisma.merchantUser.findUnique({ where: { email } });
+        // 2. On cherche l'utilisateur par son Email OU par son Username
+        const user = await prisma.merchantUser.findFirst({ 
+            where: { 
+                OR: [
+                    { email: identifier },
+                    { username: identifier.toLowerCase() } // Force la minuscule par sécurité
+                ]
+            } 
+        });
         
         if (!user) {
             return NextResponse.json({ error: "Identifiants incorrects" }, { status: 401 });

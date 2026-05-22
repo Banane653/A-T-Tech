@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('');
+    // 1. On renomme "email" en "identifier" car ça peut être l'un ou l'autre
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     
-    // Le routeur de Next.js pour nous téléporter vers la bonne page
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -21,22 +21,21 @@ export default function LoginPage() {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                // 2. On envoie "identifier" à notre API
+                body: JSON.stringify({ identifier, password }),
             });
 
             const data = await res.json();
 
             if (res.ok) {
-                // 🚀 REDIRECTION INTELLIGENTE SELON LE RÔLE
                 if (data.role === 'FOUNDER') {
                     router.push('/founder');
                 } else if (data.role === 'ADMIN') {
                     router.push('/dashboard');
                 } else {
-                    router.push('/scanner'); // Par défaut, l'employé
+                    router.push('/scanner');
                 }
             } else {
-                // Si le mot de passe est faux
                 setError(data.error || "Identifiants incorrects");
             }
         } catch (err) {
@@ -60,13 +59,14 @@ export default function LoginPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="text-sm text-gray-600 ml-1 mb-1 block">Adresse Email</label>
+                        {/* 3. On met à jour le texte du label */}
+                        <label className="text-sm text-gray-600 ml-1 mb-1 block">Email ou Nom d'utilisateur</label>
                         <input 
-                            type="email" 
+                            type="text" // 👈 Changé de "email" à "text"
                             required
-                            value={email}
+                            value={identifier}
                             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => setIdentifier(e.target.value)}
                         />
                     </div>
                     

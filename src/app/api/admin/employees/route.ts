@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     if (!admin) return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
 
     try {
-        const { name, email, password } = await request.json();
+        const { name, email, username, password } = await request.json();
 
         const existingUser = await prisma.merchantUser.findUnique({ where: { email } });
         if (existingUser) return NextResponse.json({ error: "Cet email est déjà utilisé" }, { status: 400 });
@@ -59,6 +59,7 @@ export async function POST(request: Request) {
             data: {
                 name,
                 email,
+                username,
                 password: hashedPassword,
                 role: 'EMPLOYEE',
                 companyId: admin.companyId // L'employé est lié à la même boîte que l'admin

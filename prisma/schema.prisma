@@ -54,6 +54,7 @@ model MerchantUser {
   email     String   @unique
   password  String
   name      String
+  username  String?  @unique
   role      Role     @default(EMPLOYEE)
   
   // Relation avec la Company (Optionnel car le FOUNDER n'a pas forcément de commerce)

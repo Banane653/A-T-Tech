@@ -19,6 +19,7 @@ const defaultTemplate = CARD_TEMPLATES.find((t) => t.type === 'STAMPS')?.id || '
 const initialFormData = {
     companyName: '',
     adminName: '',
+    adminUsername: '',
     adminEmail: '',
     adminPassword: '',
     systemType: 'STAMPS' as TemplateType,
@@ -215,6 +216,18 @@ export default function FounderCompaniesPage() {
                             value={formData.adminName}
                             onChange={(e) =>
                                 setFormData({ ...formData, adminName: e.target.value })
+                            }
+                        />
+                        <input
+                            type="text"
+                            placeholder="Pseudo (ex: patron_1)"
+                            required
+                            pattern="^[a-zA-Z0-9_.]+$"
+                            title="Seuls les lettres, chiffres, tirets bas (_) et points (.) sont autorisés."
+                            className={inputClass}
+                            value={formData.adminUsername}
+                            onChange={(e) =>
+                                setFormData({ ...formData, adminUsername: e.target.value.toLowerCase().trim() })
                             }
                         />
                         <input

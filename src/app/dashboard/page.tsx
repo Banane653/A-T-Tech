@@ -16,7 +16,7 @@ export default function AdminDashboard() {
     const [isSavingRatio, setIsSavingRatio] = useState(false);
 
     const [showForm, setShowForm] = useState(false);
-    const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', username: '', password: '' });
     const [loading, setLoading] = useState(false);
 
     const fetchData = async () => {
@@ -54,7 +54,7 @@ export default function AdminDashboard() {
 
         if (res.ok) {
             setShowForm(false);
-            setFormData({ name: '', email: '', password: '' });
+            setFormData({ name: '', email: '', username: '', password: '' });
             fetchData();
         } else {
             const data = await res.json();
@@ -222,6 +222,16 @@ export default function AdminDashboard() {
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             />
                         </div>
+                        <input
+                            type="text"
+                            placeholder="Nom d'utilisateur (ex: sarah_b)"
+                            required
+                            pattern="^[a-zA-Z0-9_.]+$"
+                            title="Seuls les lettres, chiffres, tirets bas (_) et points (.) sont autorisés."
+                            className="p-3 border rounded-lg text-black bg-white"
+                            value={formData.username}
+                            onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase().trim() })} 
+                        />
                         <input
                             type="password"
                             placeholder="Mot de passe provisoire"

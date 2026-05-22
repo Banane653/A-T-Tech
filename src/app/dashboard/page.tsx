@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+// 👇 1. Import du nouveau composant QR Code
+import RegisterQrCode from '@/components/registerQrCode'; 
 
 export default function AdminDashboard() {
     const [employees, setEmployees] = useState([]);
@@ -76,7 +78,6 @@ export default function AdminDashboard() {
         }
     };
 
-    // Nouvelle fonction pour sauvegarder le ratio
     const handleSaveRatio = async () => {
         setIsSavingRatio(true);
         const res = await fetch('/api/admin/company', {
@@ -116,24 +117,23 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
-            {/* 👉 NOUVEAU BLOC : Configuration du Taux de Conversion (Affiché uniquement si en mode POINTS) */}
             {systemType === 'POINTS' && (
                 <div className="bg-amber-50 border border-amber-200 p-6 rounded-xl shadow-sm mb-8">
                     <h3 className="font-bold text-amber-900 mb-2">⚙️ Règle de fidélité</h3>
                     <p className="text-sm text-amber-800 mb-4">
-                        Combien de points un client gagne-t-il pour 1 € dépensé ?
+                        Quel est le montant en euros nécessaire pour qu'un client gagne 1 point ?
                     </p>
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-amber-200">
-                            <span className="font-bold text-gray-700">1 € =</span>
+                            {/* 👇 L'INPUT EST PASSÉ À GAUCHE 👇 */}
                             <input
                                 type="number"
                                 min="1"
-                                className="w-20 text-center font-bold text-xl outline-none text-black bg-transparent"
+                                className="w-20 text-center font-bold text-xl outline-none text-black bg-transparent border-b-2 border-amber-300 focus:border-amber-500"
                                 value={pointsRatio}
                                 onChange={(e) => setPointsRatio(Number(e.target.value))}
                             />
-                            <span className="font-bold text-gray-700">points</span>
+                            <span className="font-bold text-gray-700">€ = 1 point</span>
                         </div>
                         <button
                             onClick={handleSaveRatio}
@@ -147,31 +147,47 @@ export default function AdminDashboard() {
             )}
 
             {companyId && (
-                <div className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm space-y-3 mb-8">
-                    <h3 className="font-bold text-gray-800">🔗 Votre lien d&apos;inscription client</h3>
-                    <p className="text-sm text-gray-500">
-                        Copiez ce lien pour créer un QR Code à placer sur le comptoir de votre boutique :
-                    </p>
-                    <div className="flex items-center space-x-2">
-                        <input
-                            readOnly
-                            value={registerLink}
-                            className="flex-1 bg-gray-50 p-3 text-sm border border-gray-200 rounded-lg text-gray-700 outline-none"
-                        />
-                        <button
-                            onClick={() => {
-                                navigator.clipboard.writeText(registerLink);
-                                alert('Lien copié dans le presse-papier !');
-                            }}
-                            className="bg-black text-white px-5 py-3 rounded-lg font-bold hover:bg-gray-800 transition"
-                        >
-                            Copier
-                        </button>
+                <div className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm mb-8">
+                    {/* 👇 NOUVELLE DISPOSITION FLEX 👇 */}
+                    <div className="flex items-start justify-between gap-6">
+                        
+                        {/* Partie Gauche : Textes et Input */}
+                        <div className="flex-1 space-y-3">
+                            <h3 className="font-bold text-gray-800">🔗 Votre lien d&apos;inscription client</h3>
+                            <p className="text-sm text-gray-500 max-w-lg">
+                                Imprimez ce QR Code et placez-le sur votre comptoir, ou copiez le lien ci-dessous pour l'envoyer à vos clients :
+                            </p>
+                            
+                            <div className="flex items-center space-x-2 pt-2">
+                                <input
+                                    readOnly
+                                    value={registerLink}
+                                    className="flex-1 bg-gray-50 p-3 text-sm border border-gray-200 rounded-lg text-gray-700 outline-none focus:border-gray-300"
+                                />
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(registerLink);
+                                        // Optionnel : remplacer l'alert par une petite notification toast plus discrète
+                                        alert('Lien copié !');
+                                    }}
+                                    className="bg-black text-white px-5 py-3 rounded-lg text-sm font-bold hover:bg-gray-800 transition whitespace-nowrap"
+                                >
+                                    Copier le lien
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Partie Droite : Le QR Code miniature 👇 */}
+                        <div className="flex-shrink-0 pt-1">
+                            <RegisterQrCode 
+                                registerUrl={registerLink} 
+                                merchantName={companyName} 
+                            />
+                        </div>
                     </div>
                 </div>
             )}
 
-            {/* Le reste de ton code (Mon Équipe) est inchangé ci-dessous */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center border-b pb-4">
                     <h2 className="text-xl font-bold text-gray-800">Mon Équipe</h2>

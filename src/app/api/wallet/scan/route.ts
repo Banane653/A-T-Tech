@@ -131,25 +131,29 @@ export async function POST(request: Request) {
             }
         } else if (company.systemType === 'POINTS') {
             if (action === 'add_points') {
-                // 1. amount représente désormais les EUROS dépensés par le client
+                // 1. Montant en EUROS dépensés par le client
                 const eurosSpent = Number(amount) || 0;
                 if (eurosSpent <= 0) {
                     return NextResponse.json({ error: 'Montant en euros invalide' }, { status: 400 });
                 }
 
-                // 2. Calcul du nombre de points à ajouter selon le ratio du commerce
-                const ratio = company.pointsRatio || 1;
-                const pointsToAdd = Math.floor(eurosSpent * ratio);
+                // 2. NOUVEAU CALCUL : pointsRatio représente désormais le coût en € d'UN point (ex: 5€ = 1pt)
+                // On s'assure que le ratio ne soit pas 0 pour éviter une division par zéro fatale.
+                const euroCostPerPoint = company.pointsRatio && company.pointsRatio > 0 ? company.pointsRatio : 1;
+                
+                // 👇 ON DIVISE AU LIEU DE MULTIPLIER 👇
+                const pointsToAdd = Math.floor(eurosSpent / euroCostPerPoint);
 
                 if (pointsToAdd <= 0) {
-                    return NextResponse.json({ error: 'Le montant est trop faible pour générer au moins 1 point.' }, { status: 400 });
+                    return NextResponse.json({ 
+                        error: `Le montant est inférieur à ${euroCostPerPoint}€, aucun point généré.` 
+                    }, { status: 400 });
                 }
 
                 newPoints = customer.points + pointsToAdd;
                 transactionType = 'EARN';
                 transactionAmount = pointsToAdd;
                 
-                // 3. Description plus complète pour la comptabilité du gérant
                 transactionDescription = 
                     transactionDescription || `Achat de ${eurosSpent.toFixed(2)}€ (+${pointsToAdd} pts)`;
                 

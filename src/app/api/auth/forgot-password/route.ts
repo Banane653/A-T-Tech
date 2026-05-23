@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
         // 5. Envoyer l'e-mail avec Resend
         await resend.emails.send({
-            from: 'Cardeo Support <natrist@hotmail.com>', // ⚠️ À remplacer par ton adresse vérifiée sur Resend
+            from: 'Cardeo Support <onboarding@resend.dev>', // ⚠️ À remplacer par ton adresse vérifiée sur Resend
             to: user.email,
             subject: 'Réinitialisation de votre mot de passe Cardeo',
             html: `

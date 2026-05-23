@@ -1,0 +1,89 @@
+{
+    "HomePage": {
+      "nav": {
+        "features": "Fonctionnalités",
+        "howItWorks": "Comment ça marche",
+        "pricing": "Tarifs",
+        "login": "Espace Gérant 🔒"
+      },
+      "hero": {
+        "badge": "Google Wallet & Apple Wallet disponibles",
+        "title": {
+          "part1": "La fidélité qui vit dans la",
+          "part2": "poche de vos clients."
+        },
+        "description": "Transformez chaque visite en raison de revenir. Créez une carte de fidélité à votre image en quelques minutes, sans aucune application à télécharger.",
+        "cta": {
+          "primary": "Démarrer gratuitement",
+          "secondary": "Comment ça marche"
+        },
+        "perks": {
+          "perk1": "✓ Sans carte bancaire",
+          "perk2": "✓ Prêt en 10 min",
+          "perk3": "✓ Sans engagement"
+        }
+      },
+      "mockup": {
+        "cardType": "CARTE PRIVILÈGE",
+        "pointsLabel": "Points de fidélité",
+        "memberLabel": "Membre",
+        "badge1": {
+          "title": "Félicitations Sophie !",
+          "desc": "Votre café offert est débloqué."
+        },
+        "badge2": "+1 tampon ajouté"
+      },
+      "socialProof": {
+        "title": "Conçu pour les commerces indépendants"
+      },
+      "features": {
+        "subtitle": "Tout ce qu'il vous faut",
+        "title": "Un vrai programme de fidélité, sans application à développer.",
+        "items": {
+          "wallet": {
+            "title": "Apple & Google Wallet",
+            "desc": "Une carte, deux plateformes. Les clients l'ajoutent en deux clics, sans application à télécharger."
+          },
+          "rewards": {
+            "title": "Tampons ou Points",
+            "desc": "Choisissez le programme qui vous correspond. Les récompenses se mettent à jour en direct."
+          },
+          "stats": {
+            "title": "Des statistiques utiles",
+            "desc": "Voyez qui revient et qui décroche. Analysez votre activité sans avoir besoin d'un doctorat."
+          },
+          "speed": {
+            "title": "Prêt en 10 minutes",
+            "desc": "Téléchargez votre logo, choisissez vos couleurs. Aucun code ni développeur requis."
+          },
+          "tools": {
+            "title": "Outils Gérants",
+            "desc": "Scannez depuis n'importe quel smartphone ou tablette pour ajouter des points instantanément."
+          }
+        }
+      },
+      "howItWorks": {
+        "subtitle": "Comment ça marche",
+        "title": "De zéro à carte de fidélité,<br/> avant votre prochain café.",
+        "steps": {
+          "step1": {
+            "title": "Créez votre carte",
+            "desc": "Ajoutez votre logo, choisissez votre couleur et définissez votre système de récompense."
+          },
+          "step2": {
+            "title": "Partagez le lien",
+            "desc": "Imprimez un QR code pour le comptoir ou mettez le lien dans votre bio Instagram."
+          },
+          "step3": {
+            "title": "Fidélisez",
+            "desc": "Scannez la carte des clients lors de leur passage en caisse pour les récompenser."
+          }
+        }
+      },
+      "cta": {
+        "title": "Vos meilleurs clients n'attendent qu'une raison de revenir.",
+        "desc": "Gratuit, à vos couleurs, en ligne en quelques minutes. Sans carte bancaire, sans engagement.",
+        "button": "Créer ma première carte"
+      }
+    }
+  }

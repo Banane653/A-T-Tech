@@ -1,0 +1,89 @@
+{
+    "HomePage": {
+      "nav": {
+        "features": "Functies",
+        "howItWorks": "Hoe het werkt",
+        "pricing": "Prijzen",
+        "login": "Manager Portaal 🔒"
+      },
+      "hero": {
+        "badge": "Beschikbaar in Google Wallet & Apple Wallet",
+        "title": {
+          "part1": "Loyaliteit die leeft in de",
+          "part2": "zak van uw klanten."
+        },
+        "description": "Maak van elk bezoek een reden om terug te komen. Creëer in enkele minuten een gepersonaliseerde klantenkaart, zonder een app te downloaden.",
+        "cta": {
+          "primary": "Start gratis",
+          "secondary": "Hoe het werkt"
+        },
+        "perks": {
+          "perk1": "✓ Geen creditcard nodig",
+          "perk2": "✓ Klaar in 10 min",
+          "perk3": "✓ Geen verplichtingen"
+        }
+      },
+      "mockup": {
+        "cardType": "PRIVILEGE KAART",
+        "pointsLabel": "Loyaliteitspunten",
+        "memberLabel": "Lid",
+        "badge1": {
+          "title": "Gefeliciteerd Sophie!",
+          "desc": "Je gratis koffie is ontgrendeld."
+        },
+        "badge2": "+1 stempel toegevoegd"
+      },
+      "socialProof": {
+        "title": "Ontworpen voor onafhankelijke bedrijven"
+      },
+      "features": {
+        "subtitle": "Alles wat u nodig heeft",
+        "title": "Een echt loyaliteitsprogramma, zonder app ontwikkeling.",
+        "items": {
+          "wallet": {
+            "title": "Apple & Google Wallet",
+            "desc": "Eén kaart, twee platforms. Klanten voegen hem toe in twee klikken, geen app downloaden."
+          },
+          "rewards": {
+            "title": "Stempels of Punten",
+            "desc": "Kies het programma dat bij u past. Beloningen updaten in real-time."
+          },
+          "stats": {
+            "title": "Nuttige Statistieken",
+            "desc": "Zie wie terugkomt en wie afhaakt. Analyseer uw bedrijf zonder een doctoraat."
+          },
+          "speed": {
+            "title": "Klaar in 10 minuten",
+            "desc": "Upload uw logo, kies uw kleuren. Geen code of ontwikkelaars nodig."
+          },
+          "tools": {
+            "title": "Manager Tools",
+            "desc": "Scan vanaf elke smartphone of tablet om direct punten toe te voegen."
+          }
+        }
+      },
+      "howItWorks": {
+        "subtitle": "Hoe het werkt",
+        "title": "Van nul naar klantenkaart,<br/> voor uw volgende koffie.",
+        "steps": {
+          "step1": {
+            "title": "Maak uw kaart",
+            "desc": "Voeg uw logo toe, kies uw kleuren en stel uw beloningssysteem in."
+          },
+          "step2": {
+            "title": "Deel de link",
+            "desc": "Print een QR code voor op de toonbank of zet de link in uw Instagram bio."
+          },
+          "step3": {
+            "title": "Bouw loyaliteit",
+            "desc": "Scan de kaarten van klanten bij het afrekenen om ze te belonen."
+          }
+        }
+      },
+      "cta": {
+        "title": "Uw beste klanten wachten op een reden om terug te komen.",
+        "desc": "Gratis, in uw huisstijl, online in enkele minuten. Geen creditcard, geen verplichtingen.",
+        "button": "Maak mijn eerste kaart"
+      }
+    }
+  }

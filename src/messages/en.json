@@ -1,0 +1,89 @@
+{
+    "HomePage": {
+      "nav": {
+        "features": "Features",
+        "howItWorks": "How it works",
+        "pricing": "Pricing",
+        "login": "Manager Portal 🔒"
+      },
+      "hero": {
+        "badge": "Available on Google Wallet & Apple Wallet",
+        "title": {
+          "part1": "Loyalty that lives in your",
+          "part2": "customers' pockets."
+        },
+        "description": "Turn every visit into a reason to return. Create a custom loyalty card in minutes, with no app to download.",
+        "cta": {
+          "primary": "Start for free",
+          "secondary": "How it works"
+        },
+        "perks": {
+          "perk1": "✓ No credit card required",
+          "perk2": "✓ Ready in 10 mins",
+          "perk3": "✓ No commitment"
+        }
+      },
+      "mockup": {
+        "cardType": "PRIVILEGE CARD",
+        "pointsLabel": "Loyalty Points",
+        "memberLabel": "Member",
+        "badge1": {
+          "title": "Congratulations Sophie!",
+          "desc": "Your free coffee is unlocked."
+        },
+        "badge2": "+1 stamp added"
+      },
+      "socialProof": {
+        "title": "Designed for independent businesses"
+      },
+      "features": {
+        "subtitle": "Everything you need",
+        "title": "A real loyalty program, without the app development.",
+        "items": {
+          "wallet": {
+            "title": "Apple & Google Wallet",
+            "desc": "One card, two platforms. Customers add it in two clicks, no app to download."
+          },
+          "rewards": {
+            "title": "Stamps or Points",
+            "desc": "Choose the program that fits your business. Rewards update in real-time."
+          },
+          "stats": {
+            "title": "Actionable Insights",
+            "desc": "See who returns and who drops off. Analyze your business without needing a PhD."
+          },
+          "speed": {
+            "title": "Ready in 10 minutes",
+            "desc": "Upload your logo, pick your colors. No code or developers required."
+          },
+          "tools": {
+            "title": "Manager Tools",
+            "desc": "Scan from any smartphone or tablet to add points instantly."
+          }
+        }
+      },
+      "howItWorks": {
+        "subtitle": "How it works",
+        "title": "From zero to loyalty card,<br/> before your next coffee.",
+        "steps": {
+          "step1": {
+            "title": "Create your card",
+            "desc": "Add your logo, choose your colors, and set up your reward system."
+          },
+          "step2": {
+            "title": "Share the link",
+            "desc": "Print a QR code for your counter or add the link to your Instagram bio."
+          },
+          "step3": {
+            "title": "Build loyalty",
+            "desc": "Scan customers' cards at checkout to reward them instantly."
+          }
+        }
+      },
+      "cta": {
+        "title": "Your best customers are just waiting for a reason to return.",
+        "desc": "Free, branded, online in minutes. No credit card, no commitment.",
+        "button": "Create my first card"
+      }
+    }
+  }

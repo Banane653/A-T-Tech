@@ -25,6 +25,7 @@
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
+    "next-intl": "^4.12.0",
     "passkit-generator": "^3.5.7",
     "pg": "^8.20.0",
     "qrcode.react": "^4.2.0",

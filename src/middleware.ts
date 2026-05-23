@@ -1,61 +1,86 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
+import createIntlMiddleware from 'next-intl/middleware';
 
-// On récupère la même clé secrète
+// 1. Configuration du routeur de langues (next-intl)
+const intlMiddleware = createIntlMiddleware({
+    locales: ['fr', 'en', 'nl'],
+    defaultLocale: 'fr'
+});
+
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret_pour_dev');
 
-// Les routes "ouvertes au public"
-const publicRoutes = ['/', '/login', '/register', '/privacy', '/contact'];
+// J'ai ajouté les nouvelles pages (mot de passe oublié et légal) à tes routes publiques
+const publicRoutes = [
+    '/', '/login', '/register', '/contact', 
+    '/forgot-password', '/reset-password', 
+    '/legal/confidentialite', '/legal/cgv'
+];
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // 1. On laisse toujours passer les API, les images, et les routes publiques
+    // 2. On laisse toujours passer les API, les images, etc.
     if (
         pathname.startsWith('/api') || 
         pathname.startsWith('/_next') || 
         pathname.startsWith('/assets') ||
         pathname.startsWith('/templates') ||
-        publicRoutes.includes(pathname)
+        pathname.startsWith('/legal')
     ) {
         return NextResponse.next();
     }
 
-    // 2. On fouille l'utilisateur pour trouver son badge (Cookie)
+    // 3. ASTUCE : On enlève la langue de l'URL pour vérifier nos règles de sécurité
+    // Ex: "/fr/login" devient "/login"
+    let pathnameWithoutLocale = pathname.replace(/^\/(fr|en|nl)(\/|$)/, '/');
+    // Petit nettoyage pour éviter un slash final en trop (ex: /login/ devient /login)
+    if (pathnameWithoutLocale !== '/' && pathnameWithoutLocale.endsWith('/')) {
+        pathnameWithoutLocale = pathnameWithoutLocale.slice(0, -1);
+    }
+
+    // 4. Est-ce une route publique ?
+    if (publicRoutes.includes(pathnameWithoutLocale)) {
+        // C'est public ! On laisse next-intl ajouter la langue (/fr) et afficher la page
+        return intlMiddleware(request);
+    }
+
+    // --- 5. ZONE SÉCURISÉE : On fouille l'utilisateur ---
     const token = request.cookies.get('auth_token')?.value;
 
     if (!token) {
-        // Pas de badge ? Direction la page de connexion !
+        // Pas de badge ? Direction /login. (next-intl rajoutera le /fr automatiquement après !)
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
     try {
-        // 3. On passe le badge à la machine pour voir s'il n'est pas faux
         const { payload } = await jwtVerify(token, SECRET_KEY);
         const role = payload.role as string;
 
-        // 4. Règles de sécurité strictes (Le bon rôle pour la bonne page)
-        if (pathname.startsWith('/founder') && role !== 'FOUNDER') {
+        // Règles de sécurité strictes sur l'URL "nettoyée"
+        if (pathnameWithoutLocale.startsWith('/founder') && role !== 'FOUNDER') {
             return NextResponse.redirect(new URL('/scanner', request.url));
         }
 
-        if (pathname.startsWith('/dashboard') && role === 'EMPLOYEE') {
-            return NextResponse.redirect(new URL('/scanner', request.url)); // Les employés n'ont pas de dashboard
+        if (pathnameWithoutLocale.startsWith('/dashboard') && role === 'EMPLOYEE') {
+            return NextResponse.redirect(new URL('/scanner', request.url));
         }
 
-        // Si l'utilisateur a le droit d'être là, on ouvre la porte
-        return NextResponse.next();
+        // Tout est bon, l'utilisateur a le droit d'être là. 
+        // On passe le relais à next-intl pour afficher la bonne langue !
+        return intlMiddleware(request);
 
     } catch (error) {
-        // Si le badge est expiré ou falsifié, on le détruit et on le vire au login
+        // Badge expiré ou falsifié
         const response = NextResponse.redirect(new URL('/login', request.url));
         response.cookies.delete('auth_token');
         return response;
     }
 }
 
-// Configuration pour dire à Next.js d'utiliser ce videur partout (sauf sur les fichiers statiques)
+// 6. Configuration du Matcher pour next-intl
 export const config = {
-    matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+    // On applique le middleware partout sauf sur les fichiers statiques ou API
+    matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
 };

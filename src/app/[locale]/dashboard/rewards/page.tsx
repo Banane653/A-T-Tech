@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 type Reward = { id: string; name: string; cost: number };
 
 export default function RewardsPage() {
+    const t = useTranslations('MerchantRewards');
     const [rewards, setRewards] = useState<Reward[]>([]);
     const [name, setName] = useState('');
     const [cost, setCost] = useState('');
@@ -36,13 +38,13 @@ export default function RewardsPage() {
             fetchRewards();
         } else {
             const data = await res.json();
-            alert('Erreur : ' + data.error);
+            alert(`${t('alerts.error')} ${data.error}`);
         }
         setLoading(false);
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Supprimer cette récompense ?')) return;
+        if (!confirm(t('alerts.confirmDelete'))) return;
         const res = await fetch('/api/admin/rewards', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
@@ -51,21 +53,21 @@ export default function RewardsPage() {
         if (res.ok) fetchRewards();
         else {
             const data = await res.json();
-            alert('Erreur : ' + data.error);
+            alert(`${t('alerts.error')} ${data.error}`);
         }
     };
 
     return (
         <div className="p-8 max-w-3xl">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Catalogue Cadeaux</h1>
-            <p className="text-gray-500 mb-8">Définissez les récompenses échangeables contre des points.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+            <p className="text-gray-500 mb-8">{t('subtitle')}</p>
 
             <form onSubmit={handleAdd} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4 mb-8">
-                <h2 className="font-bold text-gray-800">Ajouter une récompense</h2>
+                <h2 className="font-bold text-gray-800">{t('form.title')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input
                         type="text"
-                        placeholder="Nom (ex: Café gratuit)"
+                        placeholder={t('form.namePlaceholder')}
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -73,7 +75,7 @@ export default function RewardsPage() {
                     />
                     <input
                         type="number"
-                        placeholder="Coût en points"
+                        placeholder={t('form.costPlaceholder')}
                         required
                         min={1}
                         value={cost}
@@ -86,13 +88,13 @@ export default function RewardsPage() {
                     disabled={loading}
                     className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
                 >
-                    {loading ? 'Ajout...' : 'Ajouter au catalogue'}
+                    {loading ? t('form.loadingBtn') : t('form.submitBtn')}
                 </button>
             </form>
 
             <div className="space-y-3">
                 {rewards.length === 0 ? (
-                    <p className="text-gray-400 text-center py-8">Aucune récompense pour le moment.</p>
+                    <p className="text-gray-400 text-center py-8">{t('list.empty')}</p>
                 ) : (
                     rewards.map((reward) => (
                         <div
@@ -101,13 +103,13 @@ export default function RewardsPage() {
                         >
                             <div>
                                 <p className="font-bold text-gray-800">{reward.name}</p>
-                                <p className="text-sm text-blue-600 font-semibold">{reward.cost} points</p>
+                                <p className="text-sm text-blue-600 font-semibold">{reward.cost} {t('list.pointsLabel')}</p>
                             </div>
                             <button
                                 onClick={() => handleDelete(reward.id)}
                                 className="text-red-500 hover:text-red-700 font-bold text-sm px-3 py-1"
                             >
-                                Supprimer
+                                {t('list.deleteBtn')}
                             </button>
                         </div>
                     ))

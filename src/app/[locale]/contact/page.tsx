@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import Footer from '@/components/Footer'; // Ton composant Footer global
+import { Link } from '@/navigation'; // Utilisation de notre Link intelligent
+import Footer from '@/components/Footer';
+import { useTranslations } from 'next-intl';
 
 export default function ContactPage() {
+    const t = useTranslations('Contact');
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -44,7 +46,7 @@ export default function ContactPage() {
                     A-T-TECH.
                 </Link>
                 <Link href="/" className="text-sm font-medium text-gray-500 hover:text-black transition">
-                    ← Retour à l'accueil
+                    {t('backToHome')}
                 </Link>
             </header>
 
@@ -56,74 +58,82 @@ export default function ContactPage() {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50 rounded-bl-full -z-10"></div>
 
                     <div className="text-center mb-10">
-                        <h1 className="text-3xl font-bold mb-3">Contactez-nous</h1>
+                        <h1 className="text-3xl font-bold mb-3">{t('title')}</h1>
                         <p className="text-gray-500 text-sm">
-                            Une question sur nos tarifs ? Besoin d'une démo pour votre commerce ? Laissez-nous un message et nous vous répondrons rapidement.
+                            {t('subtitle')}
                         </p>
                     </div>
 
                     {status === 'success' ? (
                         <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-2xl text-center animate-fade-in">
                             <div className="text-4xl mb-2">✅</div>
-                            <h3 className="font-bold text-lg mb-1">Message envoyé !</h3>
-                            <p className="text-sm">Merci pour votre message. Nous vous recontacterons très vite.</p>
+                            <h3 className="font-bold text-lg mb-1">{t('success.title')}</h3>
+                            <p className="text-sm">{t('success.desc')}</p>
                             <button 
                                 onClick={() => setStatus('idle')}
                                 className="mt-6 text-sm font-semibold text-green-700 hover:underline"
                             >
-                                Envoyer un autre message
+                                {t('success.btnAgain')}
                             </button>
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label htmlFor="name" className="text-xs font-bold text-gray-700 uppercase tracking-wide">Nom complet</label>
+                                    <label htmlFor="name" className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                                        {t('form.nameLabel')}
+                                    </label>
                                     <input 
                                         type="text" id="name" required
                                         value={formData.name}
                                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black outline-none transition"
-                                        placeholder="Jean Dupont"
+                                        placeholder={t('form.namePlaceholder')}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label htmlFor="email" className="text-xs font-bold text-gray-700 uppercase tracking-wide">Email</label>
+                                    <label htmlFor="email" className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                                        {t('form.emailLabel')}
+                                    </label>
                                     <input 
                                         type="email" id="email" required
                                         value={formData.email}
                                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black outline-none transition"
-                                        placeholder="jean@commerce.com"
+                                        placeholder={t('form.emailPlaceholder')}
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label htmlFor="company" className="text-xs font-bold text-gray-700 uppercase tracking-wide">Nom du commerce (Optionnel)</label>
+                                <label htmlFor="company" className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                                    {t('form.companyLabel')}
+                                </label>
                                 <input 
                                     type="text" id="company"
                                     value={formData.company}
                                     onChange={(e) => setFormData({...formData, company: e.target.value})}
                                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black outline-none transition"
-                                    placeholder="Café Lumière"
+                                    placeholder={t('form.companyPlaceholder')}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <label htmlFor="message" className="text-xs font-bold text-gray-700 uppercase tracking-wide">Votre message</label>
+                                <label htmlFor="message" className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                                    {t('form.messageLabel')}
+                                </label>
                                 <textarea 
                                     id="message" required rows={4}
                                     value={formData.message}
                                     onChange={(e) => setFormData({...formData, message: e.target.value})}
                                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black outline-none transition resize-none"
-                                    placeholder="Comment pouvons-nous vous aider ?"
+                                    placeholder={t('form.messagePlaceholder')}
                                 ></textarea>
                             </div>
 
                             {status === 'error' && (
                                 <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
-                                    ❌ Une erreur est survenue lors de l'envoi. Veuillez réessayer.
+                                    {t('error')}
                                 </p>
                             )}
 
@@ -133,9 +143,9 @@ export default function ContactPage() {
                                 className="w-full bg-black text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition active:scale-[0.98] disabled:opacity-70 flex justify-center items-center gap-2"
                             >
                                 {status === 'loading' ? (
-                                    <span className="animate-pulse">Envoi en cours...</span>
+                                    <span className="animate-pulse">{t('submit.loading')}</span>
                                 ) : (
-                                    "Envoyer le message"
+                                    t('submit.default')
                                 )}
                             </button>
                         </form>

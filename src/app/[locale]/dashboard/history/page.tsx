@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 
-// 👉 NOUVEAU : On ajoute merchantUser dans le type
 type Transaction = {
     id: string;
     type: string;
@@ -13,12 +13,7 @@ type Transaction = {
     merchantUser: { name: string } | null; 
 };
 
-const typeLabels: Record<string, string> = {
-    EARN: 'Gain',
-    SPEND: 'Dépense',
-    RESET: 'Réinitialisation',
-};
-
+// On garde les couleurs ici car c'est de la logique visuelle (CSS)
 const typeColors: Record<string, string> = {
     EARN: 'text-green-700 bg-green-50',
     SPEND: 'text-orange-700 bg-orange-50',
@@ -26,8 +21,14 @@ const typeColors: Record<string, string> = {
 };
 
 export default function HistoryPage() {
+    const t = useTranslations('MerchantHistory');
+    const locale = useLocale();
+    
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Adaptation de la localisation de la date selon la langue en cours
+    const dateLocale = locale === 'en' ? 'en-US' : locale === 'nl' ? 'nl-NL' : 'fr-FR';
 
     useEffect(() => {
         fetch('/api/admin/transactions')
@@ -39,7 +40,7 @@ export default function HistoryPage() {
     }, []);
 
     const formatDate = (iso: string) =>
-        new Date(iso).toLocaleString('fr-FR', {
+        new Date(iso).toLocaleString(dateLocale, {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
@@ -50,28 +51,34 @@ export default function HistoryPage() {
     const customerName = (t: Transaction) =>
         `${t.customer.firstName}${t.customer.lastName ? ` ${t.customer.lastName}` : ''}`;
 
+    // Fonction de sécurité pour traduire uniquement les types qu'on connaît
+    const getTranslatedType = (type: string) => {
+        const knownTypes = ['EARN', 'SPEND', 'RESET'];
+        if (knownTypes.includes(type)) return t(`types.${type}`);
+        return type;
+    };
+
     return (
         <div className="p-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Historique</h1>
-            <p className="text-gray-500 mb-8">Toutes les transactions de votre commerce.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+            <p className="text-gray-500 mb-8">{t('subtitle')}</p>
 
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 {loading ? (
-                    <p className="p-8 text-center text-gray-400">Chargement...</p>
+                    <p className="p-8 text-center text-gray-400">{t('loading')}</p>
                 ) : transactions.length === 0 ? (
-                    <p className="p-8 text-center text-gray-400">Aucune transaction pour le moment.</p>
+                    <p className="p-8 text-center text-gray-400">{t('empty')}</p>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-200">
-                                    <th className="text-left p-4 font-semibold text-gray-600">Date</th>
-                                    <th className="text-left p-4 font-semibold text-gray-600">Client</th>
-                                    {/* 👉 NOUVEAU : En-tête de la colonne Employé */}
-                                    <th className="text-left p-4 font-semibold text-gray-600">Employé</th>
-                                    <th className="text-left p-4 font-semibold text-gray-600">Action</th>
-                                    <th className="text-left p-4 font-semibold text-gray-600">Montant</th>
-                                    <th className="text-left p-4 font-semibold text-gray-600">Description</th>
+                                    <th className="text-left p-4 font-semibold text-gray-600">{t('columns.date')}</th>
+                                    <th className="text-left p-4 font-semibold text-gray-600">{t('columns.customer')}</th>
+                                    <th className="text-left p-4 font-semibold text-gray-600">{t('columns.employee')}</th>
+                                    <th className="text-left p-4 font-semibold text-gray-600">{t('columns.action')}</th>
+                                    <th className="text-left p-4 font-semibold text-gray-600">{t('columns.amount')}</th>
+                                    <th className="text-left p-4 font-semibold text-gray-600">{t('columns.description')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,12 +90,13 @@ export default function HistoryPage() {
                                         <td className="p-4 font-medium text-gray-800">
                                             {customerName(tx)}
                                         </td>
-                                        {/* 👉 NOUVEAU : Affichage du nom de l'employé ou du fallback */}
                                         <td className="p-4 font-medium text-blue-600">
                                             {tx.merchantUser ? (
                                                 tx.merchantUser.name
                                             ) : (
-                                                <span className="text-gray-400 italic font-normal">Ancien employé</span>
+                                                <span className="text-gray-400 italic font-normal">
+                                                    {t('deletedEmployee')}
+                                                </span>
                                             )}
                                         </td>
                                         <td className="p-4">
@@ -97,7 +105,7 @@ export default function HistoryPage() {
                                                     typeColors[tx.type] || 'text-gray-600 bg-gray-50'
                                                 }`}
                                             >
-                                                {typeLabels[tx.type] || tx.type}
+                                                {getTranslatedType(tx.type)}
                                             </span>
                                         </td>
                                         <td className="p-4 font-bold text-gray-800">

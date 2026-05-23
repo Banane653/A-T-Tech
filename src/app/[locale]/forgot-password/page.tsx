@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/navigation'; // Utilisation de notre Link intelligent
+import { useTranslations } from 'next-intl';
 
 export default function ForgotPasswordPage() {
+    const t = useTranslations('ForgotPassword');
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
@@ -21,23 +23,23 @@ export default function ForgotPasswordPage() {
 
             if (res.ok) {
                 setStatus('success');
-                setMessage("Un e-mail vous a été envoyé avec les instructions pour réinitialiser votre mot de passe.");
+                setMessage(t('success.message'));
             } else {
                 setStatus('error');
-                setMessage("Une erreur est survenue. Veuillez réessayer.");
+                setMessage(t('errors.generic'));
             }
         } catch (err) {
             setStatus('error');
-            setMessage("Impossible de joindre le serveur.");
+            setMessage(t('errors.serverConnection'));
         }
     };
 
     return (
         <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
             <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-                <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">Mot de passe oublié</h1>
+                <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">{t('title')}</h1>
                 <p className="text-center text-gray-500 mb-8 text-sm">
-                    Entrez l'adresse e-mail associée à votre compte.
+                    {t('subtitle')}
                 </p>
 
                 {status === 'success' ? (
@@ -46,7 +48,7 @@ export default function ForgotPasswordPage() {
                             {message}
                         </div>
                         <Link href="/login" className="text-black font-bold hover:underline">
-                            ← Retour à la connexion
+                            {t('links.backToLoginArrow')}
                         </Link>
                     </div>
                 ) : (
@@ -59,7 +61,7 @@ export default function ForgotPasswordPage() {
                         <div>
                             <input 
                                 type="email" 
-                                placeholder="Votre adresse e-mail"
+                                placeholder={t('placeholder')}
                                 required
                                 value={email}
                                 className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
@@ -72,12 +74,12 @@ export default function ForgotPasswordPage() {
                             disabled={status === 'loading'}
                             className="w-full bg-black text-white font-bold py-3 rounded-lg hover:bg-gray-800 transition duration-200 disabled:bg-gray-400"
                         >
-                            {status === 'loading' ? "Envoi en cours..." : "Recevoir le lien"}
+                            {status === 'loading' ? t('buttons.loading') : t('buttons.submit')}
                         </button>
 
                         <div className="text-center pt-4">
                             <Link href="/login" className="text-sm text-gray-500 hover:text-black transition">
-                                Annuler et retourner à la connexion
+                                {t('links.cancelBackToLogin')}
                             </Link>
                         </div>
                     </form>

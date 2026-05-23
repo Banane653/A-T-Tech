@@ -2,13 +2,16 @@
 
 import { Link, usePathname, useRouter } from '@/navigation';
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
+// On remplace "label" par "labelKey" pour faire le lien avec le dictionnaire
 const navItems = [
-    { href: '/founder', label: 'Vue Globale', icon: '🌍', exact: true },
-    { href: '/founder/companies', label: 'Commerces', icon: '🏪' },
+    { href: '/founder', labelKey: 'overview', icon: '🌍', exact: true },
+    { href: '/founder/companies', labelKey: 'companies', icon: '🏪' },
 ];
 
 export default function FounderLayout({ children }: { children: React.ReactNode }) {
+    const t = useTranslations('FounderLayout');
     const pathname = usePathname();
     const router = useRouter();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -29,7 +32,7 @@ export default function FounderLayout({ children }: { children: React.ReactNode 
             {/* EN-TÊTE MOBILE (Visible uniquement sur mobile) */}
             <div className="md:hidden flex items-center justify-between bg-slate-900 border-b border-indigo-900/40 p-4 shrink-0">
                 <div className="flex items-center gap-2">
-                    <h1 className="text-lg font-bold text-white">Espace Fondateur</h1>
+                    <h1 className="text-lg font-bold text-white">{t('title')}</h1>
                 </div>
                 <button 
                     onClick={() => setIsMobileMenuOpen(true)}
@@ -59,8 +62,8 @@ export default function FounderLayout({ children }: { children: React.ReactNode 
             `}>
                 <div className="p-6 border-b border-indigo-900/30 flex justify-between items-center">
                     <div>
-                        <h1 className="text-lg font-bold text-white">Espace Fondateur</h1>
-                        <p className="text-xs text-indigo-300/80 mt-1">Super-Admin SaaS</p>
+                        <h1 className="text-lg font-bold text-white">{t('title')}</h1>
+                        <p className="text-xs text-indigo-300/80 mt-1">{t('subtitle')}</p>
                     </div>
                     {/* Bouton Fermer sur mobile */}
                     <button 
@@ -90,7 +93,8 @@ export default function FounderLayout({ children }: { children: React.ReactNode 
                                 }`}
                             >
                                 <span>{item.icon}</span>
-                                {item.label}
+                                {/* On récupère la traduction dynamiquement */}
+                                {t(`nav.${item.labelKey}`)}
                             </Link>
                         );
                     })}
@@ -101,7 +105,7 @@ export default function FounderLayout({ children }: { children: React.ReactNode 
                         onClick={handleLogout}
                         className="w-full px-4 py-2 text-sm font-semibold text-red-400 hover:bg-red-950/50 rounded-lg transition"
                     >
-                        Déconnexion
+                        {t('logout')}
                     </button>
                 </div>
             </aside>

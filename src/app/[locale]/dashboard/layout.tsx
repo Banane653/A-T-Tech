@@ -2,17 +2,20 @@
 
 import { Link, usePathname, useRouter } from '@/navigation';
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
+// On utilise "labelKey" pour faire le pont avec les dictionnaires
 const navItems = [
-    { href: '/scanner', label: 'Scanner', icon: '📷' },
-    { href: '/dashboard/rewards', label: 'Catalogue Cadeaux', icon: '🎁' },
-    { href: '/dashboard/history', label: 'Historique', icon: '📋' },
-    { href: '/dashboard/stats', label: 'Statistiques', icon: '📊' },
-    { href: '/dashboard/customers', label: 'Mes Clients', icon: '🤝' },
-    { href: '/dashboard', label: 'Mon Équipe', icon: '👥', exact: true },
+    { href: '/scanner', labelKey: 'scanner', icon: '📷' },
+    { href: '/dashboard/rewards', labelKey: 'rewards', icon: '🎁' },
+    { href: '/dashboard/history', labelKey: 'history', icon: '📋' },
+    { href: '/dashboard/stats', labelKey: 'stats', icon: '📊' },
+    { href: '/dashboard/customers', labelKey: 'customers', icon: '🤝' },
+    { href: '/dashboard', labelKey: 'team', icon: '👥', exact: true },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const t = useTranslations('MerchantLayout');
     const pathname = usePathname();
     const router = useRouter();
     const [systemType, setSystemType] = useState<string | null>(null);
@@ -47,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* EN-TÊTE MOBILE (Visible uniquement sur mobile) */}
             <div className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4 shrink-0 shadow-sm z-30">
                 <div className="flex items-center gap-2">
-                    <h1 className="text-lg font-bold text-gray-900">Espace Gérant</h1>
+                    <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
                 </div>
                 <button 
                     onClick={() => setIsMobileMenuOpen(true)}
@@ -77,8 +80,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             `}>
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center">
                     <div>
-                        <h1 className="text-lg font-bold text-gray-900">Espace Gérant</h1>
-                        <p className="text-xs text-gray-500 mt-1">Fidelity Wallet</p>
+                        <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>
+                        <p className="text-xs text-gray-500 mt-1">{t('subtitle')}</p>
                     </div>
                     {/* Bouton Fermer sur mobile */}
                     <button 
@@ -106,12 +109,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 href={item.href}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition ${
                                     linkActive
-                                        ? 'bg-black text-white' // J'ai adapté la couleur active en noir pour coller à ton nouveau design premium
+                                        ? 'bg-black text-white' 
                                         : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                             >
                                 <span>{item.icon}</span>
-                                {item.label}
+                                {t(`nav.${item.labelKey}`)}
                             </Link>
                         );
                     })}
@@ -122,7 +125,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         onClick={handleLogout}
                         className="w-full px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-lg transition"
                     >
-                        Déconnexion
+                        {t('logout')}
                     </button>
                 </div>
             </aside>

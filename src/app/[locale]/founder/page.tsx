@@ -10,6 +10,7 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
+import { useTranslations } from 'next-intl';
 
 type GrowthPoint = {
     label: string;
@@ -29,14 +30,13 @@ type FounderStats = {
 };
 
 function formatNumber(value: number) {
-    return new Intl.NumberFormat('fr-FR').format(value);
+    return new Intl.NumberFormat('fr-FR').format(value); // Tu pourrais aussi adapter ceci dynamiquement avec `next-intl` si besoin plus tard
 }
 
+// Les données techniques et de style sont gardées ici, les textes passent dans le JSON
 const statCards = [
     {
         key: 'totalCompanies' as const,
-        label: 'Commerces actifs',
-        subtitle: 'Entreprises inscrites sur la plateforme',
         gradient: 'from-indigo-500/20 to-violet-600/20',
         border: 'border-indigo-500/30',
         titleColor: 'text-indigo-300',
@@ -45,8 +45,6 @@ const statCards = [
     },
     {
         key: 'totalCustomers' as const,
-        label: 'Utilisateurs de la carte',
-        subtitle: 'Clients fidélisés sur tout le SaaS',
         gradient: 'from-violet-500/20 to-purple-600/20',
         border: 'border-violet-500/30',
         titleColor: 'text-violet-300',
@@ -55,8 +53,6 @@ const statCards = [
     },
     {
         key: 'rewardsPointsCount' as const,
-        label: 'Cadeaux (Points)',
-        subtitle: 'Récompenses échangées via les points',
         gradient: 'from-fuchsia-500/20 to-pink-600/20',
         border: 'border-fuchsia-500/30',
         titleColor: 'text-fuchsia-300',
@@ -65,8 +61,6 @@ const statCards = [
     },
     {
         key: 'stampsResetCount' as const,
-        label: 'Cartes Tampons',
-        subtitle: 'Cartes 10/10 complétées',
         gradient: 'from-rose-500/20 to-red-600/20',
         border: 'border-rose-500/30',
         titleColor: 'text-rose-300',
@@ -75,8 +69,6 @@ const statCards = [
     },
     {
         key: 'totalPointsDistributed' as const,
-        label: 'Points attribués',
-        subtitle: 'Programmes système POINTS uniquement',
         gradient: 'from-blue-500/20 to-cyan-600/20',
         border: 'border-blue-500/30',
         titleColor: 'text-blue-300',
@@ -85,8 +77,6 @@ const statCards = [
     },
     {
         key: 'totalStampsDistributed' as const,
-        label: 'Tampons attribués',
-        subtitle: 'Programmes système TAMPONS uniquement',
         gradient: 'from-amber-500/20 to-orange-600/20',
         border: 'border-amber-500/30',
         titleColor: 'text-amber-300',
@@ -96,6 +86,7 @@ const statCards = [
 ];
 
 export default function FounderHomePage() {
+    const t = useTranslations('FounderDashboard');
     const [stats, setStats] = useState<FounderStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -105,10 +96,10 @@ export default function FounderHomePage() {
             .then(async (res) => {
                 const data = await res.json();
                 if (!res.ok) {
-                    throw new Error(data.error || 'Impossible de charger les statistiques');
+                    throw new Error(data.error || t('errors.loadFailed'));
                 }
                 if (data.totalCompanies === undefined) {
-                    throw new Error('Données invalides reçues du serveur');
+                    throw new Error(t('errors.invalidData'));
                 }
                 setStats({
                     totalCompanies: data.totalCompanies,
@@ -125,22 +116,22 @@ export default function FounderHomePage() {
                 setError(err.message);
             })
             .finally(() => setLoading(false));
-    }, []);
+    }, [t]);
 
     const growthLabel =
         stats?.growthGranularity === 'day'
-            ? 'Acquisition quotidienne des utilisateurs'
-            : 'Acquisition mensuelle des utilisateurs';
+            ? t('charts.growth.labelDay')
+            : t('charts.growth.labelMonth');
 
     return (
         <div className="p-8 max-w-6xl">
-            <h1 className="text-2xl font-bold text-white mb-2">Vue Globale</h1>
+            <h1 className="text-2xl font-bold text-white mb-2">{t('header.title')}</h1>
             <p className="text-slate-400 mb-8">
-                Pilotage stratégique de la plateforme Fidelity Wallet.
+                {t('header.subtitle')}
             </p>
 
             {loading ? (
-                <p className="text-center text-slate-500 py-16">Chargement des statistiques...</p>
+                <p className="text-center text-slate-500 py-16">{t('loading')}</p>
             ) : error ? (
                 <div className="bg-red-950/40 border border-red-500/40 text-red-300 rounded-2xl p-6 text-center">
                     {error}
@@ -156,27 +147,30 @@ export default function FounderHomePage() {
                                 <p
                                     className={`${card.titleColor} font-semibold uppercase text-xs tracking-wider`}
                                 >
-                                    {card.label}
+                                    {/* On cherche la traduction dynamiquement en utilisant la clé du tableau */}
+                                    {t(`cards.${card.key}.label`)}
                                 </p>
                                 <p
                                     className={`text-4xl font-extrabold ${card.valueColor} mt-2 tabular-nums`}
                                 >
                                     {formatNumber(stats?.[card.key] ?? 0)}
                                 </p>
-                                <p className={`text-sm ${card.subtitleColor} mt-2`}>{card.subtitle}</p>
+                                <p className={`text-sm ${card.subtitleColor} mt-2`}>
+                                    {t(`cards.${card.key}.subtitle`)}
+                                </p>
                             </div>
                         ))}
                     </div>
 
                     <div className="bg-slate-900 rounded-2xl border border-indigo-900/40 shadow-xl p-6">
                         <h2 className="text-lg font-bold text-white mb-1">
-                            Croissance globale de la base clients
+                            {t('charts.growth.title')}
                         </h2>
                         <p className="text-sm text-slate-400 mb-6">{growthLabel}</p>
 
                         {stats?.customerGrowth.length === 0 ? (
                             <p className="text-center text-slate-500 py-12">
-                                Pas encore assez de données pour afficher le graphique.
+                                {t('charts.growth.noData')}
                             </p>
                         ) : (
                             <div className="w-full h-80 min-h-0">
@@ -217,7 +211,7 @@ export default function FounderHomePage() {
                                             }}
                                             formatter={(value) => [
                                                 formatNumber(Number(value)),
-                                                'Total clients',
+                                                t('charts.growth.tooltip'),
                                             ]}
                                         />
                                         <Area

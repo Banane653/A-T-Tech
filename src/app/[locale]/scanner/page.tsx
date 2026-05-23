@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter, Link } from '@/navigation'; // Utilisation de nos imports intelligents
 import { ArrowLeft, Camera, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 type CompanyInfo = { name: string; systemType: string };
 type CustomerInfo = { id: string; firstName: string; lastName: string | null; points: number };
@@ -29,15 +29,15 @@ function ScannerPermissionPrompt({
     requesting: boolean;
     onAuthorize: () => void;
 }) {
+    const t = useTranslations('Scanner.permission');
     return (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white px-6 text-center">
             <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
                 <Camera className="h-10 w-10 text-gray-800" strokeWidth={1.5} />
             </div>
-            <h2 className="text-xl font-bold text-black">Accès à la caméra requis</h2>
+            <h2 className="text-xl font-bold text-black">{t('title')}</h2>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-gray-500">
-                Pour scanner la carte de fidélité de vos clients, veuillez autoriser l&apos;accès à
-                l&apos;appareil photo.
+                {t('desc')}
             </p>
             <button
                 type="button"
@@ -48,10 +48,10 @@ function ScannerPermissionPrompt({
                 {requesting ? (
                     <>
                         <Loader2 className="h-5 w-5 animate-spin" />
-                        Autorisation en cours…
+                        {t('loading')}
                     </>
                 ) : (
-                    'Autoriser la caméra'
+                    t('button')
                 )}
             </button>
         </div>
@@ -59,6 +59,7 @@ function ScannerPermissionPrompt({
 }
 
 function ScannerViewfinderOverlay() {
+    const t = useTranslations('Scanner.viewfinder');
     return (
         <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center">
             <div
@@ -71,13 +72,15 @@ function ScannerViewfinderOverlay() {
                 <span className="absolute bottom-0 right-0 h-10 w-10 rounded-br border-b-[3px] border-r-[3px] border-white" />
             </div>
             <p className="absolute bottom-5 left-0 right-0 px-4 text-center text-sm font-medium text-white drop-shadow-md">
-                Placez le QR code du client dans le cadre
+                {t('instruction')}
             </p>
         </div>
     );
 }
 
 export default function ScannerPage() {
+    const t = useTranslations('Scanner');
+    
     const [status, setStatus] = useState<ScanStatus>('scanning');
     const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
     const companyInfoRef = useRef<CompanyInfo | null>(null);
@@ -116,13 +119,12 @@ export default function ScannerPage() {
             setStampLimit(data.stampLimit || STAMP_LIMIT);
             setStatus('customer');
         } catch {
-            setMessage({ text: 'Erreur serveur', type: 'error' });
+            setMessage({ text: t('errors.server'), type: 'error' });
             setStatus('result');
             setTimeout(resetScanner, 3000);
         }
-    }, []);
+    }, [t]);
     
-
     const syncCameraUi = useCallback(() => {
         const permissionBtn = document.getElementById(
             PERMISSION_BUTTON_ID
@@ -257,7 +259,7 @@ export default function ScannerPage() {
                 setMessage({ text: data.error, type: 'error' });
             }
         } catch {
-            setMessage({ text: 'Erreur serveur', type: 'error' });
+            setMessage({ text: t('errors.server'), type: 'error' });
         }
         setStatus('result');
         setTimeout(resetScanner, 4000);
@@ -296,12 +298,12 @@ export default function ScannerPage() {
                     <Link
                         href="/dashboard"
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 text-gray-700 transition hover:bg-gray-100"
-                        aria-label="Retour au tableau de bord"
+                        aria-label={t('header.backAria')}
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </Link>
                     <div className="min-w-0 flex-1">
-                        <h1 className="truncate text-lg font-bold text-black">Scanner un client</h1>
+                        <h1 className="truncate text-lg font-bold text-black">{t('header.title')}</h1>
                         {companyInfo?.name && (
                             <p className="truncate text-xs text-gray-500">{companyInfo.name}</p>
                         )}
@@ -311,7 +313,7 @@ export default function ScannerPage() {
                         onClick={handleLogout}
                         className="shrink-0 rounded-xl border border-gray-200 px-3 py-2 text-xs font-bold text-gray-600 transition hover:bg-gray-100"
                     >
-                        Quitter
+                        {t('header.logout')}
                     </button>
                 </div>
             </header>
@@ -320,7 +322,7 @@ export default function ScannerPage() {
                 <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
                     {companyInfo && (
                         <div className="border-b border-gray-100 bg-gray-50 py-2.5 text-center text-xs font-bold uppercase tracking-widest text-gray-500">
-                            Mode {isStamps ? 'TAMPONS' : 'POINTS'}
+                            {isStamps ? t('mode.stamps') : t('mode.points')}
                         </div>
                     )}
 
@@ -349,7 +351,7 @@ export default function ScannerPage() {
                         {status === 'customer' && customer && (
                             <div className="w-full space-y-5 animate-in fade-in">
                                 <div className="text-center">
-                                    <p className="text-sm text-gray-500">Client</p>
+                                    <p className="text-sm text-gray-500">{t('customer.label')}</p>
                                     <p className="text-xl font-black text-black">{customerName}</p>
                                 </div>
 
@@ -357,14 +359,14 @@ export default function ScannerPage() {
                                     <>
                                         <div className="rounded-2xl bg-gray-50 py-4 text-center">
                                             <p className="text-sm font-bold uppercase text-gray-500">
-                                                Solde tampons
+                                                {t('stamps.balance')}
                                             </p>
                                             <p className="mt-1 text-5xl font-black text-black">
                                                 {customer.points}/{stampLimit}
                                             </p>
                                             {customer.points >= stampLimit && (
                                                 <p className="mt-2 text-sm font-bold text-amber-600">
-                                                    Carte pleine — scannez pour offrir le cadeau
+                                                    {t('stamps.full')}
                                                 </p>
                                             )}
                                         </div>
@@ -373,22 +375,22 @@ export default function ScannerPage() {
                                             onClick={() =>
                                                 handleAction({
                                                     action: 'add_stamp',
-                                                    description: '+1 tampon',
+                                                    description: t('logs.addStamp'),
                                                 })
                                             }
                                             className="w-full rounded-2xl bg-black py-5 text-xl font-black text-white transition hover:bg-gray-800"
                                         >
-                                            Ajouter 1 Tampon
+                                            {t('stamps.addBtn')}
                                         </button>
                                     </>
                                 ) : (
                                     <>
                                         <div className="rounded-2xl bg-blue-50 py-3 text-center">
                                             <p className="text-sm font-bold uppercase text-gray-500">
-                                                Solde points
+                                                {t('points.balance')}
                                             </p>
                                             <p className="text-4xl font-black text-blue-900">
-                                                {customer.points} pts
+                                                {customer.points} {t('points.pts')}
                                             </p>
                                         </div>
 
@@ -402,7 +404,7 @@ export default function ScannerPage() {
                                                         : 'bg-white text-gray-600'
                                                 }`}
                                             >
-                                                Encaisser
+                                                {t('points.tabEarn')}
                                             </button>
                                             <button
                                                 type="button"
@@ -413,7 +415,7 @@ export default function ScannerPage() {
                                                         : 'bg-white text-gray-600'
                                                 }`}
                                             >
-                                                Offrir
+                                                {t('points.tabSpend')}
                                             </button>
                                         </div>
 
@@ -424,7 +426,7 @@ export default function ScannerPage() {
                                                         type="number"
                                                         autoFocus
                                                         step="0.01"
-                                                        placeholder="Montant du ticket"
+                                                        placeholder={t('points.amountPlaceholder')}
                                                         className="w-full border-b-4 border-black py-4 pr-8 text-center text-3xl font-black text-black outline-none"
                                                         value={amount}
                                                         onChange={(e) => setAmount(e.target.value)}
@@ -439,19 +441,19 @@ export default function ScannerPage() {
                                                         handleAction({
                                                             action: 'add_points',
                                                             amount: Number(amount),
-                                                            description: `Achat de ${Number(amount).toFixed(2)}€`,
+                                                            description: `${t('logs.purchase')} ${Number(amount).toFixed(2)}€`,
                                                         })
                                                     }
                                                     className="w-full rounded-2xl bg-black py-4 text-lg font-black text-white hover:bg-gray-800"
                                                 >
-                                                    VALIDER L&apos;ACHAT
+                                                    {t('points.validateBtn')}
                                                 </button>
                                             </div>
                                         ) : (
                                             <div className="max-h-48 space-y-2 overflow-y-auto">
                                                 {rewards.length === 0 ? (
                                                     <p className="py-4 text-center text-sm text-gray-400">
-                                                        Aucune récompense configurée
+                                                        {t('rewards.empty')}
                                                     </p>
                                                 ) : (
                                                     rewards.map((reward) => {
@@ -478,7 +480,7 @@ export default function ScannerPage() {
                                                                     {reward.name}
                                                                 </span>
                                                                 <span className="text-sm opacity-80">
-                                                                    {reward.cost} points
+                                                                    {reward.cost} {t('rewards.pointsCost')}
                                                                 </span>
                                                             </button>
                                                         );
@@ -494,7 +496,7 @@ export default function ScannerPage() {
                                     onClick={resetScanner}
                                     className="w-full py-2 text-sm font-bold text-gray-400"
                                 >
-                                    Annuler / Scanner suivant
+                                    {t('actions.cancel')}
                                 </button>
                             </div>
                         )}
@@ -526,11 +528,11 @@ export default function ScannerPage() {
                                             }`}
                                         >
                                             {message?.type === 'reward'
-                                                ? 'BRAVO ! Donnez le cadeau au client !'
+                                                ? t('result.rewardTitle')
                                                 : message?.text}
                                         </p>
                                         <p className="mt-4 text-sm text-white opacity-70">
-                                            Prêt pour le client suivant...
+                                            {t('result.readyNext')}
                                         </p>
                                     </div>
                                 )}

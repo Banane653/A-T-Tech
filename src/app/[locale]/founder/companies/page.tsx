@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { CARD_TEMPLATES, TemplateType } from '@/config/templates';
+import { useTranslations } from 'next-intl';
 
 type Company = {
     id: string;
@@ -29,6 +30,7 @@ const initialFormData = {
 };
 
 export default function FounderCompaniesPage() {
+    const t = useTranslations('FounderCompanies');
     const [companies, setCompanies] = useState<Company[]>([]);
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -66,7 +68,7 @@ export default function FounderCompaniesPage() {
             fetchCompanies();
         } else {
             const data = await res.json();
-            alert('Erreur : ' + data.error);
+            alert(`${t('alerts.error')} ${data.error}`);
         }
         setLoading(false);
     };
@@ -80,9 +82,9 @@ export default function FounderCompaniesPage() {
         <div className="p-8 max-w-4xl">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-white mb-2">Commerces</h1>
+                    <h1 className="text-2xl font-bold text-white mb-2">{t('header.title')}</h1>
                     <p className="text-slate-400">
-                        Gérez les commerces inscrits sur la plateforme ({companies.length}).
+                        {t('header.subtitle', { count: companies.length })}
                     </p>
                 </div>
                 <button
@@ -90,7 +92,7 @@ export default function FounderCompaniesPage() {
                     onClick={() => setShowForm(!showForm)}
                     className="shrink-0 bg-indigo-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-indigo-500 transition shadow-lg shadow-indigo-900/40"
                 >
-                    {showForm ? 'Annuler' : '+ Nouveau Commerce'}
+                    {showForm ? t('header.btnCancel') : t('header.btnNew')}
                 </button>
             </div>
 
@@ -100,13 +102,13 @@ export default function FounderCompaniesPage() {
                     className="bg-slate-900 border border-indigo-900/40 p-6 rounded-2xl space-y-6 mb-8"
                 >
                     <h3 className="font-bold text-lg text-white border-b border-slate-700 pb-2">
-                        1. Informations du Commerce
+                        {t('form.section1.title')}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input
                             type="text"
-                            placeholder="Nom du Commerce"
+                            placeholder={t('form.section1.companyName')}
                             required
                             className={inputClass}
                             value={formData.companyName}
@@ -130,22 +132,22 @@ export default function FounderCompaniesPage() {
                             }}
                         >
                             <option value="STAMPS">
-                                ☕ Système à Tampons (10 tampons = Cadeau)
+                                {t('form.section1.systemStamps')}
                             </option>
                             <option value="POINTS">
-                                🛍️ Système à Points (Lié au montant payé)
+                                {t('form.section1.systemPoints')}
                             </option>
                         </select>
                     </div>
 
                     <h3 className="font-bold text-lg text-white border-b border-slate-700 pb-2 pt-4">
-                        2. Design de la Carte Premium
+                        {t('form.section2.title')}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                         <div className="flex flex-col">
                             <label className="text-sm text-slate-400 mb-1 font-semibold">
-                                Couleur principale de la carte
+                                {t('form.section2.primaryColor')}
                             </label>
                             <div className="flex items-center gap-3 bg-slate-800 p-2 border border-slate-600 rounded-lg">
                                 <input
@@ -163,7 +165,7 @@ export default function FounderCompaniesPage() {
                         </div>
                         <div className="flex flex-col">
                             <label className="text-sm text-slate-400 mb-1 font-semibold">
-                                Lien du Logo (URL Image)
+                                {t('form.section2.logoUrl')}
                             </label>
                             <input
                                 type="url"
@@ -179,7 +181,7 @@ export default function FounderCompaniesPage() {
 
                     <div className="mt-4">
                         <label className="text-sm text-slate-400 mb-2 font-semibold block">
-                            Modèle du programme de fidélité
+                            {t('form.section2.templateLabel')}
                         </label>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {availableTemplates.map((tpl) => (
@@ -205,12 +207,12 @@ export default function FounderCompaniesPage() {
                     </div>
 
                     <h3 className="font-bold text-lg text-white border-b border-slate-700 pb-2 pt-4">
-                        3. Compte Gérant
+                        {t('form.section3.title')}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input
                             type="text"
-                            placeholder="Nom du Gérant"
+                            placeholder={t('form.section3.adminName')}
                             required
                             className={inputClass}
                             value={formData.adminName}
@@ -220,10 +222,10 @@ export default function FounderCompaniesPage() {
                         />
                         <input
                             type="text"
-                            placeholder="Pseudo (ex: patron_1)"
+                            placeholder={t('form.section3.adminUsername')}
                             required
                             pattern="^[a-zA-Z0-9_.]+$"
-                            title="Seuls les lettres, chiffres, tirets bas (_) et points (.) sont autorisés."
+                            title={t('form.section3.adminUsernameTitle')}
                             className={inputClass}
                             value={formData.adminUsername}
                             onChange={(e) =>
@@ -232,7 +234,7 @@ export default function FounderCompaniesPage() {
                         />
                         <input
                             type="email"
-                            placeholder="Email de connexion"
+                            placeholder={t('form.section3.adminEmail')}
                             required
                             className={inputClass}
                             value={formData.adminEmail}
@@ -243,7 +245,7 @@ export default function FounderCompaniesPage() {
                     </div>
                     <input
                         type="password"
-                        placeholder="Mot de passe provisoire"
+                        placeholder={t('form.section3.adminPassword')}
                         required
                         className={inputClass}
                         value={formData.adminPassword}
@@ -257,17 +259,17 @@ export default function FounderCompaniesPage() {
                         disabled={loading}
                         className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-500 mt-4 transition disabled:opacity-50"
                     >
-                        {loading ? 'Création du commerce...' : 'Créer le commerce'}
+                        {loading ? t('form.submit.loading') : t('form.submit.default')}
                     </button>
                 </form>
             )}
 
             <div className="bg-slate-900 rounded-2xl border border-indigo-900/40 shadow-xl overflow-hidden">
                 {fetching ? (
-                    <p className="p-8 text-center text-slate-500">Chargement...</p>
+                    <p className="p-8 text-center text-slate-500">{t('list.loading')}</p>
                 ) : companies.length === 0 && !showForm ? (
                     <p className="p-10 text-center text-slate-500 border-2 border-dashed border-slate-700 m-6 rounded-xl">
-                        Aucun commerce n&apos;est encore inscrit.
+                        {t('list.empty')}
                     </p>
                 ) : (
                     <div className="divide-y divide-slate-800">
@@ -309,29 +311,28 @@ export default function FounderCompaniesPage() {
                                                 }`}
                                             >
                                                 {company.systemType === 'STAMPS'
-                                                    ? 'TAMPONS'
-                                                    : 'POINTS'}
+                                                    ? t('list.badges.stamps')
+                                                    : t('list.badges.points')}
                                             </span>
                                         </div>
                                         <p className="text-sm text-slate-400 mt-1">
-                                            Modèle :{' '}
+                                            {t('list.labels.template')}{' '}
                                             <span className="font-semibold text-slate-300">
                                                 {CARD_TEMPLATES.find(
                                                     (t) => t.id === company.cardTemplate
-                                                )?.name || 'Standard'}
+                                                )?.name || t('list.labels.standard')}
                                             </span>
                                         </p>
                                         {company.users[0] && (
                                             <p className="text-xs text-slate-500 mt-1">
-                                                Gérant : {company.users[0].name} (
+                                                {t('list.labels.manager')} {company.users[0].name} (
                                                 {company.users[0].email})
                                             </p>
                                         )}
                                     </div>
                                 </div>
                                 <span className="self-start sm:self-center bg-emerald-900/40 text-emerald-300 border border-emerald-700/50 text-xs font-bold px-3 py-1.5 rounded-full">
-                                    {company._count.customers} client
-                                    {company._count.customers !== 1 ? 's' : ''}
+                                    {t('list.labels.customers', { count: company._count.customers })}
                                 </span>
                             </div>
                         ))}

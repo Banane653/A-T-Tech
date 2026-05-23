@@ -118,6 +118,429 @@
         }
       }
     },
+    "FounderDashboard": {
+      "header": {
+        "title": "Global Overview",
+        "subtitle": "Strategic management of the Fidelity Wallet platform."
+      },
+      "loading": "Loading statistics...",
+      "errors": {
+        "loadFailed": "Unable to load statistics",
+        "invalidData": "Invalid data received from server"
+      },
+      "cards": {
+        "totalCompanies": {
+          "label": "Active Businesses",
+          "subtitle": "Companies registered on the platform"
+        },
+        "totalCustomers": {
+          "label": "Card Users",
+          "subtitle": "Loyal customers across the SaaS"
+        },
+        "rewardsPointsCount": {
+          "label": "Rewards (Points)",
+          "subtitle": "Rewards redeemed via points"
+        },
+        "stampsResetCount": {
+          "label": "Stamp Cards",
+          "subtitle": "10/10 cards completed"
+        },
+        "totalPointsDistributed": {
+          "label": "Points Distributed",
+          "subtitle": "POINTS system programs only"
+        },
+        "totalStampsDistributed": {
+          "label": "Stamps Distributed",
+          "subtitle": "STAMPS system programs only"
+        }
+      },
+      "charts": {
+        "growth": {
+          "title": "Overall Customer Base Growth",
+          "labelDay": "Daily user acquisition",
+          "labelMonth": "Monthly user acquisition",
+          "noData": "Not enough data to display the chart yet.",
+          "tooltip": "Total customers"
+        }
+      }
+    },
+    "FounderCompanies": {
+      "header": {
+        "title": "Businesses",
+        "subtitle": "Manage the businesses registered on the platform ({count}).",
+        "btnNew": "+ New Business",
+        "btnCancel": "Cancel"
+      },
+      "form": {
+        "section1": {
+          "title": "1. Business Information",
+          "companyName": "Business Name",
+          "systemStamps": "☕ Stamp System (10 stamps = Reward)",
+          "systemPoints": "🛍️ Points System (Based on amount paid)"
+        },
+        "section2": {
+          "title": "2. Premium Card Design",
+          "primaryColor": "Primary card color",
+          "logoUrl": "Logo Link (Image URL)",
+          "templateLabel": "Loyalty program template"
+        },
+        "section3": {
+          "title": "3. Manager Account",
+          "adminName": "Manager Name",
+          "adminUsername": "Username (e.g. boss_1)",
+          "adminUsernameTitle": "Only letters, numbers, underscores (_), and dots (.) are allowed.",
+          "adminEmail": "Login Email",
+          "adminPassword": "Temporary Password"
+        },
+        "submit": {
+          "loading": "Creating business...",
+          "default": "Create business"
+        }
+      },
+      "list": {
+        "loading": "Loading...",
+        "empty": "No businesses registered yet.",
+        "badges": {
+          "stamps": "STAMPS",
+          "points": "POINTS"
+        },
+        "labels": {
+          "template": "Template:",
+          "standard": "Standard",
+          "manager": "Manager:",
+          "customers": "{count} customer(s)"
+        }
+      },
+      "alerts": {
+        "error": "Error:"
+      }
+    },
+    "FounderLayout": {
+      "title": "Founder Space",
+      "subtitle": "SaaS Super-Admin",
+      "logout": "Log out",
+      "nav": {
+        "overview": "Overview",
+        "companies": "Businesses"
+      }
+    },
+    "MerchantTeam": {
+      "header": {
+        "defaultName": "My Business",
+        "subtitle": "Manage your team and settings"
+      },
+      "stats": {
+        "customers": "Loyal Customers",
+        "team": "Team",
+        "employeeCount": "{count} employee(s)"
+      },
+      "points": {
+        "title": "⚙️ Loyalty Rule",
+        "desc": "What is the amount in euros required for a customer to earn 1 point?",
+        "currency": "€ = 1 point",
+        "saveBtn": "Save",
+        "savingBtn": "Saving..."
+      },
+      "link": {
+        "title": "🔗 Your customer registration link",
+        "desc": "Print this QR Code and place it on your counter, or copy the link below to send to your customers:",
+        "copyBtn": "Copy link"
+      },
+      "team": {
+        "title": "My Team",
+        "addBtn": "+ Add an employee",
+        "cancelBtn": "Cancel",
+        "roleLabel": "Role: Staff",
+        "deleteTitle": "Delete employee"
+      },
+      "form": {
+        "fullName": "Full name",
+        "email": "Login email",
+        "username": "Username (e.g. sarah_b)",
+        "usernameTitle": "Only letters, numbers, underscores (_), and dots (.) are allowed.",
+        "password": "Temporary password",
+        "submitBtn": "Save employee",
+        "loadingBtn": "Creating..."
+      },
+      "alerts": {
+        "error": "Error:",
+        "confirmDelete": "Are you sure you want to delete this employee? They will no longer have access to the scanner.",
+        "ratioSuccess": "Conversion rate updated!",
+        "ratioError": "Error during update.",
+        "copied": "Link copied!"
+      }
+    },
+    "RegisterQrCode": {
+        "expandTitle": "Expand QR Code",
+        "printLabel": "Print",
+        "modalTitle": "Registration QR Code",
+        "modalDesc": "Customers can scan this code to join your loyalty program.",
+        "downloadBtn": "Download for printing"
+      },
+    "MerchantStats": {
+      "header": {
+        "title": "Statistics",
+        "subtitle": "Overview of your loyalty program's performance."
+      },
+      "loading": "Loading...",
+      "cards": {
+        "points": {
+          "label": "Points Distributed",
+          "desc": "Total of all customer earnings"
+        },
+        "gifts": {
+          "label": "Gifts Offered",
+          "desc": "Redemptions and completed cards"
+        },
+        "customers": {
+          "label": "Total Customers",
+          "desc": "Active cards in your database"
+        }
+      },
+      "chart": {
+        "title": "Customer Base Growth",
+        "labelDay": "Daily registration trend",
+        "labelMonth": "Monthly registration trend",
+        "noData": "Not enough data to display the chart yet.",
+        "tooltipTotal": "Total customers",
+        "tooltipNew": "New customers"
+      }
+    },
+    "MerchantRewards": {
+      "title": "Rewards Catalog",
+      "subtitle": "Set up the rewards that can be redeemed for points.",
+      "form": {
+        "title": "Add a reward",
+        "namePlaceholder": "Name (e.g. Free coffee)",
+        "costPlaceholder": "Point cost",
+        "submitBtn": "Add to catalog",
+        "loadingBtn": "Adding..."
+      },
+      "list": {
+        "empty": "No rewards configured yet.",
+        "pointsLabel": "points",
+        "deleteBtn": "Delete"
+      },
+      "alerts": {
+        "error": "Error:",
+        "confirmDelete": "Delete this reward?"
+      }
+    },
+    "MerchantHistory": {
+      "title": "History",
+      "subtitle": "All transactions for your business.",
+      "loading": "Loading...",
+      "empty": "No transactions yet.",
+      "deletedEmployee": "Former employee",
+      "columns": {
+        "date": "Date",
+        "customer": "Customer",
+        "employee": "Employee",
+        "action": "Action",
+        "amount": "Amount",
+        "description": "Description"
+      },
+      "types": {
+        "EARN": "Earned",
+        "SPEND": "Spent",
+        "RESET": "Reset"
+      }
+    },
+    "MerchantCustomers": {
+      "title": "My Customers",
+      "subtitle": "List of all loyal customers of your business.",
+      "exportBtn": "Export to CSV",
+      "loading": "Loading...",
+      "empty": "No customers registered yet.",
+      "columns": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "birthDate": "Date of birth",
+        "registrationDate": "Registration Date"
+      }
+    },
+    "MerchantLayout": {
+      "title": "Manager Portal",
+      "subtitle": "Fidelity Wallet",
+      "logout": "Log out",
+      "nav": {
+        "scanner": "Scanner",
+        "rewards": "Rewards Catalog",
+        "history": "History",
+        "stats": "Statistics",
+        "customers": "My Customers",
+        "team": "My Team"
+      }
+    },
+    "Contact": {
+      "backToHome": "← Back to home",
+      "title": "Contact Us",
+      "subtitle": "Questions about pricing? Need a demo for your business? Leave us a message and we'll get back to you quickly.",
+      "success": {
+        "title": "Message sent!",
+        "desc": "Thank you for your message. We will get back to you very soon.",
+        "btnAgain": "Send another message"
+      },
+      "form": {
+        "nameLabel": "Full name",
+        "namePlaceholder": "John Doe",
+        "emailLabel": "Email",
+        "emailPlaceholder": "john@business.com",
+        "companyLabel": "Business name (Optional)",
+        "companyPlaceholder": "Lumiere Cafe",
+        "messageLabel": "Your message",
+        "messagePlaceholder": "How can we help you?"
+      },
+      "error": "❌ An error occurred while sending. Please try again.",
+      "submit": {
+        "loading": "Sending...",
+        "default": "Send message"
+      }
+    },
+    "Scanner": {
+      "permission": {
+        "title": "Camera access required",
+        "desc": "To scan your customers' loyalty cards, please allow access to your camera.",
+        "loading": "Requesting access...",
+        "button": "Allow camera"
+      },
+      "viewfinder": {
+        "instruction": "Place the customer's QR code in the frame"
+      },
+      "header": {
+        "backAria": "Back to dashboard",
+        "title": "Scan a customer",
+        "logout": "Log out"
+      },
+      "mode": {
+        "stamps": "STAMPS Mode",
+        "points": "POINTS Mode"
+      },
+      "customer": {
+        "label": "Customer"
+      },
+      "stamps": {
+        "balance": "Stamp balance",
+        "full": "Card full — scan to give the reward",
+        "addBtn": "Add 1 Stamp"
+      },
+      "points": {
+        "balance": "Point balance",
+        "pts": "pts",
+        "tabEarn": "Earn",
+        "tabSpend": "Redeem",
+        "amountPlaceholder": "Receipt amount",
+        "validateBtn": "CONFIRM PURCHASE"
+      },
+      "rewards": {
+        "empty": "No rewards configured",
+        "pointsCost": "points"
+      },
+      "actions": {
+        "cancel": "Cancel / Scan next"
+      },
+      "errors": {
+        "server": "Server error"
+      },
+      "result": {
+        "rewardTitle": "WELL DONE! Give the reward to the customer!",
+        "readyNext": "Ready for the next customer..."
+      },
+      "logs": {
+        "addStamp": "+1 stamp",
+        "purchase": "Purchase of"
+      }
+    },
+    "Login": {
+      "title": "Merchant Portal",
+      "subtitle": "Log in to your dashboard",
+      "fields": {
+        "identifier": "Email or Username",
+        "password": "Password"
+      },
+      "forgotPassword": "Forgot password?",
+      "buttons": {
+        "submit": "Log in",
+        "loading": "Logging in..."
+      },
+      "errors": {
+        "invalidCredentials": "Invalid credentials",
+        "serverError": "Cannot reach the server"
+      }
+    },
+    "ForgotPassword": {
+      "title": "Forgot password",
+      "subtitle": "Enter the email address associated with your account.",
+      "placeholder": "Your email address",
+      "buttons": {
+        "submit": "Get reset link",
+        "loading": "Sending..."
+      },
+      "links": {
+        "backToLoginArrow": "← Back to login",
+        "cancelBackToLogin": "Cancel and return to login"
+      },
+      "success": {
+        "message": "An email has been sent to you with instructions to reset your password."
+      },
+      "errors": {
+        "generic": "An error occurred. Please try again.",
+        "serverConnection": "Cannot reach the server."
+      }
+    },
+    "ResetPassword": {
+      "title": "New password",
+      "loading": "Loading...",
+      "backToLogin": "Back to login",
+      "fields": {
+        "newPassword": "New password"
+      },
+      "buttons": {
+        "submit": "Save",
+        "loading": "Saving..."
+      },
+      "success": {
+        "message": "Your password has been successfully changed!",
+        "redirect": "Redirecting to the login page..."
+      },
+      "errors": {
+        "noToken": "No security token found.",
+        "generic": "An error occurred.",
+        "serverConnection": "Cannot reach the server."
+      }
+    },
+    "Register": {
+      "subtitle": "Register to get your card",
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "birthDate": "Date of birth"
+      },
+      "buttons": {
+        "submit": "Get my card",
+        "loading": "Creating..."
+      },
+      "success": {
+        "title": "Registration successful!",
+        "desc": "Click below to save your card to your phone.",
+        "googleAlt": "Add to Google Wallet",
+        "appleAlt": "Add to Apple Wallet"
+      },
+      "errors": {
+        "invalidLink": "Invalid link. Please scan the merchant's QR code.",
+        "notFound": "Merchant not found.",
+        "fetchError": "Unable to load merchant information.",
+        "refused": "Registration denied.",
+        "serverConnection": "Server connection error.",
+        "appleWallet": "Unable to generate the Apple Wallet pass.",
+        "appleUnknown": "Unknown Apple Wallet error."
+      },
+      "alerts": {
+        "error": "Error"
+      }
+    },
     "Privacy": {
       "backToHome": "Back to home",
       "title": "Privacy Policy",

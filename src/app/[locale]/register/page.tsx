@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Footer from '@/components/Footer';
+import { useTranslations, useLocale } from 'next-intl';
 
 type PublicCompany = {
     name: string;
@@ -31,6 +32,8 @@ function RegisterSkeleton() {
 }
 
 function RegisterForm() {
+    const t = useTranslations('Register');
+    const locale = useLocale(); // Récupère la langue actuelle (fr, en, nl)
     const searchParams = useSearchParams();
     const companyId = searchParams.get('companyId');
 
@@ -66,7 +69,7 @@ function RegisterForm() {
 
                 if (!res.ok) {
                     setCompany(null);
-                    setCompanyError(data.error || 'Commerce introuvable');
+                    setCompanyError(data.error || t('errors.notFound'));
                     return;
                 }
 
@@ -74,7 +77,7 @@ function RegisterForm() {
             } catch {
                 if (!cancelled) {
                     setCompany(null);
-                    setCompanyError('Impossible de charger les informations du commerce.');
+                    setCompanyError(t('errors.fetchError'));
                 }
             } finally {
                 if (!cancelled) setCompanyLoading(false);
@@ -85,12 +88,12 @@ function RegisterForm() {
         return () => {
             cancelled = true;
         };
-    }, [companyId]);
+    }, [companyId, t]);
 
     if (!companyId) {
         return (
             <div className="text-center p-10 text-red-600 font-bold">
-                Lien invalide. Veuillez scanner le QR code du commerce.
+                {t('errors.invalidLink')}
             </div>
         );
     }
@@ -102,7 +105,7 @@ function RegisterForm() {
     if (companyError || !company) {
         return (
             <div className="text-center p-10 text-red-600 font-bold max-w-md">
-                {companyError || 'Commerce introuvable.'}
+                {companyError || t('errors.notFound')}
             </div>
         );
     }
@@ -130,10 +133,10 @@ function RegisterForm() {
                     email: formData.email,
                 });
             } else {
-                alert('Erreur : ' + (data.error || 'Inscription refusée'));
+                alert(t('alerts.error') + ' : ' + (data.error || t('errors.refused')));
             }
         } catch {
-            alert('Erreur de connexion au serveur.');
+            alert(t('errors.serverConnection'));
         } finally {
             setLoading(false);
         }
@@ -156,14 +159,12 @@ function RegisterForm() {
 
             if (!response.ok) {
                 const message = await response.text();
-                throw new Error(message || 'Impossible de générer le pass Apple Wallet.');
+                throw new Error(message || t('errors.appleWallet'));
             }
 
             const passBlob = await response.blob();
             const objectUrl = URL.createObjectURL(passBlob);
 
-            // Mobile Safari handles Apple Wallet passes better when we trigger a real file download link.
-            // This ensures iOS can open the .pkpass and show the native "Add to Wallet" modal.
             const link = document.createElement('a');
             link.href = objectUrl;
             link.download = 'loyalty.pkpass';
@@ -175,8 +176,8 @@ function RegisterForm() {
                 URL.revokeObjectURL(objectUrl);
             }, 1000);
         } catch (error) {
-            const message = error instanceof Error ? error.message : 'Erreur Apple Wallet inconnue.';
-            alert(`Erreur : ${message}`);
+            const message = error instanceof Error ? error.message : t('errors.appleUnknown');
+            alert(`${t('alerts.error')} : ${message}`);
         } finally {
             setAppleLoading(false);
         }
@@ -192,14 +193,14 @@ function RegisterForm() {
                 />
             )}
             <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">{company.name}</h1>
-            <p className="text-center text-gray-500 mb-8">Inscrivez-vous pour obtenir votre carte</p>
+            <p className="text-center text-gray-500 mb-8">{t('subtitle')}</p>
 
             {!saveUrl ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <input
                             type="text"
-                            placeholder="Prénom"
+                            placeholder={t('fields.firstName')}
                             required
                             value={formData.firstName}
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
@@ -207,7 +208,7 @@ function RegisterForm() {
                         />
                         <input
                             type="text"
-                            placeholder="Nom"
+                            placeholder={t('fields.lastName')}
                             required
                             value={formData.lastName}
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
@@ -216,14 +217,14 @@ function RegisterForm() {
                     </div>
                     <input
                         type="email"
-                        placeholder="Adresse Email"
+                        placeholder={t('fields.email')}
                         required
                         value={formData.email}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
                     <div className="flex flex-col">
-                        <label className="text-xs text-gray-500 ml-1 mb-1">Date de naissance</label>
+                        <label className="text-xs text-gray-500 ml-1 mb-1">{t('fields.birthDate')}</label>
                         <input
                             type="date"
                             required
@@ -240,7 +241,7 @@ function RegisterForm() {
                         style={buttonStyle}
                         className="w-full font-bold py-3 rounded-lg transition duration-200 disabled:opacity-50 mt-2"
                     >
-                        {loading ? 'Création en cours...' : 'Obtenir ma carte'}
+                        {loading ? t('buttons.loading') : t('buttons.submit')}
                     </button>
                 </form>
             ) : (
@@ -250,10 +251,8 @@ function RegisterForm() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
-                    <h2 className="text-xl font-bold text-black">Inscription réussie !</h2>
-                    <p className="text-gray-500">
-                        Cliquez ci-dessous pour enregistrer votre carte dans votre téléphone.
-                    </p>
+                    <h2 className="text-xl font-bold text-black">{t('success.title')}</h2>
+                    <p className="text-gray-500">{t('success.desc')}</p>
 
                     <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
                         <a
@@ -262,10 +261,13 @@ function RegisterForm() {
                             rel="noopener noreferrer"
                             className="inline-flex h-12 items-center transition-transform hover:scale-105 active:scale-95"
                         >
+                            {/* On utilise dynamiquement la langue pour charger la bonne image */}
                             <img
-                                src="/assets/google-wallet-badge-fr.svg"
-                                alt="Ajouter à Google Wallet"
+                                src={`/assets/google-wallet-badge-${locale}.svg`}
+                                alt={t('success.googleAlt')}
                                 className="h-12 w-auto"
+                                // Fallback sécuritaire si l'image traduite n'existe pas encore
+                                onError={(e) => e.currentTarget.src = "/assets/google-wallet-badge-fr.svg"}
                             />
                         </a>
 
@@ -276,9 +278,10 @@ function RegisterForm() {
                             className="inline-flex h-12 items-center transition-transform hover:scale-105 active:scale-95 disabled:opacity-60"
                         >
                             <img
-                                src="/assets/apple-wallet-badge-fr.svg"
-                                alt="Ajouter a Apple Wallet"
+                                src={`/assets/apple-wallet-badge-${locale}.svg`}
+                                alt={t('success.appleAlt')}
                                 className="h-12 w-auto"
+                                onError={(e) => e.currentTarget.src = "/assets/apple-wallet-badge-fr.svg"}
                             />
                         </button>
                     </div>
@@ -295,7 +298,9 @@ export default function RegisterPage() {
                 <RegisterForm />
             </Suspense>
 
-            <Footer />
+            <div className="mt-8">
+               <Footer />
+            </div>
         </main>
     );
 }

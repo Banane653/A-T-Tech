@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-
+import { useRouter, Link } from '@/navigation'; // Utilisation de nos imports personnalisés
+import { useTranslations } from 'next-intl';
 
 export default function LoginPage() {
-    // 1. On renomme "email" en "identifier" car ça peut être l'un ou l'autre
+    const t = useTranslations('Login');
+
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -23,7 +23,6 @@ export default function LoginPage() {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // 2. On envoie "identifier" à notre API
                 body: JSON.stringify({ identifier, password }),
             });
 
@@ -38,10 +37,12 @@ export default function LoginPage() {
                     router.push('/scanner');
                 }
             } else {
-                setError(data.error || "Identifiants incorrects");
+                // Pour les messages d'erreur venant de l'API, c'est plus compliqué à traduire directement,
+                // mais on peut traduire le message générique en cas de fallback.
+                setError(data.error || t('errors.invalidCredentials'));
             }
         } catch (err) {
-            setError("Impossible de joindre le serveur");
+            setError(t('errors.serverError'));
         } finally {
             setLoading(false);
         }
@@ -50,8 +51,8 @@ export default function LoginPage() {
     return (
         <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
             <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-                <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">Espace Commerçant</h1>
-                <p className="text-center text-gray-500 mb-8">Connectez-vous à votre tableau de bord</p>
+                <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">{t('title')}</h1>
+                <p className="text-center text-gray-500 mb-8">{t('subtitle')}</p>
 
                 {error && (
                     <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm text-center">
@@ -61,10 +62,9 @@ export default function LoginPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        {/* 3. On met à jour le texte du label */}
-                        <label className="text-sm text-gray-600 ml-1 mb-1 block">Email ou Nom d'utilisateur</label>
+                        <label className="text-sm text-gray-600 ml-1 mb-1 block">{t('fields.identifier')}</label>
                         <input 
-                            type="text" // 👈 Changé de "email" à "text"
+                            type="text"
                             required
                             value={identifier}
                             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
@@ -73,7 +73,7 @@ export default function LoginPage() {
                     </div>
                     
                     <div>
-                        <label className="text-sm text-gray-600 ml-1 mb-1 block">Mot de passe</label>
+                        <label className="text-sm text-gray-600 ml-1 mb-1 block">{t('fields.password')}</label>
                         <input 
                             type="password" 
                             required
@@ -83,14 +83,18 @@ export default function LoginPage() {
                         />
                     </div>
 
-                    <Link href="/forgot-password" className="text-sm text-gray-500 hover:text-black">Mot de passe oublié ?</Link>
+                    <div className="flex justify-start">
+                         <Link href="/forgot-password" className="text-sm text-gray-500 hover:text-black">
+                            {t('forgotPassword')}
+                        </Link>
+                    </div>
 
                     <button 
                         type="submit" 
                         disabled={loading}
                         className="w-full bg-black text-white font-bold py-3 rounded-lg hover:bg-gray-800 transition duration-200 mt-4 disabled:bg-gray-400"
                     >
-                        {loading ? "Connexion en cours..." : "Se connecter"}
+                        {loading ? t('buttons.loading') : t('buttons.submit')}
                     </button>
                 </form>
             </div>

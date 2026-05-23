@@ -118,6 +118,429 @@
         }
       }
     },
+    "FounderDashboard": {
+      "header": {
+        "title": "Vue Globale",
+        "subtitle": "Pilotage stratégique de la plateforme Fidelity Wallet."
+      },
+      "loading": "Chargement des statistiques...",
+      "errors": {
+        "loadFailed": "Impossible de charger les statistiques",
+        "invalidData": "Données invalides reçues du serveur"
+      },
+      "cards": {
+        "totalCompanies": {
+          "label": "Commerces actifs",
+          "subtitle": "Entreprises inscrites sur la plateforme"
+        },
+        "totalCustomers": {
+          "label": "Utilisateurs de la carte",
+          "subtitle": "Clients fidélisés sur tout le SaaS"
+        },
+        "rewardsPointsCount": {
+          "label": "Cadeaux (Points)",
+          "subtitle": "Récompenses échangées via les points"
+        },
+        "stampsResetCount": {
+          "label": "Cartes Tampons",
+          "subtitle": "Cartes 10/10 complétées"
+        },
+        "totalPointsDistributed": {
+          "label": "Points attribués",
+          "subtitle": "Programmes système POINTS uniquement"
+        },
+        "totalStampsDistributed": {
+          "label": "Tampons attribués",
+          "subtitle": "Programmes système TAMPONS uniquement"
+        }
+      },
+      "charts": {
+        "growth": {
+          "title": "Croissance globale de la base clients",
+          "labelDay": "Acquisition quotidienne des utilisateurs",
+          "labelMonth": "Acquisition mensuelle des utilisateurs",
+          "noData": "Pas encore assez de données pour afficher le graphique.",
+          "tooltip": "Total clients"
+        }
+      }
+    },
+    "FounderCompanies": {
+      "header": {
+        "title": "Commerces",
+        "subtitle": "Gérez les commerces inscrits sur la plateforme ({count}).",
+        "btnNew": "+ Nouveau Commerce",
+        "btnCancel": "Annuler"
+      },
+      "form": {
+        "section1": {
+          "title": "1. Informations du Commerce",
+          "companyName": "Nom du Commerce",
+          "systemStamps": "☕ Système à Tampons (10 tampons = Cadeau)",
+          "systemPoints": "🛍️ Système à Points (Lié au montant payé)"
+        },
+        "section2": {
+          "title": "2. Design de la Carte Premium",
+          "primaryColor": "Couleur principale de la carte",
+          "logoUrl": "Lien du Logo (URL Image)",
+          "templateLabel": "Modèle du programme de fidélité"
+        },
+        "section3": {
+          "title": "3. Compte Gérant",
+          "adminName": "Nom du Gérant",
+          "adminUsername": "Pseudo (ex: patron_1)",
+          "adminUsernameTitle": "Seuls les lettres, chiffres, tirets bas (_) et points (.) sont autorisés.",
+          "adminEmail": "Email de connexion",
+          "adminPassword": "Mot de passe provisoire"
+        },
+        "submit": {
+          "loading": "Création du commerce...",
+          "default": "Créer le commerce"
+        }
+      },
+      "list": {
+        "loading": "Chargement...",
+        "empty": "Aucun commerce n'est encore inscrit.",
+        "badges": {
+          "stamps": "TAMPONS",
+          "points": "POINTS"
+        },
+        "labels": {
+          "template": "Modèle :",
+          "standard": "Standard",
+          "manager": "Gérant :",
+          "customers": "{count} client(s)"
+        }
+      },
+      "alerts": {
+        "error": "Erreur :"
+      }
+    },
+    "FounderLayout": {
+      "title": "Espace Fondateur",
+      "subtitle": "Super-Admin SaaS",
+      "logout": "Déconnexion",
+      "nav": {
+        "overview": "Vue Globale",
+        "companies": "Commerces"
+      }
+    },
+    "MerchantTeam": {
+      "header": {
+        "defaultName": "Mon Commerce",
+        "subtitle": "Gestion de votre équipe et paramètres"
+      },
+      "stats": {
+        "customers": "Clients Fidélisés",
+        "team": "Équipe",
+        "employeeCount": "{count} employé(s)"
+      },
+      "points": {
+        "title": "⚙️ Règle de fidélité",
+        "desc": "Quel est le montant en euros nécessaire pour qu'un client gagne 1 point ?",
+        "currency": "€ = 1 point",
+        "saveBtn": "Sauvegarder",
+        "savingBtn": "Enregistrement..."
+      },
+      "link": {
+        "title": "🔗 Votre lien d'inscription client",
+        "desc": "Imprimez ce QR Code et placez-le sur votre comptoir, ou copiez le lien ci-dessous pour l'envoyer à vos clients :",
+        "copyBtn": "Copier le lien"
+      },
+      "team": {
+        "title": "Mon Équipe",
+        "addBtn": "+ Ajouter un employé",
+        "cancelBtn": "Annuler",
+        "roleLabel": "Rôle : Serveur",
+        "deleteTitle": "Supprimer l'employé"
+      },
+      "form": {
+        "fullName": "Nom complet",
+        "email": "Email de connexion",
+        "username": "Nom d'utilisateur (ex: sarah_b)",
+        "usernameTitle": "Seuls les lettres, chiffres, tirets bas (_) et points (.) sont autorisés.",
+        "password": "Mot de passe provisoire",
+        "submitBtn": "Enregistrer l'employé",
+        "loadingBtn": "Création..."
+      },
+      "alerts": {
+        "error": "Erreur :",
+        "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet employé ? Il n'aura plus accès au scanner.",
+        "ratioSuccess": "Taux de conversion mis à jour !",
+        "ratioError": "Erreur lors de la mise à jour.",
+        "copied": "Lien copié !"
+      }
+    },
+    "RegisterQrCode": {
+        "expandTitle": "Agrandir le QR Code",
+        "printLabel": "Imprimer",
+        "modalTitle": "QR Code d'inscription",
+        "modalDesc": "Les clients peuvent scanner ce code pour s'inscrire à votre programme de fidélité.",
+        "downloadBtn": "Télécharger pour impression"
+      },
+    "MerchantStats": {
+      "header": {
+        "title": "Statistiques",
+        "subtitle": "Vue d'ensemble de la performance de votre programme de fidélité."
+      },
+      "loading": "Chargement...",
+      "cards": {
+        "points": {
+          "label": "Points distribués",
+          "desc": "Cumul de tous les gains clients"
+        },
+        "gifts": {
+          "label": "Cadeaux offerts",
+          "desc": "Échanges et cartes complétées"
+        },
+        "customers": {
+          "label": "Total clients",
+          "desc": "Cartes actives dans votre base"
+        }
+      },
+      "chart": {
+        "title": "Croissance de la base clients",
+        "labelDay": "Évolution quotidienne des inscriptions",
+        "labelMonth": "Évolution mensuelle des inscriptions",
+        "noData": "Pas encore assez de données pour afficher le graphique.",
+        "tooltipTotal": "Total clients",
+        "tooltipNew": "Nouveaux clients"
+      }
+    },
+    "MerchantRewards": {
+      "title": "Catalogue Cadeaux",
+      "subtitle": "Définissez les récompenses échangeables contre des points.",
+      "form": {
+        "title": "Ajouter une récompense",
+        "namePlaceholder": "Nom (ex: Café gratuit)",
+        "costPlaceholder": "Coût en points",
+        "submitBtn": "Ajouter au catalogue",
+        "loadingBtn": "Ajout..."
+      },
+      "list": {
+        "empty": "Aucune récompense pour le moment.",
+        "pointsLabel": "points",
+        "deleteBtn": "Supprimer"
+      },
+      "alerts": {
+        "error": "Erreur :",
+        "confirmDelete": "Supprimer cette récompense ?"
+      }
+    },
+    "MerchantHistory": {
+      "title": "Historique",
+      "subtitle": "Toutes les transactions de votre commerce.",
+      "loading": "Chargement...",
+      "empty": "Aucune transaction pour le moment.",
+      "deletedEmployee": "Ancien employé",
+      "columns": {
+        "date": "Date",
+        "customer": "Client",
+        "employee": "Employé",
+        "action": "Action",
+        "amount": "Montant",
+        "description": "Description"
+      },
+      "types": {
+        "EARN": "Gain",
+        "SPEND": "Dépense",
+        "RESET": "Réinitialisation"
+      }
+    },
+    "MerchantCustomers": {
+      "title": "Mes Clients",
+      "subtitle": "Liste de tous les clients fidélisés de votre commerce.",
+      "exportBtn": "Exporter en CSV",
+      "loading": "Chargement...",
+      "empty": "Aucun client inscrit pour le moment.",
+      "columns": {
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "email": "Email",
+        "birthDate": "Date de naissance",
+        "registrationDate": "Date d'inscription"
+      }
+    },
+    "MerchantLayout": {
+      "title": "Espace Gérant",
+      "subtitle": "Fidelity Wallet",
+      "logout": "Déconnexion",
+      "nav": {
+        "scanner": "Scanner",
+        "rewards": "Catalogue Cadeaux",
+        "history": "Historique",
+        "stats": "Statistiques",
+        "customers": "Mes Clients",
+        "team": "Mon Équipe"
+      }
+    },
+    "Scanner": {
+      "permission": {
+        "title": "Accès à la caméra requis",
+        "desc": "Pour scanner la carte de fidélité de vos clients, veuillez autoriser l'accès à l'appareil photo.",
+        "loading": "Autorisation en cours…",
+        "button": "Autoriser la caméra"
+      },
+      "viewfinder": {
+        "instruction": "Placez le QR code du client dans le cadre"
+      },
+      "header": {
+        "backAria": "Retour au tableau de bord",
+        "title": "Scanner un client",
+        "logout": "Quitter"
+      },
+      "mode": {
+        "stamps": "Mode TAMPONS",
+        "points": "Mode POINTS"
+      },
+      "customer": {
+        "label": "Client"
+      },
+      "stamps": {
+        "balance": "Solde tampons",
+        "full": "Carte pleine — scannez pour offrir le cadeau",
+        "addBtn": "Ajouter 1 Tampon"
+      },
+      "points": {
+        "balance": "Solde points",
+        "pts": "pts",
+        "tabEarn": "Encaisser",
+        "tabSpend": "Offrir",
+        "amountPlaceholder": "Montant du ticket",
+        "validateBtn": "VALIDER L'ACHAT"
+      },
+      "rewards": {
+        "empty": "Aucune récompense configurée",
+        "pointsCost": "points"
+      },
+      "actions": {
+        "cancel": "Annuler / Scanner suivant"
+      },
+      "errors": {
+        "server": "Erreur serveur"
+      },
+      "result": {
+        "rewardTitle": "BRAVO ! Donnez le cadeau au client !",
+        "readyNext": "Prêt pour le client suivant..."
+      },
+      "logs": {
+        "addStamp": "+1 tampon",
+        "purchase": "Achat de"
+      }
+    },
+    "Login": {
+      "title": "Espace Commerçant",
+      "subtitle": "Connectez-vous à votre tableau de bord",
+      "fields": {
+        "identifier": "Email ou Nom d'utilisateur",
+        "password": "Mot de passe"
+      },
+      "forgotPassword": "Mot de passe oublié ?",
+      "buttons": {
+        "submit": "Se connecter",
+        "loading": "Connexion en cours..."
+      },
+      "errors": {
+        "invalidCredentials": "Identifiants incorrects",
+        "serverError": "Impossible de joindre le serveur"
+      }
+    },
+    "ForgotPassword": {
+      "title": "Mot de passe oublié",
+      "subtitle": "Entrez l'adresse e-mail associée à votre compte.",
+      "placeholder": "Votre adresse e-mail",
+      "buttons": {
+        "submit": "Recevoir le lien",
+        "loading": "Envoi en cours..."
+      },
+      "links": {
+        "backToLoginArrow": "← Retour à la connexion",
+        "cancelBackToLogin": "Annuler et retourner à la connexion"
+      },
+      "success": {
+        "message": "Un e-mail vous a été envoyé avec les instructions pour réinitialiser votre mot de passe."
+      },
+      "errors": {
+        "generic": "Une erreur est survenue. Veuillez réessayer.",
+        "serverConnection": "Impossible de joindre le serveur."
+      }
+    },
+    "ResetPassword": {
+      "title": "Nouveau mot de passe",
+      "loading": "Chargement...",
+      "backToLogin": "Retourner à la connexion",
+      "fields": {
+        "newPassword": "Nouveau mot de passe"
+      },
+      "buttons": {
+        "submit": "Enregistrer",
+        "loading": "Modification..."
+      },
+      "success": {
+        "message": "Votre mot de passe a été modifié avec succès !",
+        "redirect": "Redirection vers la page de connexion..."
+      },
+      "errors": {
+        "noToken": "Aucun jeton de sécurité trouvé.",
+        "generic": "Une erreur est survenue.",
+        "serverConnection": "Impossible de joindre le serveur."
+      }
+    },
+    "Register": {
+      "subtitle": "Inscrivez-vous pour obtenir votre carte",
+      "fields": {
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "email": "Adresse Email",
+        "birthDate": "Date de naissance"
+      },
+      "buttons": {
+        "submit": "Obtenir ma carte",
+        "loading": "Création en cours..."
+      },
+      "success": {
+        "title": "Inscription réussie !",
+        "desc": "Cliquez ci-dessous pour enregistrer votre carte dans votre téléphone.",
+        "googleAlt": "Ajouter à Google Wallet",
+        "appleAlt": "Ajouter à Apple Wallet"
+      },
+      "errors": {
+        "invalidLink": "Lien invalide. Veuillez scanner le QR code du commerce.",
+        "notFound": "Commerce introuvable.",
+        "fetchError": "Impossible de charger les informations du commerce.",
+        "refused": "Inscription refusée.",
+        "serverConnection": "Erreur de connexion au serveur.",
+        "appleWallet": "Impossible de générer le pass Apple Wallet.",
+        "appleUnknown": "Erreur Apple Wallet inconnue."
+      },
+      "alerts": {
+        "error": "Erreur"
+      }
+    },
+    "Contact": {
+      "backToHome": "← Retour à l'accueil",
+      "title": "Contactez-nous",
+      "subtitle": "Une question sur nos tarifs ? Besoin d'une démo pour votre commerce ? Laissez-nous un message et nous vous répondrons rapidement.",
+      "success": {
+        "title": "Message envoyé !",
+        "desc": "Merci pour votre message. Nous vous recontacterons très vite.",
+        "btnAgain": "Envoyer un autre message"
+      },
+      "form": {
+        "nameLabel": "Nom complet",
+        "namePlaceholder": "Jean Dupont",
+        "emailLabel": "Email",
+        "emailPlaceholder": "jean@commerce.com",
+        "companyLabel": "Nom du commerce (Optionnel)",
+        "companyPlaceholder": "Café Lumière",
+        "messageLabel": "Votre message",
+        "messagePlaceholder": "Comment pouvons-nous vous aider ?"
+      },
+      "error": "❌ Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
+      "submit": {
+        "loading": "Envoi en cours...",
+        "default": "Envoyer le message"
+      }
+    },
     "Privacy": {
       "backToHome": "Retour à l'accueil",
       "title": "Politique de Confidentialité",

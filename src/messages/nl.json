@@ -118,6 +118,429 @@
         }
       }
     },
+    "FounderDashboard": {
+      "header": {
+        "title": "Globaal Overzicht",
+        "subtitle": "Strategisch beheer van het Fidelity Wallet platform."
+      },
+      "loading": "Statistieken laden...",
+      "errors": {
+        "loadFailed": "Kan statistieken niet laden",
+        "invalidData": "Ongeldige gegevens ontvangen van de server"
+      },
+      "cards": {
+        "totalCompanies": {
+          "label": "Actieve Bedrijven",
+          "subtitle": "Bedrijven geregistreerd op het platform"
+        },
+        "totalCustomers": {
+          "label": "Kaartgebruikers",
+          "subtitle": "Trouwe klanten op de hele SaaS"
+        },
+        "rewardsPointsCount": {
+          "label": "Beloningen (Punten)",
+          "subtitle": "Beloningen ingewisseld via punten"
+        },
+        "stampsResetCount": {
+          "label": "Stempelkaarten",
+          "subtitle": "10/10 kaarten voltooid"
+        },
+        "totalPointsDistributed": {
+          "label": "Verdeelde Punten",
+          "subtitle": "Alleen programma's met PUNTEN-systeem"
+        },
+        "totalStampsDistributed": {
+          "label": "Uitgedeelde Stempels",
+          "subtitle": "Alleen programma's met STEMPEL-systeem"
+        }
+      },
+      "charts": {
+        "growth": {
+          "title": "Totale Groei Klantenbestand",
+          "labelDay": "Dagelijkse gebruikersacquisitie",
+          "labelMonth": "Maandelijkse gebruikersacquisitie",
+          "noData": "Nog niet genoeg gegevens om de grafiek weer te geven.",
+          "tooltip": "Totaal aantal klanten"
+        }
+      }
+    },
+    "FounderCompanies": {
+      "header": {
+        "title": "Bedrijven",
+        "subtitle": "Beheer de geregistreerde bedrijven op het platform ({count}).",
+        "btnNew": "+ Nieuw Bedrijf",
+        "btnCancel": "Annuleren"
+      },
+      "form": {
+        "section1": {
+          "title": "1. Bedrijfsinformatie",
+          "companyName": "Bedrijfsnaam",
+          "systemStamps": "☕ Stempelsysteem (10 stempels = Beloning)",
+          "systemPoints": "🛍️ Puntensysteem (Op basis van betaald bedrag)"
+        },
+        "section2": {
+          "title": "2. Premium Kaartontwerp",
+          "primaryColor": "Primaire kaartkleur",
+          "logoUrl": "Logo Link (Afbeeldings-URL)",
+          "templateLabel": "Sjabloon loyaliteitsprogramma"
+        },
+        "section3": {
+          "title": "3. Manager Account",
+          "adminName": "Naam Manager",
+          "adminUsername": "Gebruikersnaam (bijv. baas_1)",
+          "adminUsernameTitle": "Alleen letters, cijfers, underscores (_) en punten (.) zijn toegestaan.",
+          "adminEmail": "Inlog E-mail",
+          "adminPassword": "Tijdelijk Wachtwoord"
+        },
+        "submit": {
+          "loading": "Bedrijf aanmaken...",
+          "default": "Bedrijf aanmaken"
+        }
+      },
+      "list": {
+        "loading": "Laden...",
+        "empty": "Nog geen bedrijven geregistreerd.",
+        "badges": {
+          "stamps": "STEMPELS",
+          "points": "PUNTEN"
+        },
+        "labels": {
+          "template": "Sjabloon:",
+          "standard": "Standaard",
+          "manager": "Manager:",
+          "customers": "{count} klant(en)"
+        }
+      },
+      "alerts": {
+        "error": "Fout:"
+      }
+    },
+    "FounderLayout": {
+      "title": "Oprichtersruimte",
+      "subtitle": "SaaS Super-Admin",
+      "logout": "Uitloggen",
+      "nav": {
+        "overview": "Overzicht",
+        "companies": "Bedrijven"
+      }
+    },
+    "MerchantTeam": {
+      "header": {
+        "defaultName": "Mijn Bedrijf",
+        "subtitle": "Beheer uw team en instellingen"
+      },
+      "stats": {
+        "customers": "Vaste Klanten",
+        "team": "Team",
+        "employeeCount": "{count} medewerker(s)"
+      },
+      "points": {
+        "title": "⚙️ Loyaliteitsregel",
+        "desc": "Welk bedrag in euro's is nodig voor een klant om 1 punt te verdienen?",
+        "currency": "€ = 1 punt",
+        "saveBtn": "Opslaan",
+        "savingBtn": "Opslaan..."
+      },
+      "link": {
+        "title": "🔗 Uw klant registratielink",
+        "desc": "Print deze QR-code en plaats deze op uw toonbank, of kopieer de onderstaande link om naar uw klanten te sturen:",
+        "copyBtn": "Link kopiëren"
+      },
+      "team": {
+        "title": "Mijn Team",
+        "addBtn": "+ Medewerker toevoegen",
+        "cancelBtn": "Annuleren",
+        "roleLabel": "Rol: Medewerker",
+        "deleteTitle": "Medewerker verwijderen"
+      },
+      "form": {
+        "fullName": "Volledige naam",
+        "email": "Inlog e-mail",
+        "username": "Gebruikersnaam (bijv. sarah_b)",
+        "usernameTitle": "Alleen letters, cijfers, underscores (_) en punten (.) zijn toegestaan.",
+        "password": "Tijdelijk wachtwoord",
+        "submitBtn": "Medewerker opslaan",
+        "loadingBtn": "Aanmaken..."
+      },
+      "alerts": {
+        "error": "Fout:",
+        "confirmDelete": "Weet u zeker dat u deze medewerker wilt verwijderen? Deze persoon heeft geen toegang meer tot de scanner.",
+        "ratioSuccess": "Conversieratio bijgewerkt!",
+        "ratioError": "Fout bij het bijwerken.",
+        "copied": "Link gekopieerd!"
+      }
+    },
+    "RegisterQrCode": {
+      "expandTitle": "QR-code vergroten",
+      "printLabel": "Afdrukken",
+      "modalTitle": "Registratie QR-code",
+      "modalDesc": "Klanten kunnen deze code scannen om zich aan te melden voor uw loyaliteitsprogramma.",
+      "downloadBtn": "Downloaden om af te drukken"
+    },
+    "MerchantStats": {
+      "header": {
+        "title": "Statistieken",
+        "subtitle": "Overzicht van de prestaties van uw loyaliteitsprogramma."
+      },
+      "loading": "Laden...",
+      "cards": {
+        "points": {
+          "label": "Verdeelde Punten",
+          "desc": "Totaal van alle klantverdiensten"
+        },
+        "gifts": {
+          "label": "Aangeboden Cadeaus",
+          "desc": "Inwisselingen en volle kaarten"
+        },
+        "customers": {
+          "label": "Totaal Klanten",
+          "desc": "Actieve kaarten in uw database"
+        }
+      },
+      "chart": {
+        "title": "Groei Klantenbestand",
+        "labelDay": "Dagelijkse registratietrend",
+        "labelMonth": "Maandelijkse registratietrend",
+        "noData": "Nog niet genoeg gegevens om de grafiek weer te geven.",
+        "tooltipTotal": "Totaal aantal klanten",
+        "tooltipNew": "Nieuwe klanten"
+      }
+    },
+    "MerchantRewards": {
+      "title": "Cadeaucatalogus",
+      "subtitle": "Stel de beloningen in die kunnen worden ingewisseld voor punten.",
+      "form": {
+        "title": "Een beloning toevoegen",
+        "namePlaceholder": "Naam (bijv. Gratis koffie)",
+        "costPlaceholder": "Kosten in punten",
+        "submitBtn": "Toevoegen aan catalogus",
+        "loadingBtn": "Toevoegen..."
+      },
+      "list": {
+        "empty": "Nog geen beloningen ingesteld.",
+        "pointsLabel": "punten",
+        "deleteBtn": "Verwijderen"
+      },
+      "alerts": {
+        "error": "Fout:",
+        "confirmDelete": "Deze beloning verwijderen?"
+      }
+    },
+    "MerchantHistory": {
+      "title": "Geschiedenis",
+      "subtitle": "Alle transacties van uw bedrijf.",
+      "loading": "Laden...",
+      "empty": "Nog geen transacties.",
+      "deletedEmployee": "Voormalig medewerker",
+      "columns": {
+        "date": "Datum",
+        "customer": "Klant",
+        "employee": "Medewerker",
+        "action": "Actie",
+        "amount": "Bedrag",
+        "description": "Beschrijving"
+      },
+      "types": {
+        "EARN": "Verdiend",
+        "SPEND": "Uitgegeven",
+        "RESET": "Reset"
+      }
+    },
+    "MerchantCustomers": {
+      "title": "Mijn Klanten",
+      "subtitle": "Lijst van alle vaste klanten van uw bedrijf.",
+      "exportBtn": "Exporteren naar CSV",
+      "loading": "Laden...",
+      "empty": "Nog geen klanten geregistreerd.",
+      "columns": {
+        "firstName": "Voornaam",
+        "lastName": "Achternaam",
+        "email": "E-mail",
+        "birthDate": "Geboortedatum",
+        "registrationDate": "Registratiedatum"
+      }
+    },
+    "MerchantLayout": {
+      "title": "Manager Portaal",
+      "subtitle": "Fidelity Wallet",
+      "logout": "Uitloggen",
+      "nav": {
+        "scanner": "Scanner",
+        "rewards": "Cadeaucatalogus",
+        "history": "Geschiedenis",
+        "stats": "Statistieken",
+        "customers": "Mijn Klanten",
+        "team": "Mijn Team"
+      }
+    },
+    "Contact": {
+      "backToHome": "← Back to home",
+      "title": "Contact Us",
+      "subtitle": "Questions about pricing? Need a demo for your business? Leave us a message and we'll get back to you quickly.",
+      "success": {
+        "title": "Message sent!",
+        "desc": "Thank you for your message. We will get back to you very soon.",
+        "btnAgain": "Send another message"
+      },
+      "form": {
+        "nameLabel": "Full name",
+        "namePlaceholder": "John Doe",
+        "emailLabel": "Email",
+        "emailPlaceholder": "john@business.com",
+        "companyLabel": "Business name (Optional)",
+        "companyPlaceholder": "Lumiere Cafe",
+        "messageLabel": "Your message",
+        "messagePlaceholder": "How can we help you?"
+      },
+      "error": "❌ An error occurred while sending. Please try again.",
+      "submit": {
+        "loading": "Sending...",
+        "default": "Send message"
+      }
+    },
+    "Scanner": {
+      "permission": {
+        "title": "Cameratoegang vereist",
+        "desc": "Om de klantenkaarten van uw klanten te scannen, dient u toegang tot de camera toe te staan.",
+        "loading": "Toegang vragen...",
+        "button": "Camera toestaan"
+      },
+      "viewfinder": {
+        "instruction": "Plaats de QR-code van de klant in het kader"
+      },
+      "header": {
+        "backAria": "Terug naar dashboard",
+        "title": "Scan een klant",
+        "logout": "Uitloggen"
+      },
+      "mode": {
+        "stamps": "STEMPEL Modus",
+        "points": "PUNTEN Modus"
+      },
+      "customer": {
+        "label": "Klant"
+      },
+      "stamps": {
+        "balance": "Stempelsaldo",
+        "full": "Kaart vol — scan om de beloning te geven",
+        "addBtn": "1 Stempel toevoegen"
+      },
+      "points": {
+        "balance": "Puntensaldo",
+        "pts": "ptn",
+        "tabEarn": "Ontvangen",
+        "tabSpend": "Verzilveren",
+        "amountPlaceholder": "Bonbedrag",
+        "validateBtn": "AANKOOP BEVESTIGEN"
+      },
+      "rewards": {
+        "empty": "Geen beloningen ingesteld",
+        "pointsCost": "punten"
+      },
+      "actions": {
+        "cancel": "Annuleren / Volgende scannen"
+      },
+      "errors": {
+        "server": "Serverfout"
+      },
+      "result": {
+        "rewardTitle": "GEFELICITEERD! Geef de beloning aan de klant!",
+        "readyNext": "Klaar voor de volgende klant..."
+      },
+      "logs": {
+        "addStamp": "+1 stempel",
+        "purchase": "Aankoop van"
+      }
+    },
+    "Login": {
+      "title": "Manager Portaal",
+      "subtitle": "Log in op uw dashboard",
+      "fields": {
+        "identifier": "E-mail of Gebruikersnaam",
+        "password": "Wachtwoord"
+      },
+      "forgotPassword": "Wachtwoord vergeten?",
+      "buttons": {
+        "submit": "Inloggen",
+        "loading": "Inloggen..."
+      },
+      "errors": {
+        "invalidCredentials": "Ongeldige inloggegevens",
+        "serverError": "Kan de server niet bereiken"
+      }
+    },
+    "Register": {
+      "subtitle": "Registreer om uw kaart te ontvangen",
+      "fields": {
+        "firstName": "Voornaam",
+        "lastName": "Achternaam",
+        "email": "E-mailadres",
+        "birthDate": "Geboortedatum"
+      },
+      "buttons": {
+        "submit": "Ontvang mijn kaart",
+        "loading": "Aanmaken..."
+      },
+      "success": {
+        "title": "Registratie succesvol!",
+        "desc": "Klik hieronder om uw kaart op uw telefoon op te slaan.",
+        "googleAlt": "Toevoegen aan Google Wallet",
+        "appleAlt": "Toevoegen aan Apple Wallet"
+      },
+      "errors": {
+        "invalidLink": "Ongeldige link. Scan de QR-code van de winkelier.",
+        "notFound": "Winkelier niet gevonden.",
+        "fetchError": "Kan winkeliersinformatie niet laden.",
+        "refused": "Registratie geweigerd.",
+        "serverConnection": "Fout bij serververbinding.",
+        "appleWallet": "Kan de Apple Wallet pas niet genereren.",
+        "appleUnknown": "Onbekende Apple Wallet fout."
+      },
+      "alerts": {
+        "error": "Fout"
+      }
+    },
+    "ForgotPassword": {
+      "title": "Wachtwoord vergeten",
+      "subtitle": "Voer het e-mailadres in dat is gekoppeld aan uw account.",
+      "placeholder": "Uw e-mailadres",
+      "buttons": {
+        "submit": "Ontvang de link",
+        "loading": "Verzenden..."
+      },
+      "links": {
+        "backToLoginArrow": "← Terug naar inloggen",
+        "cancelBackToLogin": "Annuleren en terug naar inloggen"
+      },
+      "success": {
+        "message": "Er is een e-mail naar u verzonden met instructies om uw wachtwoord opnieuw in te stellen."
+      },
+      "errors": {
+        "generic": "Er is een fout opgetreden. Probeer het opnieuw.",
+        "serverConnection": "Kan de server niet bereiken."
+      }
+    },
+    "ResetPassword": {
+      "title": "Nieuw wachtwoord",
+      "loading": "Laden...",
+      "backToLogin": "Terug naar inloggen",
+      "fields": {
+        "newPassword": "Nieuw wachtwoord"
+      },
+      "buttons": {
+        "submit": "Opslaan",
+        "loading": "Wijzigen..."
+      },
+      "success": {
+        "message": "Uw wachtwoord is succesvol gewijzigd!",
+        "redirect": "Doorverwijzen naar de inlogpagina..."
+      },
+      "errors": {
+        "noToken": "Geen beveiligingstoken gevonden.",
+        "generic": "Er is een fout opgetreden.",
+        "serverConnection": "Kan de server niet bereiken."
+      }
+    },
     "Privacy": {
       "backToHome": "Terug naar startpagina",
       "title": "Privacybeleid",

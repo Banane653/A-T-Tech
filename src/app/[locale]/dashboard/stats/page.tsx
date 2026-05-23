@@ -10,6 +10,7 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
+import { useTranslations, useLocale } from 'next-intl';
 
 type GrowthPoint = {
     label: string;
@@ -25,13 +26,17 @@ type StatsData = {
     growthGranularity: 'day' | 'month';
 };
 
-function formatNumber(value: number) {
-    return new Intl.NumberFormat('fr-FR').format(value);
-}
-
 export default function StatsPage() {
+    const t = useTranslations('MerchantStats');
+    const locale = useLocale();
+    
     const [stats, setStats] = useState<StatsData | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Fonction de formatage dynamique selon la langue
+    const formatNumber = (value: number) => {
+        return new Intl.NumberFormat(locale).format(value);
+    };
 
     useEffect(() => {
         fetch('/api/admin/stats')
@@ -52,61 +57,65 @@ export default function StatsPage() {
 
     const growthLabel =
         stats?.growthGranularity === 'day'
-            ? 'Évolution quotidienne des inscriptions'
-            : 'Évolution mensuelle des inscriptions';
+            ? t('chart.labelDay')
+            : t('chart.labelMonth');
 
     return (
         <div className="p-8 max-w-5xl">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Statistiques</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('header.title')}</h1>
             <p className="text-gray-500 mb-8">
-                Vue d&apos;ensemble de la performance de votre programme de fidélité.
+                {t('header.subtitle')}
             </p>
 
             {loading ? (
-                <p className="text-center text-gray-400 py-16">Chargement...</p>
+                <p className="text-center text-gray-400 py-16">{t('loading')}</p>
             ) : (
                 <>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200 shadow-sm">
                             <p className="text-blue-600 font-semibold uppercase text-xs tracking-wider">
-                                Points distribués
+                                {t('cards.points.label')}
                             </p>
                             <p className="text-4xl font-extrabold text-blue-900 mt-2 tabular-nums">
                                 {formatNumber(stats?.totalPointsDistributed ?? 0)}
                             </p>
-                            <p className="text-sm text-blue-700/80 mt-2">Cumul de tous les gains clients</p>
+                            <p className="text-sm text-blue-700/80 mt-2">
+                                {t('cards.points.desc')}
+                            </p>
                         </div>
 
                         <div className="bg-gradient-to-br from-amber-50 to-orange-100 p-6 rounded-2xl border border-amber-200 shadow-sm">
                             <p className="text-amber-700 font-semibold uppercase text-xs tracking-wider">
-                                Cadeaux offerts
+                                {t('cards.gifts.label')}
                             </p>
                             <p className="text-4xl font-extrabold text-amber-900 mt-2 tabular-nums">
                                 {formatNumber(stats?.totalGiftsOffered ?? 0)}
                             </p>
                             <p className="text-sm text-amber-800/80 mt-2">
-                                Échanges et cartes complétées
+                                {t('cards.gifts.desc')}
                             </p>
                         </div>
 
                         <div className="bg-gradient-to-br from-emerald-50 to-green-100 p-6 rounded-2xl border border-emerald-200 shadow-sm">
                             <p className="text-emerald-700 font-semibold uppercase text-xs tracking-wider">
-                                Total clients
+                                {t('cards.customers.label')}
                             </p>
                             <p className="text-4xl font-extrabold text-emerald-900 mt-2 tabular-nums">
                                 {formatNumber(stats?.totalCustomers ?? 0)}
                             </p>
-                            <p className="text-sm text-emerald-800/80 mt-2">Cartes actives dans votre base</p>
+                            <p className="text-sm text-emerald-800/80 mt-2">
+                                {t('cards.customers.desc')}
+                            </p>
                         </div>
                     </div>
 
                     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                        <h2 className="text-lg font-bold text-gray-900 mb-1">Croissance de la base clients</h2>
+                        <h2 className="text-lg font-bold text-gray-900 mb-1">{t('chart.title')}</h2>
                         <p className="text-sm text-gray-500 mb-6">{growthLabel}</p>
 
                         {stats?.customerGrowth.length === 0 ? (
                             <p className="text-center text-gray-400 py-12">
-                                Pas encore assez de données pour afficher le graphique.
+                                {t('chart.noData')}
                             </p>
                         ) : (
                             <div className="h-80 w-full">
@@ -141,8 +150,8 @@ export default function StatsPage() {
                                             formatter={(value, name) => {
                                                 const label =
                                                     name === 'totalCustomers'
-                                                        ? 'Total clients'
-                                                        : 'Nouveaux clients';
+                                                        ? t('chart.tooltipTotal')
+                                                        : t('chart.tooltipNew');
                                                 return [formatNumber(Number(value)), label];
                                             }}
                                         />

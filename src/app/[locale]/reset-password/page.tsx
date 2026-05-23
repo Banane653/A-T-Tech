@@ -1,24 +1,27 @@
 'use client';
 
 import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useRouter, Link } from '@/navigation'; // Utilisation de nos imports personnalisés
+import { useTranslations } from 'next-intl';
 
 function ResetPasswordForm() {
+    const t = useTranslations('ResetPassword');
     const searchParams = useSearchParams();
-    const token = searchParams.get('token'); // Récupère le ?token=... dans l'URL
+    const token = searchParams.get('token'); 
     const router = useRouter();
 
     const [newPassword, setNewPassword] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
 
-    // Si quelqu'un arrive sur cette page sans jeton dans l'URL
     if (!token) {
         return (
             <div className="text-center p-8">
-                <p className="text-red-500 mb-4 font-semibold">Aucun jeton de sécurité trouvé.</p>
-                <Link href="/login" className="text-black font-bold hover:underline">Retourner à la connexion</Link>
+                <p className="text-red-500 mb-4 font-semibold">{t('errors.noToken')}</p>
+                <Link href="/login" className="text-black font-bold hover:underline">
+                    {t('backToLogin')}
+                </Link>
             </div>
         );
     }
@@ -38,16 +41,15 @@ function ResetPasswordForm() {
 
             if (res.ok) {
                 setStatus('success');
-                setMessage("Votre mot de passe a été modifié avec succès !");
-                // On redirige vers la page de login après 3 secondes
+                setMessage(t('success.message'));
                 setTimeout(() => router.push('/login'), 3000);
             } else {
                 setStatus('error');
-                setMessage(data.error || "Une erreur est survenue.");
+                setMessage(data.error || t('errors.generic'));
             }
         } catch (err) {
             setStatus('error');
-            setMessage("Impossible de joindre le serveur.");
+            setMessage(t('errors.serverConnection'));
         }
     };
 
@@ -57,7 +59,7 @@ function ResetPasswordForm() {
                 <div className="p-4 bg-green-50 text-green-700 rounded-xl border border-green-200">
                     {message}
                 </div>
-                <p className="text-sm text-gray-500">Redirection vers la page de connexion...</p>
+                <p className="text-sm text-gray-500">{t('success.redirect')}</p>
             </div>
         );
     }
@@ -71,7 +73,7 @@ function ResetPasswordForm() {
             )}
             
             <div>
-                <label className="text-sm text-gray-600 ml-1 mb-1 block">Nouveau mot de passe</label>
+                <label className="text-sm text-gray-600 ml-1 mb-1 block">{t('fields.newPassword')}</label>
                 <input 
                     type="password" 
                     required
@@ -87,19 +89,20 @@ function ResetPasswordForm() {
                 disabled={status === 'loading'}
                 className="w-full bg-black text-white font-bold py-3 rounded-lg hover:bg-gray-800 transition duration-200 disabled:bg-gray-400"
             >
-                {status === 'loading' ? "Modification..." : "Enregistrer"}
+                {status === 'loading' ? t('buttons.loading') : t('buttons.submit')}
             </button>
         </form>
     );
 }
 
 export default function ResetPasswordPage() {
+    const t = useTranslations('ResetPassword');
+    
     return (
         <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
             <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-                <h1 className="text-2xl font-bold text-center text-gray-900 mb-8">Nouveau mot de passe</h1>
-                {/* Suspense est requis par Next.js quand on utilise useSearchParams() */}
-                <Suspense fallback={<p className="text-center text-gray-500">Chargement...</p>}>
+                <h1 className="text-2xl font-bold text-center text-gray-900 mb-8">{t('title')}</h1>
+                <Suspense fallback={<p className="text-center text-gray-500">{t('loading')}</p>}>
                     <ResetPasswordForm />
                 </Suspense>
             </div>

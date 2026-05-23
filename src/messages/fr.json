@@ -85,5 +85,124 @@
         "desc": "Gratuit, à vos couleurs, en ligne en quelques minutes. Sans carte bancaire, sans engagement.",
         "button": "Créer ma première carte"
       }
+    },
+    "Pricing": {
+      "title": "Simple. Basique. Illimité.",
+      "description": "Une fidélité qui se rembourse dès votre premier client fidèle. Sans frais cachés, sans limite de volume.",
+      "toggle": {
+        "monthly": "Mensuel",
+        "annually": "Annuel",
+        "discount": "2 mois offerts"
+      },
+      "pricing": {
+        "monthSuffix": "/mois",
+        "yearSuffix": "/an"
+      },
+      "billing": {
+        "monthly": "Facturé mensuellement. Sans engagement.",
+        "annually": "Facturé en un seul paiement de 100€ chaque année."
+      },
+      "included": "Tout est inclus :",
+      "plan": {
+        "badge": "Offre de Lancement",
+        "title": "Pro Illimité",
+        "desc": "La solution complète pour fidéliser vos clients, sans aucune limite de volume.",
+        "button": "Démarrer l'essai gratuit",
+        "features": {
+          "0": "Cartes actives illimitées",
+          "1": "Comptes gérants et employés illimités",
+          "2": "Apple Wallet & Google Pay",
+          "3": "Statistiques en temps réel",
+          "4": "Outil de scan web inclus",
+          "5": "Support prioritaire"
+        }
+      }
+    },
+    "Privacy": {
+      "backToHome": "Retour à l'accueil",
+      "title": "Politique de Confidentialité",
+      "lastUpdated": "Dernière mise à jour : Mai 2026",
+      "section1": {
+        "title": "1. Responsable du traitement",
+        "content": "Les données personnelles collectées sur ce service sont traitées par <strong>Tristan Hourman de Tobel</strong>, agissant en tant qu'indépendant, créateur et gestionnaire de la solution A-T-Tech Fidelity. Pour toute question relative à la protection de vos données, vous pouvez nous contacter à l'adresse suivante : <a>tristanhdtb@hotmail.com</a>."
+      },
+      "section2": {
+        "title": "2. Données collectées et finalité",
+        "intro": "Afin de vous fournir votre carte de fidélité numérique, nous collectons les informations suivantes :",
+        "list": {
+          "0": "<strong>Prénom et Nom :</strong> pour personnaliser votre carte.",
+          "1": "<strong>Adresse e-mail :</strong> pour identifier votre compte de manière unique.",
+          "2": "<strong>Date de naissance :</strong> pour vous faire bénéficier d'offres d'anniversaire de la part de vos commerçants."
+        },
+        "outro": "Ces données sont exclusivement utilisées pour la création, la gestion et l'affichage de votre carte de fidélité via Apple Wallet et Google Pay, ainsi que pour permettre au commerçant de mettre à jour votre solde de points ou de tampons.",
+        "legalBase": "Base légale : Le traitement de ces données repose sur votre consentement explicite lors de votre inscription et sur la nécessité d'exécuter le service de fidélité que vous avez sollicité."
+      },
+      "section3": {
+        "title": "3. Hébergement et Sous-traitants (Stack Technique)",
+        "intro": "Nous accordons une grande importance à la sécurité de vos données. Vos informations ne sont jamais revendues à des tiers. Pour faire fonctionner le service, nous nous appuyons sur des infrastructures techniques sécurisées :",
+        "list": {
+          "0": "<strong>Supabase :</strong> Hébergement sécurisé de la base de données.",
+          "1": "<strong>Vercel :</strong> Hébergement de l'application web.",
+          "2": "<strong>Apple Wallet & Google Pay :</strong> Services tiers permettant la génération et l'affichage du pass cryptographique sur votre smartphone."
+        }
+      },
+      "section4": {
+        "title": "4. Utilisation des Cookies",
+        "content": "Notre plateforme est conçue pour respecter votre vie privée. Nous n'utilisons <strong>aucun cookie de traçage ou publicitaire</strong>. Les seuls cookies utilisés sont strictement nécessaires au fonctionnement technique du site (par exemple : le maintien de la session de connexion sécurisée pour les gérants et employés). Par conséquent, aucun consentement préalable pour les cookies n'est requis."
+      },
+      "section5": {
+        "title": "5. Durée de conservation",
+        "content": "Vos données personnelles sont conservées de manière sécurisée pendant toute la durée d'utilisation du service. En cas d'inactivité prolongée (aucun point ou tampon ajouté), vos données et votre carte de fidélité seront <strong>automatiquement supprimées après une période de 2 ans</strong> suivant votre dernière activité."
+      },
+      "section6": {
+        "title": "6. Vos droits (RGPD)",
+        "intro": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de portabilité et d'effacement de vos données personnelles. Vous pouvez exercer ces droits à tout moment, ou demander la suppression définitive de votre carte de fidélité, en envoyant un e-mail à : <aBold>tristanhdtb@hotmail.com</aBold>.",
+        "outro": "Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous avez la possibilité d'introduire une réclamation auprès de l'Autorité de protection des données (APD) en Belgique."
+      }
+    },
+    "Terms": {
+      "title": "Conditions Générales d'Utilisation et de Vente",
+      "lastUpdated": "Dernière mise à jour :",
+      "section1": {
+        "title": "1. Objet",
+        "content": "Les présentes Conditions Générales définissent les règles d'utilisation de la plateforme <strong>Cardeo</strong>. Cardeo fournit une solution logicielle (SaaS) permettant aux commerçants de créer et gérer des programmes de fidélité dématérialisés compatibles avec Apple Wallet et Google Wallet."
+      },
+      "section2": {
+        "title": "2. Accès au Service",
+        "content": "L'accès à l'interface d'administration est réservé aux commerçants ayant souscrit un abonnement. Le commerçant est seul responsable de la confidentialité de ses identifiants et de l'accès accordé à ses employés (comptes collaborateurs)."
+      },
+      "section3": {
+        "title": "3. Responsabilités du Commerçant",
+        "intro": "Le commerçant partenaire s'engage à :",
+        "list": {
+          "0": "Ne pas utiliser la plateforme à des fins frauduleuses ou illégales.",
+          "1": "Honorer les récompenses de fidélité (tampons, points) acquises légitimement par ses clients finaux via le système Cardeo.",
+          "2": "Recueillir le consentement libre et éclairé de ses clients lors de leur inscription en magasin."
+        }
+      },
+      "section4": {
+        "title": "4. Disponibilité et Limite de Responsabilité",
+        "intro": "Cardeo s'efforce de maintenir le service accessible 24h/24 et 7j/7. Toutefois, notre responsabilité ne saurait être engagée en cas de :",
+        "list": {
+          "0": "Coupure de réseau internet côté commerçant ou client.",
+          "1": "Modification des politiques restrictives imposées par les sociétés tierces (Apple Inc. et Google LLC) concernant leurs applications Wallet.",
+          "2": "Maintenance technique programmée (dont les utilisateurs seront informés au préalable)."
+        },
+        "outro": "Cardeo fournit un outil logiciel et n'est en aucun cas responsable des litiges commerciaux pouvant survenir entre un commerçant et son client final concernant les récompenses."
+      },
+      "section5": {
+        "title": "5. Propriété Intellectuelle",
+        "content": "La plateforme, son code source, son design, et l'architecture logicielle restent la propriété intellectuelle exclusive de Cardeo. Les logos et couleurs intégrés par les commerçants restent la propriété des commerçants respectifs."
+      },
+      "section6": {
+        "title": "6. Modifications",
+        "content": "Cardeo se réserve le droit de modifier ces conditions à tout moment. Les utilisateurs seront informés des mises à jour majeures via leur tableau de bord ou par e-mail."
+      }
+    },
+    "Footer": {
+      "rights": "Tous droits réservés.",
+      "privacy": "Politique de Confidentialité",
+      "terms": "CGU / CGV",
+      "contact": "Contact"
     }
   }

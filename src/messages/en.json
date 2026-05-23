@@ -85,5 +85,124 @@
         "desc": "Free, branded, online in minutes. No credit card, no commitment.",
         "button": "Create my first card"
       }
+    },
+    "Pricing": {
+      "title": "Simple. Basic. Unlimited.",
+      "description": "Loyalty that pays for itself from your first returning customer. No hidden fees, no volume limits.",
+      "toggle": {
+        "monthly": "Monthly",
+        "annually": "Annually",
+        "discount": "2 months free"
+      },
+      "pricing": {
+        "monthSuffix": "/month",
+        "yearSuffix": "year"
+      },
+      "billing": {
+        "monthly": "Billed monthly. Cancel anytime.",
+        "annually": "Billed as a single €100 payment each year."
+      },
+      "included": "Everything is included:",
+      "plan": {
+        "badge": "Launch Offer",
+        "title": "Pro Unlimited",
+        "desc": "The complete solution to build customer loyalty, with no volume limits.",
+        "button": "Start free trial",
+        "features": {
+          "0": "Unlimited active cards",
+          "1": "Unlimited manager & employee accounts",
+          "2": "Apple Wallet & Google Pay",
+          "3": "Real-time analytics",
+          "4": "Web scanner tool included",
+          "5": "Priority support"
+        }
+      }
+    },
+    "Privacy": {
+      "backToHome": "Back to home",
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: May 2026",
+      "section1": {
+        "title": "1. Data Controller",
+        "content": "The personal data collected on this service is processed by <strong>Tristan Hourman de Tobel</strong>, acting as an independent professional, creator, and manager of the A-T-Tech Fidelity solution. For any question regarding the protection of your data, you can contact us at the following address: <a>tristanhdtb@hotmail.com</a>."
+      },
+      "section2": {
+        "title": "2. Data Collected and Purpose",
+        "intro": "In order to provide your digital loyalty card, we collect the following information:",
+        "list": {
+          "0": "<strong>First and Last Name:</strong> to personalize your card.",
+          "1": "<strong>Email address:</strong> to uniquely identify your account.",
+          "2": "<strong>Date of birth:</strong> to let you benefit from birthday offers from your merchants."
+        },
+        "outro": "This data is exclusively used for the creation, management, and display of your loyalty card via Apple Wallet and Google Pay, as well as to allow merchants to update your points or stamp balance.",
+        "legalBase": "Legal basis: The processing of this data is based on your explicit consent during your registration and on the necessity to execute the loyalty service you requested."
+      },
+      "section3": {
+        "title": "3. Hosting and Subcontractors (Tech Stack)",
+        "intro": "We attach great importance to the security of your data. Your information is never sold to third parties. To run the service, we rely on secure technical infrastructures:",
+        "list": {
+          "0": "<strong>Supabase:</strong> Secure hosting of the database.",
+          "1": "<strong>Vercel:</strong> Hosting of the web application.",
+          "2": "<strong>Apple Wallet & Google Pay:</strong> Third-party services enabling the generation and display of the cryptographic pass on your smartphone."
+        }
+      },
+      "section4": {
+        "title": "4. Use of Cookies",
+        "content": "Our platform is designed to respect your privacy. We use <strong>no tracking or advertising cookies</strong>. The only cookies used are strictly necessary for the technical operation of the site (for example: maintaining a secure login session for managers and employees). Therefore, no prior consent for cookies is required."
+      },
+      "section5": {
+        "title": "5. Retention Period",
+        "content": "Your personal data is securely retained for the entire duration of service use. In case of prolonged inactivity (no points or stamps added), your data and your loyalty card will be <strong>automatically deleted after a period of 2 years</strong> following your last activity."
+      },
+      "section6": {
+        "title": "6. Your Rights (GDPR)",
+        "intro": "In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify, port, and erase your personal data. You can exercise these rights at any time, or request the permanent deletion of your loyalty card, by sending an email to: <aBold>tristanhdtb@hotmail.com</aBold>.",
+        "outro": "If you feel, after contacting us, that your rights are not being respected, you have the option to lodge a complaint with the Data Protection Authority (DPA) in Belgium."
+      }
+    },
+    "Terms": {
+      "title": "General Terms and Conditions of Use and Sale",
+      "lastUpdated": "Last updated:",
+      "section1": {
+        "title": "1. Purpose",
+        "content": "These General Terms define the rules for using the <strong>Cardeo</strong> platform. Cardeo provides a software solution (SaaS) allowing merchants to create and manage digital loyalty programs compatible with Apple Wallet and Google Wallet."
+      },
+      "section2": {
+        "title": "2. Access to the Service",
+        "content": "Access to the administration interface is reserved for merchants who have subscribed to a plan. The merchant is solely responsible for the confidentiality of their credentials and the access granted to their employees (collaborator accounts)."
+      },
+      "section3": {
+        "title": "3. Merchant Responsibilities",
+        "intro": "The partner merchant agrees to:",
+        "list": {
+          "0": "Not use the platform for fraudulent or illegal purposes.",
+          "1": "Honor loyalty rewards (stamps, points) legitimately acquired by their end customers via the Cardeo system.",
+          "2": "Obtain free and informed consent from their customers when they register in-store."
+        }
+      },
+      "section4": {
+        "title": "4. Availability and Limitation of Liability",
+        "intro": "Cardeo strives to keep the service accessible 24/7. However, our liability cannot be engaged in the event of:",
+        "list": {
+          "0": "Internet network outage on the merchant or customer side.",
+          "1": "Changes in restrictive policies imposed by third-party companies (Apple Inc. and Google LLC) regarding their Wallet applications.",
+          "2": "Scheduled technical maintenance (users will be informed in advance)."
+        },
+        "outro": "Cardeo provides a software tool and is in no way responsible for commercial disputes that may arise between a merchant and their end customer regarding rewards."
+      },
+      "section5": {
+        "title": "5. Intellectual Property",
+        "content": "The platform, its source code, design, and software architecture remain the exclusive intellectual property of Cardeo. Logos and colors integrated by merchants remain the property of the respective merchants."
+      },
+      "section6": {
+        "title": "6. Modifications",
+        "content": "Cardeo reserves the right to modify these terms at any time. Users will be informed of major updates via their dashboard or by email."
+      }
+    },
+    "Footer": {
+      "rights": "All rights reserved.",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "contact": "Contact"
     }
   }

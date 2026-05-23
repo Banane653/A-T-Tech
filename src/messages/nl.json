@@ -85,5 +85,124 @@
         "desc": "Gratis, in uw huisstijl, online in enkele minuten. Geen creditcard, geen verplichtingen.",
         "button": "Maak mijn eerste kaart"
       }
+    },
+    "Pricing": {
+      "title": "Simpel. Basis. Onbeperkt.",
+      "description": "Loyaliteit die zichzelf terugbetaalt vanaf uw eerste trouwe klant. Geen verborgen kosten, geen volumelimieten.",
+      "toggle": {
+        "monthly": "Maandelijks",
+        "annually": "Jaarlijks",
+        "discount": "2 maanden gratis"
+      },
+      "pricing": {
+        "monthSuffix": "/maand",
+        "yearSuffix": "/jaar"
+      },
+      "billing": {
+        "monthly": "Maandelijks gefactureerd. Vrijblijvend.",
+        "annually": "Gefactureerd als een eenmalige betaling van €100 per jaar."
+      },
+      "included": "Alles is inbegrepen:",
+      "plan": {
+        "badge": "Lanceringsaanbod",
+        "title": "Pro Onbeperkt",
+        "desc": "De complete oplossing voor klantenbinding, zonder volumelimieten.",
+        "button": "Start gratis proefperiode",
+        "features": {
+          "0": "Onbeperkt actieve kaarten",
+          "1": "Onbeperkt manager & medewerker accounts",
+          "2": "Apple Wallet & Google Pay",
+          "3": "Real-time statistieken",
+          "4": "Web scanner inbegrepen",
+          "5": "Prioritaire ondersteuning"
+        }
+      }
+    },
+    "Privacy": {
+      "backToHome": "Terug naar startpagina",
+      "title": "Privacybeleid",
+      "lastUpdated": "Laatst bijgewerkt: Mei 2026",
+      "section1": {
+        "title": "1. Verwerkingsverantwoordelijke",
+        "content": "De persoonsgegevens die op deze dienst worden verzameld, worden verwerkt door <strong>Tristan Hourman de Tobel</strong>, handelend als zelfstandige, maker en beheerder van de A-T-Tech Fidelity-oplossing. Voor alle vragen met betrekking au de bescherming van uw gegevens kunt u contact met ons opnemen via het volgende adres: <a>tristanhdtb@hotmail.com</a>."
+      },
+      "section2": {
+        "title": "2. Verzamelde gegevens en Doel",
+        "intro": "Om u te voorzien van uw digitale klantenkaart, verzamelen wij de volgende informatie:",
+        "list": {
+          "0": "<strong>Voornaam en Achternaam:</strong> om uw kaart te personaliseren.",
+          "1": "<strong>E-mailadres:</strong> om uw account uniek te identificeren.",
+          "2": "<strong>Geboortedatum:</strong> om te profiteren van verjaardagsaanbiedingen van uw winkeliers."
+        },
+        "outro": "Deze gegevens worden uitsluitend gebruikt voor het aanmaken, beheren en tonen van uw klantenkaart via Apple Wallet en Google Pay, en om de winkelier in staat te stellen uw punten- of stempelsaldo bij te werken.",
+        "legalBase": "Wettelijke basis: De verwerking van deze gegevens is gebaseerd op uw uitdrukkelijke toestemming bij uw registratie en op de noodzaak om de door u gevraagde loyaliteitsdienst uit te voeren."
+      },
+      "section3": {
+        "title": "3. Hosting en Onderaannemers (Tech Stack)",
+        "intro": "Wij hechten veel waarde aan de beveiliging van uw gegevens. Uw gegevens worden nooit aan derden verkocht. Om de dienst te laten werken, vertrouwen wij op beveiligde technische infrastructuren:",
+        "list": {
+          "0": "<strong>Supabase:</strong> Veilige hosting van de database.",
+          "1": "<strong>Vercel:</strong> Hosting van de webapplicatie.",
+          "2": "<strong>Apple Wallet & Google Pay:</strong> Diensten van derden waarmee de cryptografische pas op uw smartphone kan worden gegenereerd en getoond."
+        }
+      },
+      "section4": {
+        "title": "4. Gebruik van Cookies",
+        "content": "Ons platform is ontworpen om uw privacy te respecteren. Wij gebruiken <strong>geen tracking- of advertentiecookies</strong>. De enige gebruikte cookies zijn strikt noodzakelijk voor de technische werking van de site (bijvoorbeeld: het behouden van de beveiligde inlogsessie voor managers en medewerkers). Daarom is er geen voorafgaande toestemming voor cookies vereist."
+      },
+      "section5": {
+        "title": "5. Bewaartermijn",
+        "content": "Uw persoonsgegevens worden veilig bewaard voor de gehele duur van het gebruik van de dienst. Bij langdurige inactiviteit (geen punten of stempels toegevoegd), worden uw gegevens en uw klantenkaart <strong>automatisch verwijderd na een periode van 2 jaar</strong> na uw laatste activiteit."
+      },
+      "section6": {
+        "title": "6. Uw rechten (AVG/RGPD)",
+        "intro": "In overeenstemming met de Algemene Verordening Gegevensbescherming (AVG), heeft u recht op toegang, rectificatie, overdraagbaarheid en wissen van uw persoonsgegevens. U kunt deze rechten op elk moment uitoefenen, of verzoeken om de definitieve verwijdering van uw klantenkaart door een e-mail te sturen naar: <aBold>tristanhdtb@hotmail.com</aBold>.",
+        "outro": "Als u na contact met ons van mening bent dat uw rechten niet worden gerespecteerd, heeft u de mogelijkheid om een klacht in te dienen bij de Gegevensbeschermingsautoriteit (GBA) in België."
+      }
+    },
+    "Terms": {
+      "title": "Algemene Gebruiks- en Verkoopvoorwaarden",
+      "lastUpdated": "Laatst bijgewerkt:",
+      "section1": {
+        "title": "1. Doel",
+        "content": "Deze Algemene Voorwaarden bepalen de regels voor het gebruik van het <strong>Cardeo</strong> platform. Cardeo biedt een softwareoplossing (SaaS) waarmee winkeliers digitale loyaliteitsprogramma's kunnen creëren en beheren die compatibel zijn met Apple Wallet en Google Wallet."
+      },
+      "section2": {
+        "title": "2. Toegang tot de Dienst",
+        "content": "Toegang tot de administratie-interface is gereserveerd voor winkeliers met een abonnement. De winkelier is als enige verantwoordelijk voor de vertrouwelijkheid van zijn inloggegevens en de toegang die aan zijn werknemers (medewerkersaccounts) wordt verleend."
+      },
+      "section3": {
+        "title": "3. Verantwoordelijkheden van de Winkelier",
+        "intro": "De partnerwinkelier stemt ermee in om:",
+        "list": {
+          "0": "Het platform niet te gebruiken voor frauduleuze of illegale doeleinden.",
+          "1": "Loyaliteitsbeloningen (stempels, punten) die rechtmatig door hun eindklanten zijn verkregen via het Cardeo-systeem te respecteren.",
+          "2": "Vrije en geïnformeerde toestemming van hun klanten te verkrijgen wanneer zij zich in de winkel registreren."
+        }
+      },
+      "section4": {
+        "title": "4. Beschikbaarheid en Beperking van Aansprakelijkheid",
+        "intro": "Cardeo streeft ernaar de dienst 24/7 toegankelijk te houden. Wij kunnen echter niet aansprakelijk worden gesteld in het geval van:",
+        "list": {
+          "0": "Internetstoring aan de kant van de winkelier of klant.",
+          "1": "Wijzigingen in het restrictieve beleid dat door externe bedrijven (Apple Inc. en Google LLC) wordt opgelegd met betrekking tot hun Wallet-applicaties.",
+          "2": "Gepland technisch onderhoud (gebruikers worden vooraf geïnformeerd)."
+        },
+        "outro": "Cardeo levert een softwaretool en is op geen enkele manier verantwoordelijk voor commerciële geschillen die kunnen ontstaan tussen een winkelier en zijn eindklant met betrekking tot beloningen."
+      },
+      "section5": {
+        "title": "5. Intellectueel Eigendom",
+        "content": "Het platform, de broncode, het ontwerp en de softwarearchitectuur blijven het exclusieve intellectuele eigendom van Cardeo. Logo's en kleuren die door winkeliers zijn geïntegreerd, blijven eigendom van de respectievelijke winkeliers."
+      },
+      "section6": {
+        "title": "6. Wijzigingen",
+        "content": "Cardeo behoudt zich het recht voor om deze voorwaarden op elk moment te wijzigen. Gebruikers worden op de hoogte gebracht van grote updates via hun dashboard of per e-mail."
+      }
+    },
+    "Footer": {
+      "rights": "Alle rechten voorbehouden.",
+      "privacy": "Privacybeleid",
+      "terms": "Algemene Voorwaarden",
+      "contact": "Contact"
     }
   }

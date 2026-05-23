@@ -623,6 +623,11 @@
       }
     },
     "Footer": {
+      "description": "Native wallet loyalty for businesses that care about retention.",
+      "sections": {
+        "company": "Company",
+        "legal": "Legal"
+      },
       "rights": "All rights reserved.",
       "privacy": "Privacy Policy",
       "terms": "Terms & Conditions",

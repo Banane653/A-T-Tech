@@ -623,6 +623,11 @@
       }
     },
     "Footer": {
+      "description": "Native wallet loyaliteit voor bedrijven die geven om retentie.",
+      "sections": {
+        "company": "Bedrijf",
+        "legal": "Juridisch"
+      },
       "rights": "Alle rechten voorbehouden.",
       "privacy": "Privacybeleid",
       "terms": "Algemene Voorwaarden",

@@ -623,6 +623,11 @@
       }
     },
     "Footer": {
+      "description": "La fidélité native au wallet, pour les commerces qui tiennent à faire revenir.",
+      "sections": {
+        "company": "Entreprise",
+        "legal": "Légal"
+      },
       "rights": "Tous droits réservés.",
       "privacy": "Politique de Confidentialité",
       "terms": "CGU / CGV",

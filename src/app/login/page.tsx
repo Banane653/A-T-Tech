@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
 
 export default function LoginPage() {
     // 1. On renomme "email" en "identifier" car ça peut être l'un ou l'autre
@@ -80,6 +82,8 @@ export default function LoginPage() {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
+
+                    <Link href="/forgot-password" className="text-sm text-gray-500 hover:text-black">Mot de passe oublié ?</Link>
 
                     <button 
                         type="submit" 

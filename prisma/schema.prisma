@@ -61,6 +61,10 @@ model MerchantUser {
   companyId String?  
   company   Company? @relation(fields: [companyId], references: [id])
 
+  // Token pour la réinitialisation du mdp
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
+
   transactions Transaction[]
   
   createdAt DateTime @default(now())

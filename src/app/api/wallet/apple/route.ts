@@ -108,6 +108,7 @@ export async function GET(request: Request) {
       serialNumber,
       webServiceURL: `${protocol}://${host}/api/wallet/apple`,
       authenticationToken: customer.walletId,
+      groupingIdentifier: companyId,
       // 👇 DISPOSITION PARFAITE DU HAUT 👇
       organizationName: "CARTE FIDÉLITÉ", // Titre en haut à gauche
       logoText: templateData.merchant.name,     // Logo "Goodly" en haut à gauche

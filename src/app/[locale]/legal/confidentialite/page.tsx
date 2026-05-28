@@ -9,12 +9,12 @@ export default function PrivacyPage() {
     const richConfig = {
         strong: (chunks: React.ReactNode) => <strong>{chunks}</strong>,
         a: (chunks: React.ReactNode) => (
-            <a href="mailto:tristanhdtb@hotmail.com" className="text-blue-600 hover:underline">
+            <a href="mailto:contact@cardeo.be" className="text-blue-600 hover:underline">
                 {chunks}
             </a>
         ),
         aBold: (chunks: React.ReactNode) => (
-            <a href="mailto:tristanhdtb@hotmail.com" className="text-blue-600 hover:underline font-semibold">
+            <a href="mailto:contact@cardeo.be" className="text-blue-600 hover:underline font-semibold">
                 {chunks}
             </a>
         )

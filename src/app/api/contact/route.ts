@@ -16,9 +16,9 @@ export async function POST(req: Request) {
 
         // On ordonne à Resend d'envoyer l'email
         const data = await resend.emails.send({
-            from: 'A-T-Tech Contact <onboarding@resend.dev>', // ⚠️ Doit rester onboarding@resend.dev pour l'instant
-            to: [process.env.CONTACT_EMAIL || 'natrist@hotmail.com'], // Ton adresse de réception
-            subject: `Nouveau message de ${name} - A-T-Tech`,
+            from: 'Cardeo Contact <contact@cardeo.be>',
+            to: [process.env.CONTACT_EMAIL || 'contact@cardeo.be'], // Ton adresse de réception
+            subject: `Nouveau message de ${name} - Cardeo`,
             replyTo: email, // Permet de faire "Répondre" directement à ton prospect dans ta boîte mail !
             html: `
                 <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
                     </div>
                     
                     <p style="font-size: 12px; color: #888; margin-top: 40px; text-align: center;">
-                        Cet email a été envoyé depuis le formulaire de contact de A-T-Tech Fidelity.
+                        Cet email a été envoyé depuis le formulaire de contact de Cardeo.
                     </p>
                 </div>
             `

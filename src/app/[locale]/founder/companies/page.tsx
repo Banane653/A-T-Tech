@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CARD_TEMPLATES, TemplateType } from '@/config/templates';
 import { useTranslations } from 'next-intl';
+
+// On garde cette importation pour le typage si nécessaire ailleurs, mais on n'en a plus besoin pour le choix
+import { TemplateType } from '@/config/templates'; 
 
 type Company = {
     id: string;
@@ -15,8 +17,6 @@ type Company = {
     _count: { customers: number };
 };
 
-const defaultTemplate = CARD_TEMPLATES.find((t) => t.type === 'STAMPS')?.id || 'default';
-
 const initialFormData = {
     companyName: '',
     adminName: '',
@@ -26,7 +26,7 @@ const initialFormData = {
     systemType: 'STAMPS' as TemplateType,
     primaryColor: '#000000',
     logoUrl: '',
-    cardTemplate: defaultTemplate,
+    cardTemplate: 'default', // Valeur fixe invisible pour le backend
 };
 
 export default function FounderCompaniesPage() {
@@ -61,10 +61,7 @@ export default function FounderCompaniesPage() {
 
         if (res.ok) {
             setShowForm(false);
-            setFormData({
-                ...initialFormData,
-                cardTemplate: CARD_TEMPLATES.find((t) => t.type === 'STAMPS')?.id || 'default',
-            });
+            setFormData(initialFormData);
             fetchCompanies();
         } else {
             const data = await res.json();
@@ -72,8 +69,6 @@ export default function FounderCompaniesPage() {
         }
         setLoading(false);
     };
-
-    const availableTemplates = CARD_TEMPLATES.filter((t) => t.type === formData.systemType);
 
     const inputClass =
         'w-full p-3 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-400 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500';
@@ -121,13 +116,9 @@ export default function FounderCompaniesPage() {
                             className={inputClass}
                             value={formData.systemType}
                             onChange={(e) => {
-                                const newType = e.target.value as TemplateType;
-                                const firstTemplateId =
-                                    CARD_TEMPLATES.find((t) => t.type === newType)?.id || 'default';
                                 setFormData({
                                     ...formData,
-                                    systemType: newType,
-                                    cardTemplate: firstTemplateId,
+                                    systemType: e.target.value as TemplateType,
                                 });
                             }}
                         >
@@ -176,33 +167,6 @@ export default function FounderCompaniesPage() {
                                     setFormData({ ...formData, logoUrl: e.target.value })
                                 }
                             />
-                        </div>
-                    </div>
-
-                    <div className="mt-4">
-                        <label className="text-sm text-slate-400 mb-2 font-semibold block">
-                            {t('form.section2.templateLabel')}
-                        </label>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            {availableTemplates.map((tpl) => (
-                                <button
-                                    key={tpl.id}
-                                    type="button"
-                                    onClick={() =>
-                                        setFormData({ ...formData, cardTemplate: tpl.id })
-                                    }
-                                    className={`cursor-pointer border-2 rounded-xl p-4 flex flex-col items-center text-center transition-all ${
-                                        formData.cardTemplate === tpl.id
-                                            ? 'border-indigo-500 bg-indigo-950/50 ring-2 ring-indigo-500/30'
-                                            : 'border-slate-600 bg-slate-800 hover:border-slate-500'
-                                    }`}
-                                >
-                                    <div className="font-bold text-sm mb-1 text-white">
-                                        {tpl.name}
-                                    </div>
-                                    <div className="text-xs text-slate-400">{tpl.description}</div>
-                                </button>
-                            ))}
                         </div>
                     </div>
 
@@ -315,14 +279,6 @@ export default function FounderCompaniesPage() {
                                                     : t('list.badges.points')}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-slate-400 mt-1">
-                                            {t('list.labels.template')}{' '}
-                                            <span className="font-semibold text-slate-300">
-                                                {CARD_TEMPLATES.find(
-                                                    (t) => t.id === company.cardTemplate
-                                                )?.name || t('list.labels.standard')}
-                                            </span>
-                                        </p>
                                         {company.users[0] && (
                                             <p className="text-xs text-slate-500 mt-1">
                                                 {t('list.labels.manager')} {company.users[0].name} (

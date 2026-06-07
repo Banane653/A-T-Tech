@@ -9,7 +9,7 @@ export interface CardTemplate {
     description: string;
     
     // --- Propriétés secrètes pour notre moteur de génération ---
-    stampShape?: 'star' | 'coffee' | 'pizza' | 'gift'; // Quel dessin pour les tampons ?
+    stampShape?: 'star' | 'coffee' | 'pizza' | 'gift' | 'nails'; // Quel dessin pour les tampons ?
     backgroundImage?: string; // Quelle image de fond pour les points ?
 }
 
@@ -45,7 +45,13 @@ export const CARD_TEMPLATES: CardTemplate[] = [
         description: 'De jolis paquets cadeaux pour récompenser la fidélité.',
         stampShape: 'gift',
     },
-
+    {
+        id: 'stamps_nails',
+        type: 'STAMPS',
+        name: 'Nails',
+        description: 'Des ongles pour récompenser la fidélité.',
+        stampShape: 'nails',
+    },
     // -------------------------
     // 💳 MODÈLES POUR POINTS
     // -------------------------

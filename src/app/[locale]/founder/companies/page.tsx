@@ -316,6 +316,12 @@ export default function FounderCompaniesPage() {
                                                     : t('list.badges.points')}
                                             </span>
                                         </div>
+
+                                        {company.systemType === 'STAMPS' && (
+                                            <p className="text-xs text-amber-400/80 mt-1">
+                                                Style : <span className="font-semibold uppercase text-slate-300">{company.cardTemplate}</span>
+                                            </p>
+                                        )}
                                         {company.users[0] && (
                                             <p className="text-xs text-slate-500 mt-1">
                                                 {t('list.labels.manager')} {company.users[0].name} (

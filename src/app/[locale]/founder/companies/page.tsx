@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-
-// On garde cette importation pour le typage si nécessaire ailleurs, mais on n'en a plus besoin pour le choix
-import { TemplateType } from '@/config/templates'; 
+import { CARD_TEMPLATES, TemplateType } from '@/config/templates'; // 👈 Retour de l'import
 
 type Company = {
     id: string;
@@ -17,6 +15,8 @@ type Company = {
     _count: { customers: number };
 };
 
+const defaultStampsTemplate = CARD_TEMPLATES.find((t) => t.type === 'STAMPS')?.id || 'default';
+
 const initialFormData = {
     companyName: '',
     adminName: '',
@@ -26,7 +26,7 @@ const initialFormData = {
     systemType: 'STAMPS' as TemplateType,
     primaryColor: '#000000',
     logoUrl: '',
-    cardTemplate: 'default', // Valeur fixe invisible pour le backend
+    cardTemplate: defaultStampsTemplate, 
 };
 
 export default function FounderCompaniesPage() {
@@ -69,6 +69,9 @@ export default function FounderCompaniesPage() {
         }
         setLoading(false);
     };
+
+    // On ne filtre que les templates de tampons pour l'affichage
+    const stampTemplates = CARD_TEMPLATES.filter((t) => t.type === 'STAMPS');
 
     const inputClass =
         'w-full p-3 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-400 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500';
@@ -116,9 +119,14 @@ export default function FounderCompaniesPage() {
                             className={inputClass}
                             value={formData.systemType}
                             onChange={(e) => {
+                                const newType = e.target.value as TemplateType;
+                                // Si on passe en STAMPS, on sélectionne le 1er template de tampons. Sinon, un default pour les POINTS.
+                                const firstTemplateId = CARD_TEMPLATES.find((t) => t.type === newType)?.id || 'default';
+                                
                                 setFormData({
                                     ...formData,
-                                    systemType: e.target.value as TemplateType,
+                                    systemType: newType,
+                                    cardTemplate: firstTemplateId,
                                 });
                             }}
                         >
@@ -130,6 +138,34 @@ export default function FounderCompaniesPage() {
                             </option>
                         </select>
                     </div>
+
+                    {/* 👇 NOUVEAU : Affichage conditionnel des icônes de tampons 👇 */}
+                    {formData.systemType === 'STAMPS' && (
+                        <div className="mt-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+                            <label className="text-sm text-slate-400 mb-3 font-semibold block">
+                                Icône des tampons (Optionnel)
+                            </label>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                {stampTemplates.map((tpl) => (
+                                    <button
+                                        key={tpl.id}
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, cardTemplate: tpl.id })}
+                                        className={`cursor-pointer border-2 rounded-xl p-3 flex flex-col items-center text-center transition-all ${
+                                            formData.cardTemplate === tpl.id
+                                                ? 'border-indigo-500 bg-indigo-950/50 ring-2 ring-indigo-500/30'
+                                                : 'border-slate-600 bg-slate-800 hover:border-slate-500'
+                                        }`}
+                                    >
+                                        <div className="font-bold text-sm text-white">
+                                            {tpl.name}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {/* 👆 FIN NOUVEAU 👆 */}
 
                     <h3 className="font-bold text-lg text-white border-b border-slate-700 pb-2 pt-4">
                         {t('form.section2.title')}
@@ -228,6 +264,7 @@ export default function FounderCompaniesPage() {
                 </form>
             )}
 
+            {/* Liste des commerces inchangée ... */}
             <div className="bg-slate-900 rounded-2xl border border-indigo-900/40 shadow-xl overflow-hidden">
                 {fetching ? (
                     <p className="p-8 text-center text-slate-500">{t('list.loading')}</p>

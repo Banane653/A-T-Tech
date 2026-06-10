@@ -46,7 +46,8 @@ export async function GET(request: Request) {
             customer.company.googleClassId,
             templateData.loyalty.systemType,
             templateData.colors.background,
-            customer.company.cardTemplate
+            customer.company.cardTemplate,
+            templateData.loyalty.level
         );
 
         // On renvoie du HTML pur

@@ -82,7 +82,6 @@ export const generateGoogleWalletPass = (
         };
     } else {
         // En mode point, on peut ajouter le solde si tu le souhaites
-        textModules.push({ id: "points", header: "SOLDE", body: `${points} points` });
         
         if (template.backgroundImage) {
             heroImage = {
@@ -161,7 +160,6 @@ export const updateWalletPoints = async (
                 }
             };
         } else {
-            textModules.push({ id: "points", header: "SOLDE", body: `${newPoints} points` });
             updateData = {
                 textModulesData: textModules,
                 loyaltyPoints: { label: "Points", balance: { int: newPoints } }

@@ -1,6 +1,6 @@
 @AGENTS.md
 
-# Contexte du Projet : A-T-Tech Fidélité
+# Contexte du Projet : Cardeo
 Ceci est un SaaS B2B2C de création de cartes de fidélité numériques (Google Wallet) en marque blanche pour les commerçants.
 
 ## Stack Technique

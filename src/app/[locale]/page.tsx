@@ -39,7 +39,7 @@ export default function HomePage() {
       
       {/* 1. NAVBAR */}
       <header className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-        <div className="text-2xl font-black tracking-tighter">A-T-TECH.</div>
+        <div className="text-2xl font-black tracking-tighter">CARDEO.</div>
         <nav className="hidden md:flex gap-8 font-medium text-sm text-gray-600">
           <a href="#features" className="hover:text-black transition">{t('nav.features')}</a>
           <a href="#how-it-works" className="hover:text-black transition">{t('nav.howItWorks')}</a>

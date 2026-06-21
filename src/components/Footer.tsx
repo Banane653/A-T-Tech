@@ -52,9 +52,9 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Bas du footer : Copyright (A-T-Tech) & Sélecteur de langue */}
+                {/* Bas du footer : Copyright (Cardeo) & Sélecteur de langue */}
                 <div className="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-gray-200 gap-4">
-                    <span>© {new Date().getFullYear()} A-T-Tech Fidelity. {t('rights')}</span>
+                    <span>© {new Date().getFullYear()} Cardeo {t('rights')}</span>
                     <LanguageSwitcher />
                 </div>
             </div>

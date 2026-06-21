@@ -81,8 +81,9 @@ model Customer {
   birthDate String?
   points    Int      @default(0)
   walletId  String   @unique
+
+  acceptsMarketing Boolean @default(false)
   
-  // Le client est désormais lié au commerce où il s'est inscrit
   companyId String?  
   company   Company? @relation(fields: [companyId], references: [id])
   transactions Transaction[]

@@ -43,7 +43,7 @@ export default function ContactPage() {
             {/* Navbar basique pour pouvoir revenir à l'accueil */}
             <header className="flex items-center justify-between px-6 py-6 max-w-7xl mx-auto w-full">
                 <Link href="/" className="text-2xl font-black tracking-tighter hover:opacity-80 transition">
-                    A-T-TECH.
+                    CARDEO
                 </Link>
                 <Link href="/" className="text-sm font-medium text-gray-500 hover:text-black transition">
                     {t('backToHome')}

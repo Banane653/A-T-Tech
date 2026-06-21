@@ -514,6 +514,10 @@
       },
       "alerts": {
         "error": "Erreur"
+      },
+      "checkboxes": {
+        "termsAndPrivacy": "J'accepte les <terms>Conditions d'Utilisation</terms> et la <privacy>Politique de Confidentialité</privacy>.*",
+        "marketing": "J'accepte de recevoir des offres promotionnelles et des actualités de la part de ce commerce."
       }
     },
     "Contact": {

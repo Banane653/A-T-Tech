@@ -539,6 +539,10 @@
       },
       "alerts": {
         "error": "Error"
+      },
+      "checkboxes": {
+        "termsAndPrivacy": "I accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>.*",
+        "marketing": "I agree to receive promotional offers and news from this business."
       }
     },
     "Privacy": {

@@ -498,6 +498,10 @@
       },
       "alerts": {
         "error": "Fout"
+      },
+      "checkboxes": {
+        "termsAndPrivacy": "Ik ga akkoord met de <terms>Gebruiksvoorwaarden</terms> en het <privacy>Privacybeleid</privacy>.*",
+        "marketing": "Ik ga ermee akkoord om promotionele aanbiedingen en nieuws van dit bedrijf te ontvangen."
       }
     },
     "ForgotPassword": {

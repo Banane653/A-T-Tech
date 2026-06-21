@@ -37,7 +37,7 @@ function RegisterForm() {
     const searchParams = useSearchParams();
     const companyId = searchParams.get('companyId');
 
-    const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', birthDate: '' });
+    const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', birthDate: '', acceptsMarketing: false });
     const [saveUrl, setSaveUrl] = useState<string | null>(null);
     const [registeredIdentity, setRegisteredIdentity] = useState<{ name: string; email: string } | null>(null);
     const [appleLoading, setAppleLoading] = useState(false);
@@ -233,6 +233,44 @@ function RegisterForm() {
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none text-black"
                             onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
                         />
+                    </div>
+
+                    <div className="space-y-3 mt-6 mb-4">
+                        {/* Case 1 : Obligatoire (CGU) */}
+                        <label className="flex items-start gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                required
+                                className="mt-1 w-5 h-5 text-black border-gray-300 rounded focus:ring-black"
+                            />
+                            <span className="text-sm text-gray-600 leading-tight">
+                                {t.rich('checkboxes.termsAndPrivacy', {
+                                    terms: (chunks) => (
+                                        <a href="/terms" target="_blank" className="underline hover:text-black">
+                                            {chunks}
+                                        </a>
+                                    ),
+                                    privacy: (chunks) => (
+                                        <a href="/privacy" target="_blank" className="underline hover:text-black">
+                                            {chunks}
+                                        </a>
+                                    )
+                                })}
+                            </span>
+                        </label>
+
+                        {/* Case 2 : Optionnelle (Marketing) */}
+                        <label className="flex items-start gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={formData.acceptsMarketing}
+                                onChange={(e) => setFormData({ ...formData, acceptsMarketing: e.target.checked })}
+                                className="mt-1 w-5 h-5 text-black border-gray-300 rounded focus:ring-black"
+                            />
+                            <span className="text-sm text-gray-600 leading-tight">
+                                {t('checkboxes.marketing')}
+                            </span>
+                        </label>
                     </div>
 
                     <button

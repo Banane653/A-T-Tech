@@ -39,7 +39,7 @@ export default function HomePage() {
       
       {/* 1. NAVBAR */}
       <header className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-        <div className="text-2xl font-black tracking-tighter">CARDEO.</div>
+        <div className="text-2xl font-black tracking-tighter">CARDEO</div>
         <nav className="hidden md:flex gap-8 font-medium text-sm text-gray-600">
           <a href="#features" className="hover:text-black transition">{t('nav.features')}</a>
           <a href="#how-it-works" className="hover:text-black transition">{t('nav.howItWorks')}</a>
@@ -106,7 +106,7 @@ export default function HomePage() {
 
                       <div className="flex justify-between items-start z-10">
                           <div>
-                              <h3 className="font-bold text-base tracking-wide">A-T-TECH.</h3>
+                              <h3 className="font-bold text-base tracking-wide">CARDEO</h3>
                               <p className="text-[10px] text-gray-400 mt-0.5 tracking-wider">{t('mockup.cardType')}</p>
                           </div>
                           <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center font-bold text-sm">VIP</div>

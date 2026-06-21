@@ -6,7 +6,7 @@ import { getCardTemplateData } from '@/lib/wallet-templates';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { firstName, lastName, email, birthDate, companyId } = body; 
+        const { firstName, lastName, email, birthDate, companyId, acceptsMarketing } = body; 
 
         if (!firstName || !email || !companyId) {
             return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
@@ -29,7 +29,8 @@ export async function POST(request: Request) {
                     birthDate, 
                     walletId, 
                     points: 0,
-                    companyId 
+                    companyId,
+                    acceptsMarketing: Boolean(acceptsMarketing)
                 },
                 include: { company: true } // 👈 NOUVEAU : On demande à Prisma de nous renvoyer l'entreprise
             });
@@ -50,7 +51,8 @@ export async function POST(request: Request) {
             customer.company.googleClassId,
             templateData.loyalty.systemType,   
             templateData.colors.background,
-            customer.company.cardTemplate
+            customer.company.cardTemplate,
+            templateData.loyalty.level
         );
         
         return NextResponse.json({ saveUrl });

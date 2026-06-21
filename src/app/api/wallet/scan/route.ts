@@ -12,7 +12,8 @@ type ScanAction = 'lookup' | 'add_stamp' | 'add_points' | 'spend_points';
 async function syncWallet(
     walletId: string,
     newPoints: number,
-    company: { systemType: string; primaryColor: string; cardTemplate: string }
+    company: { systemType: string; primaryColor: string; cardTemplate: string },
+    firstName: string
 ) {
     try {
         await updateWalletPoints(
@@ -20,7 +21,9 @@ async function syncWallet(
             newPoints,
             company.systemType,
             company.primaryColor,
-            company.cardTemplate
+            company.cardTemplate,
+            firstName,
+            "Standard"
         );
     } catch (googleError) {
         console.error('❌ Erreur synchro Google Wallet:', googleError);
@@ -202,7 +205,7 @@ export async function POST(request: Request) {
             }),
         ]);
 
-        await syncWallet(walletId, newPoints, company);
+        await syncWallet(walletId, newPoints, company, customer.firstName);
 
         return NextResponse.json({
             success: true,

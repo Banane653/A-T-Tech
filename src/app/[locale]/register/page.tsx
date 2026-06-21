@@ -246,12 +246,12 @@ function RegisterForm() {
                             <span className="text-sm text-gray-600 leading-tight">
                                 {t.rich('checkboxes.termsAndPrivacy', {
                                     terms: (chunks) => (
-                                        <a href="/terms" target="_blank" className="underline hover:text-black">
+                                        <a href="/legal/confidentialite" target="_blank" className="underline hover:text-black">
                                             {chunks}
                                         </a>
                                     ),
                                     privacy: (chunks) => (
-                                        <a href="/privacy" target="_blank" className="underline hover:text-black">
+                                        <a href="/legal/cgv" target="_blank" className="underline hover:text-black">
                                             {chunks}
                                         </a>
                                     )

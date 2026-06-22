@@ -362,7 +362,7 @@
     },
     "MerchantLayout": {
       "title": "Manager Portal",
-      "subtitle": "Fidelity Wallet",
+      "subtitle": "Cardeo",
       "logout": "Log out",
       "nav": {
         "scanner": "Scanner",

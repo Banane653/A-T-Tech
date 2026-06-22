@@ -3,6 +3,7 @@
 import { Link, usePathname, useRouter } from '@/navigation';
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 // On utilise "labelKey" pour faire le pont avec les dictionnaires
 const navItems = [
@@ -120,6 +121,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         );
                     })}
                 </nav>
+
+                <div className="flex justify-center">
+                    <LanguageSwitcher />
+                </div>
 
                 <div className="p-4 border-t border-gray-100">
                     <button

@@ -16,6 +16,7 @@ export default function AdminDashboard() {
     const [systemType, setSystemType] = useState('STAMPS');
     const [pointsRatio, setPointsRatio] = useState(1);
     const [isSavingRatio, setIsSavingRatio] = useState(false);
+    const [showQrModal, setShowQrModal] = useState(false);
 
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({ name: '', email: '', username: '', password: '' });
@@ -155,18 +156,19 @@ export default function AdminDashboard() {
 
             {companyId && (
                 <div className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm mb-8">
-                    <div className="flex items-start justify-between gap-6">
-                        <div className="flex-1 space-y-3">
+                    {/* On passe en flex-col sur mobile, et flex-row sur desktop */}
+                    <div className="flex flex-col md:flex-row items-start justify-between gap-6">
+                        <div className="flex-1 space-y-3 w-full">
                             <h3 className="font-bold text-gray-800">{t('link.title')}</h3>
                             <p className="text-sm text-gray-500 max-w-lg">
                                 {t('link.desc')}
                             </p>
                             
-                            <div className="flex items-center space-x-2 pt-2">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 w-full">
                                 <input
                                     readOnly
                                     value={registerLink}
-                                    className="flex-1 bg-gray-50 p-3 text-sm border border-gray-200 rounded-lg text-gray-700 outline-none focus:border-gray-300"
+                                    className="flex-1 bg-gray-50 p-3 text-sm border border-gray-200 rounded-lg text-gray-700 outline-none focus:border-gray-300 w-full"
                                 />
                                 <button
                                     onClick={() => {
@@ -178,9 +180,21 @@ export default function AdminDashboard() {
                                     {t('link.copyBtn')}
                                 </button>
                             </div>
+
+                            {/* 👇 BOUTON MOBILE SEULEMENT 👇 */}
+                            <button
+                                onClick={() => setShowQrModal(true)}
+                                className="md:hidden w-full mt-4 bg-blue-50 text-blue-600 font-bold py-3 rounded-lg flex items-center justify-center gap-2 border border-blue-100 active:scale-95 transition"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                                </svg>
+                                Afficher le QR Code
+                            </button>
                         </div>
 
-                        <div className="flex-shrink-0 pt-1">
+                        {/* 👇 QR CODE DESKTOP SEULEMENT 👇 */}
+                        <div className="hidden md:block flex-shrink-0 pt-1">
                             <RegisterQrCode 
                                 registerUrl={registerLink} 
                                 merchantName={companyName} 
@@ -287,6 +301,43 @@ export default function AdminDashboard() {
                     ))}
                 </div>
             </div>
+            {showQrModal && (
+                <div 
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+                    onClick={() => setShowQrModal(false)} // Ferme si on clique à côté
+                >
+                    <div 
+                        className="bg-white rounded-3xl p-8 max-w-sm w-full flex flex-col items-center relative shadow-2xl"
+                        onClick={(e) => e.stopPropagation()} // Empêche la fermeture si on clique sur la carte
+                    >
+                        {/* Croix de fermeture */}
+                        <button 
+                            onClick={() => setShowQrModal(false)}
+                            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-500 rounded-full hover:bg-gray-200 transition"
+                        >
+                            ✕
+                        </button>
+                        
+                        <h3 className="text-lg font-bold mb-6 text-center text-gray-800">
+                            Faire scanner le client
+                        </h3>
+                        
+                        <div className="transform scale-160 mb-4">
+                            <RegisterQrCode 
+                                registerUrl={registerLink} 
+                                merchantName={companyName} 
+                            />
+                        </div>
+
+                        <button 
+                            onClick={() => setShowQrModal(false)}
+                            className="mt-6 w-full bg-black text-white font-bold py-3 rounded-xl active:scale-95 transition"
+                        >
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

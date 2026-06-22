@@ -370,7 +370,8 @@
         "history": "History",
         "stats": "Statistics",
         "customers": "My Customers",
-        "team": "My Team"
+        "team": "My Team",
+        "contact": "Support"
       }
     },
     "Contact": {
@@ -396,6 +397,13 @@
       "submit": {
         "loading": "Sending...",
         "default": "Send message"
+      },
+      "dashboard": {
+        "title": "Need help?",
+        "subtitle": "We are at your disposal for any questions or technical issues.",
+        "phoneLabel": "Direct phone",
+        "emailLabel": "Support email",
+        "formTitle": "Send a message"
       }
     },
     "Scanner": {

@@ -370,7 +370,8 @@
         "history": "Historique",
         "stats": "Statistiques",
         "customers": "Mes Clients",
-        "team": "Mon Équipe"
+        "team": "Mon Équipe",
+        "contact": "Contact"
       }
     },
     "Scanner": {
@@ -543,6 +544,13 @@
       "submit": {
         "loading": "Envoi en cours...",
         "default": "Envoyer le message"
+      },
+      "dashboard": {
+        "title": "Besoin d'aide ?",
+        "subtitle": "Nous sommes à votre disposition pour toute question ou problème technique.",
+        "phoneLabel": "Téléphone direct",
+        "emailLabel": "Email support",
+        "formTitle": "Envoyer un message"
       }
     },
     "Privacy": {

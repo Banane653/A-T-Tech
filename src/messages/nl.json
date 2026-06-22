@@ -370,7 +370,8 @@
         "history": "Geschiedenis",
         "stats": "Statistieken",
         "customers": "Mijn Klanten",
-        "team": "Mijn Team"
+        "team": "Mijn Team",
+        "contact": "Contact"
       }
     },
     "Contact": {
@@ -396,6 +397,13 @@
       "submit": {
         "loading": "Sending...",
         "default": "Send message"
+      },
+      "dashboard": {
+        "title": "Hulp nodig?",
+        "subtitle": "Wij staan tot uw beschikking voor al uw vragen of technische problemen.",
+        "phoneLabel": "Directe telefoon",
+        "emailLabel": "Support e-mail",
+        "formTitle": "Stuur een bericht"
       }
     },
     "Scanner": {

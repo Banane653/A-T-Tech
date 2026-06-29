@@ -178,3 +178,42 @@ export const updateWalletPoints = async (
         return false;
     }
 };
+
+// ------------------------------------------------------------------
+// 4. ENVOI D'UN MESSAGE MARKETING (PUSH)
+// ------------------------------------------------------------------
+export const sendGoogleWalletMessage = async (
+    walletId: string, 
+    title: string, 
+    message: string
+): Promise<boolean> => {
+    try {
+        const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
+        const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
+        const auth = new google.auth.GoogleAuth({ 
+            credentials, 
+            scopes: ['https://www.googleapis.com/auth/wallet_object.issuer'] 
+        });
+        const client = await auth.getClient();
+        const objectId = `${issuerId}.${walletId}`;
+
+        // On utilise "PATCH" pour ajouter un message à la carte existante
+        // Google affichera ce message en dessous du QR Code et déclenchera une notification
+        await client.request({
+            url: `https://walletobjects.googleapis.com/walletobjects/v1/loyaltyObject/${objectId}`,
+            method: 'PATCH',
+            data: {
+                messages: [{
+                    header: title,
+                    body: message
+                }]
+            }
+        });
+
+        console.log(`✅ Message Google Wallet envoyé avec succès au client : ${walletId}`);
+        return true;
+    } catch (error) {
+        console.error(`❌ Erreur lors de l'envoi du message Google Wallet pour ${walletId}:`, error);
+        return false;
+    }
+};

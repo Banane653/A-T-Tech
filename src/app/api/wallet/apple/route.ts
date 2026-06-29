@@ -84,6 +84,14 @@ export async function GET(request: Request) {
     }
 
     const templateData = getCardTemplateData(customer.company, customer);
+    // 👇 NOUVEAU : On va chercher la dernière campagne marketing du commerçant
+    const latestCampaign = await prisma.marketingCampaign.findFirst({
+      where: { companyId: customer.companyId! },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const marketingTitle = latestCampaign ? latestCampaign.title : "Dernière offre";
+    const marketingMessage = latestCampaign ? latestCampaign.message : "Gagnez des points à chaque visite !";
     const serialNumber = templateData.customer.walletId;
     
     const logoBuffer = await getMerchantLogoBuffer(templateData.images.logoUrl);
@@ -142,7 +150,13 @@ export async function GET(request: Request) {
         ],
         backFields: [
           { key: "email", label: "Email", value: templateData.customer.email },
-          { key: "walletId", label: "Identifiant", value: templateData.customer.walletId }
+          { key: "walletId", label: "Identifiant", value: templateData.customer.walletId },
+          { 
+            key: "marketingMessage", 
+            label: marketingTitle, 
+            value: marketingMessage, 
+            changeMessage: "%@" 
+          }
         ],
       },
       barcodes: [

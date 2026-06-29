@@ -45,6 +45,8 @@ model Company {
   transactions   Transaction[]
   createdAt      DateTime       @default(now())
 
+  marketingCampaigns MarketingCampaign[]
+
   @@map("companies")
 }
 
@@ -134,4 +136,18 @@ model ApplePassRegistration {
   // Un iPhone ne peut s'enregistrer qu'une seule fois pour une même carte
   @@unique([deviceLibraryIdentifier, serialNumber])
   @@map("apple_pass_registrations")
+}
+
+model MarketingCampaign {
+  id        String   @id @default(uuid())
+  title     String   // Le titre de la notification (ex: "Offre Flash 🍕")
+  message   String   // Le texte de l'offre (ex: "-20% sur tout le menu ce soir !")
+  
+  // Relation avec le commerce qui envoie la campagne
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+
+  @@map("marketing_campaigns")
 }

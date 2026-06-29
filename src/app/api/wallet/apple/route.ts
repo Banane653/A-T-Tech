@@ -225,6 +225,7 @@ export async function GET(request: Request) {
       headers: {
         'Content-Type': 'application/vnd.apple.pkpass',
         'Content-Disposition': 'attachment; filename="loyalty.pkpass"',
+        'Last-Modified': new Date().toUTCString()
       },
     });
   } catch (error) {

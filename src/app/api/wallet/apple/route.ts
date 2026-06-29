@@ -98,6 +98,7 @@ export async function GET(request: Request) {
     
     let iconBuffer: any = FALLBACK_PIXEL_BUFFER;
     try {
+      console.log("🛠️ Tentative de redimensionnement de l'icône avec Sharp...");
       iconBuffer = await sharp(logoBuffer)
         .resize(100, 100, {
           fit: 'contain',
@@ -106,6 +107,7 @@ export async function GET(request: Request) {
         .png()
         .toBuffer();
     } catch (e) {
+      console.error("❌ Erreur Sharp pour l'icône :", e); // 👈 Et ici pour voir l'erreur !
       console.error("Erreur création icône, utilisation de l'icône par défaut...");
       try { iconBuffer = await readFile(FALLBACK_ICON_PATH); } catch (err) {}
     }

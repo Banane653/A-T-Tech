@@ -96,11 +96,18 @@ export async function GET(request: Request) {
     
     const logoBuffer = await getMerchantLogoBuffer(templateData.images.logoUrl);
     
-    let iconBuffer = FALLBACK_PIXEL_BUFFER;
+    let iconBuffer: any = FALLBACK_PIXEL_BUFFER;
     try {
-      iconBuffer = await readFile(FALLBACK_ICON_PATH);
+      iconBuffer = await sharp(logoBuffer)
+        .resize(100, 100, {
+          fit: 'contain',
+          background: { r: 0, g: 0, b: 0, alpha: 0 } // Fond transparent
+        })
+        .png()
+        .toBuffer();
     } catch (e) {
-      console.error("Fichier default_icon.png introuvable...");
+      console.error("Erreur création icône, utilisation de l'icône par défaut...");
+      try { iconBuffer = await readFile(FALLBACK_ICON_PATH); } catch (err) {}
     }
 
     const signerCert = requireEnv('APPLE_WALLET_CERT');
@@ -118,7 +125,7 @@ export async function GET(request: Request) {
       authenticationToken: customer.walletId,
       groupingIdentifier: companyId,
       // 👇 DISPOSITION PARFAITE DU HAUT 👇
-      organizationName: "CARTE FIDÉLITÉ", // Titre en haut à gauche
+      organizationName: templateData.merchant.name, // Titre en haut à gauche
       logoText: templateData.merchant.name,     // Logo "Goodly" en haut à gauche
       description: `${templateData.merchant.name} - Carte de fidelite`,
       foregroundColor: `rgb(${parseInt(templateData.colors.text.slice(1, 3), 16)}, ${parseInt(templateData.colors.text.slice(3, 5), 16)}, ${parseInt(templateData.colors.text.slice(5, 7), 16)})`,

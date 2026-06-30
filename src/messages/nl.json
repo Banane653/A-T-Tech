@@ -366,6 +366,7 @@
       "logout": "Uitloggen",
       "nav": {
         "scanner": "Scanner",
+        "marketing": "Marketing",
         "rewards": "Cadeaucatalogus",
         "history": "Geschiedenis",
         "stats": "Statistieken",
@@ -459,6 +460,22 @@
         "addStamp": "+1 stempel",
         "purchase": "Aankoop van"
       }
+    },
+    "MerchantMarketing": {
+      "title": "Marketingcampagnes",
+      "subtitle": "Stuur pushnotificaties rechtstreeks naar het vergrendelscherm van je klanten (Apple & Google Wallet).",
+      "form": {
+        "titleLabel": "Titel van de aanbieding (Kort en krachtig)",
+        "titlePlaceholder": "Flitsdeal ⚡️",
+        "messageLabel": "Je bericht",
+        "messagePlaceholder": "Vandaag 20% korting op de hele winkel!",
+        "sendBtn": "Notificatie verzenden",
+        "sending": "Verzenden...",
+        "success": "Notificatie verzonden!",
+        "error": "Er is een fout opgetreden"
+      },
+      "previewTitle": "Voorbeeld op het scherm van de klant",
+      "previewDisclaimer": "De werkelijke weergave kan licht variëren afhankelijk van het telefoonmodel (iOS of Android)."
     },
     "Login": {
       "title": "Manager Portaal",

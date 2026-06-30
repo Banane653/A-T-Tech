@@ -8,6 +8,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 // On utilise "labelKey" pour faire le pont avec les dictionnaires
 const navItems = [
     { href: '/scanner', labelKey: 'scanner', icon: '📷' },
+    { href: '/dashboard/marketing', labelKey: 'marketing', icon: '📢' },
     { href: '/dashboard/rewards', labelKey: 'rewards', icon: '🎁' },
     { href: '/dashboard/history', labelKey: 'history', icon: '📋' },
     { href: '/dashboard/stats', labelKey: 'stats', icon: '📊' },

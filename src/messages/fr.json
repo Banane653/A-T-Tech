@@ -366,6 +366,7 @@
       "logout": "Déconnexion",
       "nav": {
         "scanner": "Scanner",
+        "marketing": "Marketing",
         "rewards": "Catalogue Cadeaux",
         "history": "Historique",
         "stats": "Statistiques",
@@ -427,6 +428,22 @@
         "addStamp": "+1 tampon",
         "purchase": "Achat de"
       }
+    },
+    "MerchantMarketing": {
+      "title": "Campagnes Marketing",
+      "subtitle": "Envoyez des notifications Push directement sur l'écran verrouillé de vos clients (Apple & Google Wallet).",
+      "form": {
+        "titleLabel": "Titre de l'offre (Court et percutant)",
+        "titlePlaceholder": "Offre Flash ⚡️",
+        "messageLabel": "Votre message",
+        "messagePlaceholder": "-20% sur toute la boutique aujourd'hui !",
+        "sendBtn": "Envoyer la notification",
+        "sending": "Envoi en cours...",
+        "success": "Notification envoyée !",
+        "error": "Une erreur est survenue"
+      },
+      "previewTitle": "Aperçu sur l'écran du client",
+      "previewDisclaimer": "L'apparence réelle peut varier légèrement selon le modèle de téléphone (iOS ou Android)."
     },
     "Login": {
       "title": "Espace Commerçant",

@@ -9,7 +9,12 @@ export async function GET() {
     try {
         const company = await prisma.company.findUnique({
             where: { id: admin.companyId },
-            select: { pointsRatio: true, systemType: true },
+            select: { 
+                id: true, 
+                name: true, 
+                pointsRatio: true, 
+                systemType: true 
+            },
         });
         return NextResponse.json({ company });
     } catch {

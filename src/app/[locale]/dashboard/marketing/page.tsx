@@ -9,6 +9,7 @@ export default function MarketingPage() {
     const [companyName, setCompanyName] = useState<string>('Votre Commerce');
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
+    const [companyLogo, setCompanyLogo] = useState<string | null>(null);
     
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [notifiedCount, setNotifiedCount] = useState(0);
@@ -22,6 +23,7 @@ export default function MarketingPage() {
                 if (data.company) {
                     setCompanyId(data.company.id);
                     setCompanyName(data.company.name);
+                    setCompanyLogo(data.company.logoUrl);
                 }
             })
             .catch(console.error);
@@ -143,8 +145,19 @@ export default function MarketingPage() {
                     {/* Fausse bulle de notification iOS */}
                     <div className="w-full max-w-sm bg-white/80 backdrop-blur-md rounded-3xl p-4 shadow-lg border border-white/40 transform transition-all">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-8 h-8 rounded bg-gradient-to-br from-gray-800 to-black flex items-center justify-center shrink-0">
-                                <span className="text-white text-xs">🍏</span>
+                            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden border border-gray-200 shadow-sm">
+                                {companyLogo ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img 
+                                        src={companyLogo} 
+                                        alt="Logo" 
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <span className="text-gray-400 text-xs font-bold">
+                                        {companyName.charAt(0).toUpperCase()}
+                                    </span>
+                                )}
                             </div>
                             <div className="flex-1">
                                 <p className="text-xs font-semibold text-gray-900 opacity-60 flex justify-between">

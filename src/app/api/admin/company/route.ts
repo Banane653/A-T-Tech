@@ -12,6 +12,7 @@ export async function GET() {
             select: { 
                 id: true, 
                 name: true, 
+                logoUrl: true,
                 pointsRatio: true, 
                 systemType: true 
             },

@@ -467,6 +467,7 @@
       "form": {
         "titleLabel": "Titel van de aanbieding (Kort en krachtig)",
         "titlePlaceholder": "Flitsdeal ⚡️",
+        "titleHint": "Gebruikt als titel op Android, en als label op de achterkant van de kaart op de iPhone.",
         "messageLabel": "Je bericht",
         "messagePlaceholder": "Vandaag 20% korting op de hele winkel!",
         "sendBtn": "Notificatie verzenden",
@@ -475,7 +476,8 @@
         "error": "Er is een fout opgetreden"
       },
       "previewTitle": "Voorbeeld op het scherm van de klant",
-      "previewDisclaimer": "De werkelijke weergave kan licht variëren afhankelijk van het telefoonmodel (iOS of Android)."
+      "previewDisclaimer": "De werkelijke weergave kan licht variëren afhankelijk van het telefoonmodel (iOS of Android).",
+      "previewFallbackName": "Uw Bedrijf Naam"
     },
     "Login": {
       "title": "Manager Portaal",

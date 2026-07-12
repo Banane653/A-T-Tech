@@ -86,6 +86,9 @@ export default function MarketingPage() {
                                 required
                                 className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
                             />
+                            <p className="text-xs text-gray-500 mt-2">
+                                {t('form.titleHint')}
+                            </p>
                         </div>
 
                         <div>
@@ -101,6 +104,7 @@ export default function MarketingPage() {
                                 required
                                 className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition resize-none"
                             />
+                            
                             <p className="text-right text-xs text-gray-400 mt-2">
                                 {message.length}/120
                             </p>
@@ -150,7 +154,7 @@ export default function MarketingPage() {
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img 
                                         src={companyLogo} 
-                                        alt="Logo" 
+                                          alt="Logo" 
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
@@ -167,9 +171,11 @@ export default function MarketingPage() {
                             </div>
                         </div>
                         <div className="pl-11">
+                            {/* Sur iOS, le titre de la notif est TOUJOURS le nom du commerce */}
                             <p className="text-sm font-bold text-gray-900 leading-tight mb-1">
-                                {title || t('form.titlePlaceholder')}
+                                {companyName || t('previewFallbackName')}
                             </p>
+                            {/* Le corps de la notif est le message */}
                             <p className="text-sm text-gray-800 leading-snug">
                                 {message || t('form.messagePlaceholder')}
                             </p>

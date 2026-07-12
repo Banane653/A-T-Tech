@@ -467,6 +467,7 @@
       "form": {
         "titleLabel": "Offer Title (Short and catchy)",
         "titlePlaceholder": "Flash Sale ⚡️",
+        "titleHint": "Used as a title on Android, and as a label on the back of the card on iPhone.",
         "messageLabel": "Your message",
         "messagePlaceholder": "20% off the entire store today only!",
         "sendBtn": "Send notification",
@@ -475,7 +476,8 @@
         "error": "An error occurred"
       },
       "previewTitle": "Customer screen preview",
-      "previewDisclaimer": "Actual appearance may vary slightly depending on the phone model (iOS or Android)."
+      "previewDisclaimer": "Actual appearance may vary slightly depending on the phone model (iOS or Android).",
+      "previewFallbackName": "Your Business Name"
     },
     "Login": {
       "title": "Merchant Portal",

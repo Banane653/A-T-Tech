@@ -435,6 +435,7 @@
       "form": {
         "titleLabel": "Titre de l'offre (Court et percutant)",
         "titlePlaceholder": "Offre Flash ⚡️",
+        "titleHint": "Utilisé comme titre sur Android, et comme libellé au dos de la carte sur iPhone.",
         "messageLabel": "Votre message",
         "messagePlaceholder": "-20% sur toute la boutique aujourd'hui !",
         "sendBtn": "Envoyer la notification",
@@ -443,7 +444,8 @@
         "error": "Une erreur est survenue"
       },
       "previewTitle": "Aperçu sur l'écran du client",
-      "previewDisclaimer": "L'apparence réelle peut varier légèrement selon le modèle de téléphone (iOS ou Android)."
+      "previewDisclaimer": "L'apparence réelle peut varier légèrement selon le modèle de téléphone (iOS ou Android).",
+      "previewFallbackName": "Votre Commerce"
     },
     "Login": {
       "title": "Espace Commerçant",

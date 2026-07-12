@@ -463,7 +463,11 @@
     },
     "MerchantMarketing": {
       "title": "Marketingcampagnes",
-      "subtitle": "Stuur pushnotificaties rechtstreeks naar het vergrendelscherm van je klanten (Apple & Google Wallet).",
+      "subtitle": "Beheer klantcommunicatie in realtime of via het GPS-proximiteitsnetwerk.",
+      "tabs": {
+        "flash": "Flitsveldtocht (Push)",
+        "proximity": "Proximiteitsnotificatie (GPS)"
+      },
       "form": {
         "titleLabel": "Titel van de aanbieding (Kort en krachtig)",
         "titlePlaceholder": "Flitsdeal ⚡️",
@@ -474,6 +478,20 @@
         "sending": "Verzenden...",
         "success": "Notificatie verzonden!",
         "error": "Er is een fout opgetreden"
+      },
+      "gps": {
+        "addressLabel": "Adres van de vestiging",
+        "addressPlaceholder": "Bijv: Pizzeriastraat 15, 1000 Brussel",
+        "searchBtn": "Zoeken",
+        "searchLoading": "Zoeken...",
+        "notFound": "Adres niet gevonden. Vermeld de stad of postcode.",
+        "searchError": "Netwerkfout tijdens het zoeken naar het adres.",
+        "searchSuccess": "Locatie succesvol gevonden!",
+        "messageLabel": "Permanent proximiteitsbericht",
+        "messagePlaceholder": "Je bent heel dichtbij! Kom langs en ontdek onze nieuwe producten. 🍕",
+        "saveBtn": "Geofencing Activeren",
+        "saving": "Kaarten bijwerken...",
+        "saved": "GPS-instellingen geactiveerd!"
       },
       "previewTitle": "Voorbeeld op het scherm van de klant",
       "previewDisclaimer": "De werkelijke weergave kan licht variëren afhankelijk van het telefoonmodel (iOS of Android).",

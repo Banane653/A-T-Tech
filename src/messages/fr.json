@@ -431,7 +431,11 @@
     },
     "MerchantMarketing": {
       "title": "Campagnes Marketing",
-      "subtitle": "Envoyez des notifications Push directement sur l'écran verrouillé de vos clients (Apple & Google Wallet).",
+      "subtitle": "Gérez vos communications client en temps réel ou via le réseau GPS de proximité.",
+      "tabs": {
+        "flash": "Campagne Flash (Push)",
+        "proximity": "Notification de Proximité (GPS)"
+      },
       "form": {
         "titleLabel": "Titre de l'offre (Court et percutant)",
         "titlePlaceholder": "Offre Flash ⚡️",
@@ -442,6 +446,20 @@
         "sending": "Envoi en cours...",
         "success": "Notification envoyée !",
         "error": "Une erreur est survenue"
+      },
+      "gps": {
+        "addressLabel": "Adresse de votre établissement",
+        "addressPlaceholder": "Ex: 15 Rue de la Pizzeria, 1000 Bruxelles",
+        "searchBtn": "Rechercher",
+        "searchLoading": "Recherche...",
+        "notFound": "Adresse introuvable. Précisez la ville ou le code postal.",
+        "searchError": "Erreur réseau lors de la recherche de l'adresse.",
+        "searchSuccess": "Emplacement localisé avec succès !",
+        "messageLabel": "Message d'accroche permanent",
+        "messagePlaceholder": "Vous êtes juste à côté ! Venez profiter de nos nouveautés. 🍕",
+        "saveBtn": "Activer la géolocalisation",
+        "saving": "Mise à jour des cartes...",
+        "saved": "Paramètres GPS activés !"
       },
       "previewTitle": "Aperçu sur l'écran du client",
       "previewDisclaimer": "L'apparence réelle peut varier légèrement selon le modèle de téléphone (iOS ou Android).",

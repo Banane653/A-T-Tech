@@ -217,3 +217,35 @@ export const sendGoogleWalletMessage = async (
         return false;
     }
 };
+
+export const updateGoogleClassLocations = async (
+    companyId: string,
+    latitude: number,
+    longitude: number
+): Promise<boolean> => {
+    try {
+        const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
+        const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
+        const auth = new google.auth.GoogleAuth({ credentials, scopes: ['https://www.googleapis.com/auth/wallet_object.issuer'] });
+        const client = await auth.getClient();
+        
+        const classId = `${issuerId}.${companyId.replace(/-/g, '')}`;
+
+        await client.request({
+            url: `https://walletobjects.googleapis.com/walletobjects/v1/loyaltyClass/${classId}`,
+            method: 'PATCH',
+            data: {
+                locations: [{
+                    latitude: latitude,
+                    longitude: longitude
+                }]
+            }
+        });
+
+        console.log(`✅ Coordonnées GPS du modèle Google mis à jour pour ${companyId}`);
+        return true;
+    } catch (error) {
+        console.error("❌ Erreur màj GPS Google Class:", error);
+        return false;
+    }
+};

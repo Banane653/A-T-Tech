@@ -463,7 +463,11 @@
     },
     "MerchantMarketing": {
       "title": "Marketing Campaigns",
-      "subtitle": "Send Push notifications directly to your customers' lock screens (Apple & Google Wallet).",
+      "subtitle": "Manage client communications in real-time or via the proximity GPS network.",
+      "tabs": {
+        "flash": "Flash Campaign (Push)",
+        "proximity": "Proximity Notification (GPS)"
+      },
       "form": {
         "titleLabel": "Offer Title (Short and catchy)",
         "titlePlaceholder": "Flash Sale ⚡️",
@@ -475,11 +479,25 @@
         "success": "Notification sent!",
         "error": "An error occurred"
       },
+      "gps": {
+        "addressLabel": "Business address",
+        "addressPlaceholder": "e.g., 15 Pizza Street, 1000 Brussels",
+        "searchBtn": "Search",
+        "searchLoading": "Searching...",
+        "notFound": "Address not found. Please include city or zip code.",
+        "searchError": "Network error while searching for the address.",
+        "searchSuccess": "Location successfully found!",
+        "messageLabel": "Permanent proximity text",
+        "messagePlaceholder": "You are right next door! Come check out our new arrivals. 🍕",
+        "saveBtn": "Activate Geofencing",
+        "saving": "Updating passes...",
+        "saved": "GPS settings activated!"
+      },
       "previewTitle": "Customer screen preview",
       "previewDisclaimer": "Actual appearance may vary slightly depending on the phone model (iOS or Android).",
-      "previewFallbackName": "Your Business Name"
+      "previewFallbackName": "Your Business"
     },
-    "Login": {
+      "Login": {
       "title": "Merchant Portal",
       "subtitle": "Log in to your dashboard",
       "fields": {

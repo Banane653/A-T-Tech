@@ -38,6 +38,11 @@ model Company {
   googleClassId  String?        // L'ID du modèle chez Google Wallet
   applePassId    String?        // Réservé pour la future intégration Apple Wallet
   // ------------------------------------------------
+
+  latitude        Float?
+  longitude       Float?
+  address         String?
+  proximityText   String?
   
   users          MerchantUser[]
   customers      Customer[]

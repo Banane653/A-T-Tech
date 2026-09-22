@@ -8,13 +8,20 @@ import dynamic from 'next/dynamic';
 const MapPreview = dynamic(() => import('@/components/MapPreview'), { 
     ssr: false,
     loading: () => (
-        <div className="w-full h-48 mt-3 bg-gray-100 rounded-xl animate-pulse flex items-center justify-center border border-gray-200">
+        <div className="w-full h-64 mt-3 bg-gray-100 rounded-xl animate-pulse flex items-center justify-center border border-gray-200">
             <span className="text-sm font-semibold text-gray-400">Chargement de la carte...</span>
         </div>
     )
 });
 
 type TabType = 'flash' | 'proximity';
+type Location = { 
+    name: string; 
+    address: string; 
+    latitude: number; 
+    longitude: number; 
+    proximityText: string; 
+};
 
 export default function MarketingPage() {
     const t = useTranslations('MerchantMarketing');
@@ -25,19 +32,19 @@ export default function MarketingPage() {
     const [companyName, setCompanyName] = useState<string>('Votre Commerce');
     const [companyLogo, setCompanyLogo] = useState<string | null>(null);
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-    const [address, setAddress] = useState('');
-    const [geoError, setGeoError] = useState<string | null>(null);
-    const [isSearchingAddress, setIsSearchingAddress] = useState(false);
 
     // États Onglet 1 : Campagne Flash
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
     const [notifiedCount, setNotifiedCount] = useState(0);
 
-    // États Onglet 2 : Proximity GPS
-    const [latitude, setLatitude] = useState('');
-    const [longitude, setLongitude] = useState('');
-    const [proximityText, setProximityText] = useState('');
+    // États Onglet 2 : Proximity GPS (Multi-adresses)
+    const [locations, setLocations] = useState<Location[]>([]);
+    const [newName, setNewName] = useState('');
+    const [newAddress, setNewAddress] = useState('');
+    const [newProximityText, setNewProximityText] = useState('');
+    const [isSearchingAddress, setIsSearchingAddress] = useState(false);
+    const [geoError, setGeoError] = useState<string | null>(null);
 
     // Récupération des données d'entreprise
     useEffect(() => {
@@ -48,10 +55,9 @@ export default function MarketingPage() {
                     setCompanyId(data.company.id);
                     setCompanyName(data.company.name);
                     setCompanyLogo(data.company.logoUrl);
-                    if (data.company.latitude) setLatitude(String(data.company.latitude));
-                    if (data.company.longitude) setLongitude(String(data.company.longitude));
-                    if (data.company.proximityText) setProximityText(data.company.proximityText);
-                    if (data.company.address) setAddress(data.company.address);
+                    if (data.company.locations) {
+                        setLocations(data.company.locations);
+                    }
                 }
             })
             .catch(console.error);
@@ -87,10 +93,51 @@ export default function MarketingPage() {
         }
     };
 
-    // Enregistrement de la configuration GPS Proximité
+    // Recherche et ajout d'une localisation à la liste
+    const handleAddLocation = async () => {
+        if (!newAddress.trim() || !newName.trim() || !newProximityText.trim()) return;
+        if (locations.length >= 10) return;
+
+        setIsSearchingAddress(true);
+        setGeoError(null);
+
+        try {
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(newAddress)}&limit=1`
+            );
+            const data = await res.json();
+
+            if (data && data.length > 0) {
+                const newLoc: Location = {
+                    name: newName,
+                    address: newAddress,
+                    latitude: parseFloat(data[0].lat),
+                    longitude: parseFloat(data[0].lon),
+                    proximityText: newProximityText
+                };
+                setLocations([...locations, newLoc]);
+                setNewName('');
+                setNewAddress('');
+                setNewProximityText('');
+                setStatus('idle');
+            } else {
+                setGeoError(t('gps.notFound'));
+            }
+        } catch (err) {
+            setGeoError(t('gps.searchError'));
+        } finally {
+            setIsSearchingAddress(false);
+        }
+    };
+
+    const handleRemoveLocation = (index: number) => {
+        setLocations(locations.filter((_, i) => i !== index));
+    };
+
+    // Enregistrement global de la liste des localisations GPS
     const handleSaveProximity = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!companyId || !latitude || !longitude || !proximityText) return;
+        if (!companyId) return;
         setStatus('loading');
 
         try {
@@ -99,9 +146,7 @@ export default function MarketingPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     isGpsUpdate: true, 
-                    latitude, 
-                    longitude, 
-                    proximityText 
+                    locations 
                 }),
             });
 
@@ -115,31 +160,6 @@ export default function MarketingPage() {
         } catch {
             setStatus('error');
             setTimeout(() => setStatus('idle'), 4000);
-        }
-    };
-
-    const handleSearchAddress = async () => {
-        if (!address.trim()) return;
-        setIsSearchingAddress(true);
-        setGeoError(null);
-    
-        try {
-            const res = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
-            );
-            const data = await res.json();
-    
-            if (data && data.length > 0) {
-                setLatitude(data[0].lat);
-                setLongitude(data[0].lon);
-                setStatus('idle'); 
-            } else {
-                setGeoError(t('gps.notFound')); // 👈 Message d'erreur traduit
-            }
-        } catch (err) {
-            setGeoError(t('gps.searchError')); // 👈 Message d'erreur réseau traduit
-        } finally {
-            setIsSearchingAddress(false);
         }
     };
 
@@ -237,66 +257,86 @@ export default function MarketingPage() {
                             )}
                         </form>
                     ) : (
-                        /* FORMULAIRE 2 : GPS GEOFENCING PROXIMITÉ */
+                        /* FORMULAIRE 2 : GEOFENCING PROXIMITÉ MULTI-ADRESSES */
                         <form onSubmit={handleSaveProximity} className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    {t('gps.addressLabel')}
-                                </label>
-                                <div className="flex flex-col sm:flex-row gap-2">
+                            
+                            {/* Carte dynamique affichant toutes les épingles */}
+                            <MapPreview locations={locations.map(l => ({ lat: l.latitude, lng: l.longitude }))} />
+
+                            {/* Liste des points de vente enregistrés */}
+                            {locations.length > 0 && (
+                                <div className="space-y-3 mt-4">
+                                    <h3 className="text-sm font-bold text-gray-900">
+                                        Vos points de vente ({locations.length}/10)
+                                    </h3>
+                                    {locations.map((loc, index) => (
+                                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-xl">
+                                            <div>
+                                                <p className="text-sm font-bold text-gray-900">{loc.name}</p>
+                                                <p className="text-xs text-gray-500">{loc.address}</p>
+                                            </div>
+                                            <button 
+                                                type="button"
+                                                onClick={() => handleRemoveLocation(index)} 
+                                                className="text-red-500 hover:text-red-700 p-2 text-sm font-semibold transition"
+                                            >
+                                                Retirer
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Formulaire d'ajout d'une nouvelle adresse (max 10) */}
+                            {locations.length < 10 ? (
+                                <div className="p-4 border border-gray-200 rounded-xl bg-gray-50/50 space-y-3">
+                                    <h3 className="text-sm font-bold text-gray-900">Ajouter un établissement</h3>
+                                    
                                     <input
                                         type="text"
-                                        value={address}
-                                        onChange={(e) => setAddress(e.target.value)}
-                                        placeholder={t('gps.addressPlaceholder')}
-                                        className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
+                                        value={newName}
+                                        onChange={(e) => setNewName(e.target.value)}
+                                        placeholder="Nom de la boutique (ex: Succursale Centre)"
+                                        className="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-black outline-none bg-white transition"
                                     />
+                                    <input
+                                        type="text"
+                                        value={newAddress}
+                                        onChange={(e) => setNewAddress(e.target.value)}
+                                        placeholder="Adresse complète (ex: 15 Rue de la Loi, Bruxelles)"
+                                        className="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-black outline-none bg-white transition"
+                                    />
+                                    <textarea
+                                        value={newProximityText}
+                                        onChange={(e) => setNewProximityText(e.target.value)}
+                                        placeholder="Message GPS de proximité (ex: Bienvenue dans notre boutique du centre !)"
+                                        rows={2}
+                                        maxLength={100}
+                                        className="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-black outline-none bg-white transition resize-none"
+                                    />
+                                    
+                                    {geoError && (
+                                        <p className="text-xs text-red-500 font-medium">⚠️ {geoError}</p>
+                                    )}
+
                                     <button
                                         type="button"
-                                        onClick={handleSearchAddress}
-                                        disabled={isSearchingAddress || !address}
-                                        className="px-5 py-3 bg-gray-900 text-white font-bold text-sm rounded-xl hover:bg-gray-800 transition disabled:opacity-50 whitespace-nowrap"
+                                        onClick={handleAddLocation}
+                                        disabled={isSearchingAddress || !newName || !newAddress || !newProximityText}
+                                        className="w-full py-2.5 bg-white border border-gray-300 text-gray-900 text-sm font-bold rounded-xl hover:bg-gray-100 transition disabled:opacity-50 shadow-sm"
                                     >
-                                        {isSearchingAddress ? t('gps.searchLoading') : t('gps.searchBtn')}
+                                        {isSearchingAddress ? '🔍 Recherche...' : '+ Ajouter à la liste'}
                                     </button>
                                 </div>
-                                
-                                {/* Message d'erreur dynamique et traduit */}
-                                {geoError && (
-                                    <p className="text-xs text-red-500 mt-2 font-medium">⚠️ {geoError}</p>
-                                )}
-
-                                {/* Indicateur de succès traduit */}
-                                {latitude && longitude && !geoError && (
-                                    <p className="text-xs text-green-600 mt-2 font-medium">
-                                        ✅ {t('gps.searchSuccess')} (Lat: {Number(latitude).toFixed(4)}, Lng: {Number(longitude).toFixed(4)})
-                                    </p>
-                                )}
-                                {/* LA CARTE MAGIQUE */}
-                                {latitude && longitude && !geoError && (
-                                    <MapPreview latitude={Number(latitude)} longitude={Number(longitude)} />
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    {t('gps.messageLabel')}
-                                </label>
-                                <textarea
-                                    value={proximityText}
-                                    onChange={(e) => setProximityText(e.target.value)}
-                                    placeholder={t('gps.messagePlaceholder')}
-                                    rows={4}
-                                    maxLength={100}
-                                    required
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition resize-none"
-                                />
-                                <p className="text-right text-xs text-gray-400 mt-2">{proximityText.length}/100</p>
-                            </div>
+                            ) : (
+                                <div className="p-4 bg-orange-50 border border-orange-200 rounded-xl text-center text-orange-800 text-xs font-medium">
+                                    ⚠️ Limite de 10 adresses atteinte (maximum autorisé par Apple Wallet).
+                                </div>
+                            )}
 
                             <button
                                 type="submit"
-                                disabled={status === 'loading' || !latitude || !longitude || !proximityText || !companyId}
+                                disabled={status === 'loading' || locations.length === 0 || !companyId}
                                 className={`w-full py-3.5 rounded-xl text-sm font-bold transition flex justify-center items-center gap-2
                                     ${status === 'loading' ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 
                                       status === 'success' ? 'bg-green-500 text-white' :
@@ -345,15 +385,18 @@ export default function MarketingPage() {
                         <div className="pl-11">
                             {activeTab === 'flash' ? (
                                 <>
+                                    <p className="text-sm font-bold text-gray-900 leading-tight mb-1">
+                                        {companyName || t('previewFallbackName')}
+                                    </p>
                                     <p className="text-sm text-gray-800 leading-snug">
                                         {message || t('form.messagePlaceholder')}
                                     </p>
                                 </>
                             ) : (
                                 <>
-                                    {/* Comportement Geofencing : Pas de titre de promo, juste le texte GPS direct */}
+                                    {/* Comportement Geofencing : Aperçu du premier message ou message type */}
                                     <p className="text-sm text-gray-900 leading-snug font-medium">
-                                        {proximityText || t('gps.messagePlaceholder')}
+                                        {locations.length > 0 ? locations[0].proximityText : t('gps.messagePlaceholder')}
                                     </p>
                                 </>
                             )}

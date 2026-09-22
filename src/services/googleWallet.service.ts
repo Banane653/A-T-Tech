@@ -218,10 +218,10 @@ export const sendGoogleWalletMessage = async (
     }
 };
 
+
 export const updateGoogleClassLocations = async (
     companyId: string,
-    latitude: number,
-    longitude: number
+    locations: { latitude: number; longitude: number }[]
 ): Promise<boolean> => {
     try {
         const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
@@ -231,18 +231,21 @@ export const updateGoogleClassLocations = async (
         
         const classId = `${issuerId}.${companyId.replace(/-/g, '')}`;
 
+        // On mappe la liste pour qu'elle corresponde exactement au format exigé par Google
+        const formattedLocations = locations.map(loc => ({
+            latitude: loc.latitude,
+            longitude: loc.longitude
+        }));
+
         await client.request({
             url: `https://walletobjects.googleapis.com/walletobjects/v1/loyaltyClass/${classId}`,
             method: 'PATCH',
             data: {
-                locations: [{
-                    latitude: latitude,
-                    longitude: longitude
-                }]
+                locations: formattedLocations // 👈 On envoie tout le tableau d'un coup
             }
         });
 
-        console.log(`✅ Coordonnées GPS du modèle Google mis à jour pour ${companyId}`);
+        console.log(`✅ ${formattedLocations.length} coordonnées GPS mises à jour chez Google pour ${companyId}`);
         return true;
     } catch (error) {
         console.error("❌ Erreur màj GPS Google Class:", error);

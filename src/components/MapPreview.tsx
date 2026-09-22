@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// Correctif pour afficher correctement l'icône du marqueur bleu sous Next.js
+// Correctif pour les icônes
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -13,32 +13,36 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Petit sous-composant invisible qui recentre la carte quand l'adresse change
-function MapUpdater({ lat, lng }: { lat: number; lng: number }) {
+// Composant intelligent qui recadre la carte pour voir tous les marqueurs
+function MapBounds({ locations }: { locations: { lat: number; lng: number }[] }) {
     const map = useMap();
     useEffect(() => {
-        map.setView([lat, lng], 15, { animate: true });
-    }, [lat, lng, map]);
+        if (locations.length === 0) return;
+        if (locations.length === 1) {
+            map.setView([locations[0].lat, locations[0].lng], 15, { animate: true });
+        } else {
+            const bounds = L.latLngBounds(locations.map(loc => [loc.lat, loc.lng]));
+            map.fitBounds(bounds, { padding: [40, 40], animate: true });
+        }
+    }, [locations, map]);
     return null;
 }
 
-export default function MapPreview({ latitude, longitude }: { latitude: number; longitude: number }) {
+export default function MapPreview({ locations }: { locations: { lat: number; lng: number }[] }) {
+    // Centre par défaut (Bruxelles) si aucune adresse
+    const center: [number, number] = locations.length > 0 ? [locations[0].lat, locations[0].lng] : [50.8503, 4.3517];
+
     return (
-        <div className="w-full h-48 rounded-xl overflow-hidden border border-gray-200 shadow-sm relative z-0 mt-3">
-            <MapContainer 
-                center={[latitude, longitude]} 
-                zoom={15} 
-                style={{ height: '100%', width: '100%' }} 
-                zoomControl={false}
-                dragging={false} // On bloque le glissement pour que ça reste un simple aperçu
-                scrollWheelZoom={false}
-            >
+        <div className="w-full h-64 rounded-xl overflow-hidden border border-gray-200 shadow-sm relative z-0">
+            <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; OpenStreetMap'
                 />
-                <Marker position={[latitude, longitude]} />
-                <MapUpdater lat={latitude} lng={longitude} />
+                {locations.map((loc, i) => (
+                    <Marker key={i} position={[loc.lat, loc.lng]} />
+                ))}
+                <MapBounds locations={locations} />
             </MapContainer>
         </div>
     );

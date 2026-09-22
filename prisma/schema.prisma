@@ -39,10 +39,7 @@ model Company {
   applePassId    String?        // Réservé pour la future intégration Apple Wallet
   // ------------------------------------------------
 
-  latitude        Float?
-  longitude       Float?
-  address         String?
-  proximityText   String?
+  locations       CompanyLocation[]
   
   users          MerchantUser[]
   customers      Customer[]
@@ -155,4 +152,20 @@ model MarketingCampaign {
   createdAt DateTime @default(now())
 
   @@map("marketing_campaigns")
+}
+
+model CompanyLocation {
+  id              String   @id @default(uuid())
+  name            String   // Ex: "Boutique Centre-Ville" ou "Succursale Sud"
+  address         String   // L'adresse complète
+  latitude        Float
+  longitude       Float
+  proximityText   String?  // Le message GPS spécifique à ce lieu
+  
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+
+  @@map("company_locations")
 }

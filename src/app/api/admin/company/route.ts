@@ -17,14 +17,12 @@ export async function GET() {
                 logoUrl: true,
                 pointsRatio: true, 
                 systemType: true,
-                latitude: true,
-                longitude: true,
-                proximityText: true,
-                address: true
+                locations: true // 👈 On charge la NOUVELLE table des adresses multiples
             },
         });
         return NextResponse.json({ company });
-    } catch {
+    } catch (error) {
+        console.error("❌ Erreur GET Company:", error);
         return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
     }
 }
@@ -35,33 +33,42 @@ export async function PATCH(request: Request) {
 
     try {
         const body = await request.json();
-        const { pointsRatio, latitude, longitude, proximityText, isGpsUpdate, address } = body;
+        const { pointsRatio, isGpsUpdate, locations } = body;
 
-        // Cas A : C'est une mise à jour des paramètres GPS Marketing
+        // Cas A : C'est une mise à jour des paramètres GPS Marketing Multi-Adresses
         if (isGpsUpdate) {
-            const parsedLat = parseFloat(latitude);
-            const parsedLng = parseFloat(longitude);
-
-            if (Number.isNaN(parsedLat) || Number.isNaN(parsedLng) || !proximityText) {
-                return NextResponse.json({ error: 'Données GPS invalides' }, { status: 400 });
+            // Sécurité absolue : on refuse plus de 10 adresses (Limitation Apple Wallet)
+            if (!Array.isArray(locations) || locations.length > 10) {
+                return NextResponse.json({ error: 'Maximum 10 adresses autorisées par Apple' }, { status: 400 });
             }
 
-            // 1. Sauvegarde en Base de données
-            const updatedCompany = await prisma.company.update({
-                where: { id: admin.companyId },
-                data: {
-                    latitude: parsedLat,
-                    longitude: parsedLng,
-                    address: address,
-                    proximityText: proximityText
-                }
+            // 1. Sauvegarde en Base de données (Transaction Prisma)
+            // On supprime proprement les anciennes adresses du commerce et on enregistre la nouvelle liste
+            await prisma.$transaction([
+                prisma.companyLocation.deleteMany({ 
+                    where: { companyId: admin.companyId } 
+                }),
+                prisma.companyLocation.createMany({
+                    data: locations.map((loc: any) => ({
+                        name: loc.name || "Boutique",
+                        address: loc.address,
+                        latitude: parseFloat(loc.latitude),
+                        longitude: parseFloat(loc.longitude),
+                        proximityText: loc.proximityText,
+                        companyId: admin.companyId
+                    }))
+                })
+            ]);
+
+            // On récupère la liste toute neuve pour l'envoyer à Google
+            const updatedLocations = await prisma.companyLocation.findMany({
+                where: { companyId: admin.companyId }
             });
 
-            // 2. Synchronisation Google Wallet Class
-            await updateGoogleClassLocations(admin.companyId, parsedLat, parsedLng);
+            // 2. Synchronisation Google Wallet Class avec la nouvelle liste
+            await updateGoogleClassLocations(admin.companyId, updatedLocations);
 
             // 3. Notification Push en arrière plan à tous les clients Apple du commerce
-            // On récupère tous les clients de cette entreprise pour relancer leurs iPhones
             const customers = await prisma.customer.findMany({
                 where: { companyId: admin.companyId }
             });
@@ -69,7 +76,7 @@ export async function PATCH(request: Request) {
                 await sendAppleWalletPush(c.walletId);
             }
 
-            return NextResponse.json({ success: true, company: updatedCompany });
+            return NextResponse.json({ success: true, locations: updatedLocations });
         }
 
         // Cas B : C'est ta mise à jour historique du Taux de points (Inchangé)
@@ -81,7 +88,7 @@ export async function PATCH(request: Request) {
 
         return NextResponse.json({ success: true, pointsRatio: parsedRatio });
     } catch (err) {
-        console.error(err);
+        console.error("❌ Erreur PATCH Company:", err);
         return NextResponse.json({ error: 'Erreur de mise à jour' }, { status: 500 });
     }
 }

@@ -62,7 +62,11 @@ export async function GET(request: Request) {
 
     let customer = await prisma.customer.findUnique({
       where: { email },
-      include: { company: true },
+      include: { 
+        company: { 
+          include: { locations: true } // 👈 Remplacé ici
+        } 
+      },
     });
 
     if (!customer) {
@@ -75,7 +79,11 @@ export async function GET(request: Request) {
           points: 0,
           companyId,
         },
-        include: { company: true },
+        include: { 
+          company: { 
+            include: { locations: true } // 👈 Et remplacé ici
+          } 
+        },
       });
     }
 
@@ -126,6 +134,13 @@ export async function GET(request: Request) {
       webServiceURL: `${protocol}://${host}/api/wallet/apple`,
       authenticationToken: customer.walletId,
       groupingIdentifier: companyId,
+      ...(customer.company.locations && customer.company.locations.length > 0 ? {
+        locations: customer.company.locations.slice(0, 10).map(loc => ({
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+          relevantText: loc.proximityText || "Vous êtes proche ! Venez nous rendre visite."
+        }))
+      } : {}),
       // 👇 DISPOSITION PARFAITE DU HAUT 👇
       organizationName: templateData.merchant.name, // Titre en haut à gauche
       logoText: templateData.merchant.name,     // Logo "Goodly" en haut à gauche

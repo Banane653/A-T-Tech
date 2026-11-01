@@ -15,12 +15,25 @@ export async function POST(request: Request) {
         // 1. On cherche le client, ET on demande à inclure son entreprise
         let customer = await prisma.customer.findUnique({ 
             where: { email },
-            include: { company: true } // 👈 NOUVEAU : On charge l'entreprise avec
+            include: { company: true }
         });
 
-        // Si le client n'existe pas, on le crée ET on inclut son entreprise en retour
+        // Si le client n'existe pas, on le crée
         if (!customer) {
             const walletId = `WLT-${Date.now()}`;
+            
+            // 👇 NOUVEAU : Génération sécurisée du code court à 5 chiffres
+            let newShortCode = '';
+            let isUnique = false;
+            while (!isUnique) {
+                newShortCode = Math.floor(10000 + Math.random() * 90000).toString();
+                const existing = await prisma.customer.findFirst({
+                    where: { companyId, shortCode: newShortCode }
+                });
+                if (!existing) isUnique = true;
+            }
+            // 👆 FIN DE LA GÉNÉRATION
+
             customer = await prisma.customer.create({
                 data: { 
                     firstName, 
@@ -28,11 +41,12 @@ export async function POST(request: Request) {
                     email, 
                     birthDate, 
                     walletId, 
+                    shortCode: newShortCode, // 👈 On l'enregistre en base de données
                     points: 0,
                     companyId,
                     acceptsMarketing: Boolean(acceptsMarketing)
                 },
-                include: { company: true } // 👈 NOUVEAU : On demande à Prisma de nous renvoyer l'entreprise
+                include: { company: true }
             });
         }
 

@@ -11,7 +11,6 @@ const FALLBACK_PIXEL_PNG_BASE64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9s5Vn6QAAAAASUVORK5CYII=';
 const FALLBACK_PIXEL_BUFFER = Buffer.from(FALLBACK_PIXEL_PNG_BASE64, 'base64');
 
-// 👇 NOS VRAIS FICHIERS PNG PAR DÉFAUT 👇
 const FALLBACK_LOGO_PATH = path.join(process.cwd(), 'public', 'assets', 'default_logo.png');
 const FALLBACK_ICON_PATH = path.join(process.cwd(), 'public', 'assets', 'default_icon.png');
 
@@ -25,25 +24,15 @@ function requireEnv(name: string) {
 
 async function getMerchantLogoBuffer(logoUrl: string | null): Promise<Buffer> {
   if (!logoUrl) {
-    try {
-      return await readFile(FALLBACK_LOGO_PATH);
-    } catch {
-      return FALLBACK_PIXEL_BUFFER;
-    }
+    try { return await readFile(FALLBACK_LOGO_PATH); } catch { return FALLBACK_PIXEL_BUFFER; }
   }
-
   try {
     const res = await fetch(logoUrl, { cache: 'no-store' });
     if (!res.ok) throw new Error('Fetch failed');
-
     const arrayBuffer = await res.arrayBuffer();
     return Buffer.from(arrayBuffer);
   } catch {
-    try {
-      return await readFile(FALLBACK_LOGO_PATH);
-    } catch {
-      return FALLBACK_PIXEL_BUFFER;
-    }
+    try { return await readFile(FALLBACK_LOGO_PATH); } catch { return FALLBACK_PIXEL_BUFFER; }
   }
 }
 
@@ -62,37 +51,51 @@ export async function GET(request: Request) {
 
     let customer = await prisma.customer.findUnique({
       where: { email },
-      include: { 
-        company: { 
-          include: { locations: true } // 👈 Remplacé ici
-        } 
-      },
+      include: { company: { include: { locations: true } } },
     });
 
-    if (!customer) {
-      const walletId = `WLT-${Date.now()}`;
+    // 👇 RATTRAPAGE DES ANCIENS CLIENTS (Qui n'ont pas de code 5 chiffres) 👇
+    if (customer && !customer.shortCode) {
       let newShortCode = '';
       let isUnique = false;
       while (!isUnique) {
-        newShortCode = Math.floor(10000 + Math.random() * 90000).toString(); // De 10000 à 99999
+        newShortCode = Math.floor(10000 + Math.random() * 90000).toString();
         const existing = await prisma.customer.findFirst({
           where: { companyId, shortCode: newShortCode }
         });
         if (!existing) isUnique = true;
       }
+      customer = await prisma.customer.update({
+        where: { id: customer.id },
+        data: { shortCode: newShortCode },
+        include: { company: { include: { locations: true } } }
+      });
+    }
+
+    // 👇 CRÉATION DES NOUVEAUX CLIENTS AVEC LE CODE À 5 CHIFFRES 👇
+    if (!customer) {
+      const walletId = `WLT-${Date.now()}`;
+      
+      let newShortCode = '';
+      let isUnique = false;
+      while (!isUnique) {
+        newShortCode = Math.floor(10000 + Math.random() * 90000).toString();
+        const existing = await prisma.customer.findFirst({
+          where: { companyId, shortCode: newShortCode }
+        });
+        if (!existing) isUnique = true;
+      }
+
       customer = await prisma.customer.create({
         data: {
           firstName: name,
           email,
           walletId,
+          shortCode: newShortCode,
           points: 0,
           companyId,
         },
-        include: { 
-          company: { 
-            include: { locations: true } // 👈 Et remplacé ici
-          } 
-        },
+        include: { company: { include: { locations: true } } },
       });
     }
 
@@ -101,7 +104,7 @@ export async function GET(request: Request) {
     }
 
     const templateData = getCardTemplateData(customer.company, customer);
-    // 👇 NOUVEAU : On va chercher la dernière campagne marketing du commerçant
+    
     const latestCampaign = await prisma.marketingCampaign.findFirst({
       where: { companyId: customer.companyId! },
       orderBy: { createdAt: 'desc' }
@@ -115,17 +118,14 @@ export async function GET(request: Request) {
     
     let iconBuffer: any = FALLBACK_PIXEL_BUFFER;
     try {
-      console.log("🛠️ Tentative de redimensionnement de l'icône avec Sharp...");
       iconBuffer = await sharp(logoBuffer)
         .resize(100, 100, {
           fit: 'contain',
-          background: { r: 0, g: 0, b: 0, alpha: 0 } // Fond transparent
+          background: { r: 0, g: 0, b: 0, alpha: 0 } 
         })
         .png()
         .toBuffer();
     } catch (e) {
-      console.error("❌ Erreur Sharp pour l'icône :", e); // 👈 Et ici pour voir l'erreur !
-      console.error("Erreur création icône, utilisation de l'icône par défaut...");
       try { iconBuffer = await readFile(FALLBACK_ICON_PATH); } catch (err) {}
     }
 
@@ -135,7 +135,7 @@ export async function GET(request: Request) {
     const passTypeIdentifier = requireEnv('APPLE_PASS_TYPE_IDENTIFIER');
     const wwdr = process.env.APPLE_WALLET_WWDR || signerCert;
 
-    const passJson = {
+    const passJson: any = {
       formatVersion: 1,
       passTypeIdentifier,
       teamIdentifier,
@@ -143,22 +143,23 @@ export async function GET(request: Request) {
       webServiceURL: `${protocol}://${host}/api/wallet/apple`,
       authenticationToken: customer.walletId,
       groupingIdentifier: companyId,
+
+      // 👇 GÉOLOCALISATION MULTIPLE (GPS Marketing) 👇
       ...(customer.company.locations && customer.company.locations.length > 0 ? {
-        locations: customer.company.locations.slice(0, 10).map(loc => ({
+        locations: customer.company.locations.slice(0, 10).map((loc: any) => ({
           latitude: loc.latitude,
           longitude: loc.longitude,
           relevantText: loc.proximityText || "Vous êtes proche ! Venez nous rendre visite."
         }))
       } : {}),
-      // 👇 DISPOSITION PARFAITE DU HAUT 👇
-      organizationName: templateData.merchant.name, // Titre en haut à gauche
-      logoText: templateData.merchant.name,     // Logo "Goodly" en haut à gauche
+
+      organizationName: templateData.merchant.name, 
+      logoText: templateData.merchant.name,     
       description: `${templateData.merchant.name} - Carte de fidelite`,
       foregroundColor: `rgb(${parseInt(templateData.colors.text.slice(1, 3), 16)}, ${parseInt(templateData.colors.text.slice(3, 5), 16)}, ${parseInt(templateData.colors.text.slice(5, 7), 16)})`,
       backgroundColor: `rgb(${parseInt(templateData.colors.background.slice(1, 3), 16)}, ${parseInt(templateData.colors.background.slice(3, 5), 16)}, ${parseInt(templateData.colors.background.slice(5, 7), 16)})`,
       labelColor: `rgb(${parseInt(templateData.colors.label.slice(1, 3), 16)}, ${parseInt(templateData.colors.label.slice(3, 5), 16)}, ${parseInt(templateData.colors.label.slice(5, 7), 16)})`,
       storeCard: {
-        // 👇 CORRECTION : Si c'est POINTS on affiche le bloc, si c'est STAMPS on envoie un tableau vide [] pour que rien n'apparaisse 👇
         primaryFields: templateData.loyalty.systemType === "POINTS" ? [
           {
             key: "points",
@@ -166,9 +167,7 @@ export async function GET(request: Request) {
             value: String(templateData.loyalty.points),
           }
         ] : [],
-        
         secondaryFields: [], 
-        
         auxiliaryFields: [
           {
             key: "member",
@@ -184,21 +183,17 @@ export async function GET(request: Request) {
         backFields: [
           { key: "email", label: "Email", value: templateData.customer.email },
           { key: "walletId", label: "Identifiant", value: templateData.customer.walletId },
-          { 
-            key: "marketingMessage", 
-            label: marketingTitle, 
-            value: marketingMessage, 
-            changeMessage: "%@" 
-          }
+          { key: "marketingMessage", label: marketingTitle, value: marketingMessage, changeMessage: "%@" }
         ],
       },
       barcodes: [
         {
-          // 👇 ON REMPLACE LE BARCODE PAR UN QR CODE 👇
           format: 'PKBarcodeFormatQR',
-          message: templateData.qr.value,
+          message: templateData.qr.value, // (Le QR Code scanne toujours le long ID)
           messageEncoding: 'iso-8859-1',
-          altText: customer.shortCode ? `CODE: ${customer.shortCode}` : templateData.customer.walletId,        },
+          // 👇 LA LIGNE QUI FAISAIT DÉFAUT : AFFICHER LE CODE COURT SOUS LE QR 👇
+          altText: customer.shortCode ? `CODE: ${customer.shortCode}` : templateData.customer.walletId,
+        },
       ],
     };
 
@@ -214,40 +209,26 @@ export async function GET(request: Request) {
     pass.addBuffer('logo.png', logoBuffer);
     pass.addBuffer('logo@2x.png', logoBuffer);
 
-    // 👇 INJECTION DE LA GRILLE DE TAMPONS PARFAITE (En PNG Transparent) 👇
     try {
       if (templateData.images.stripUrl) {
         let finalStripUrl = templateData.images.stripUrl;
         if (finalStripUrl.startsWith('/')) {
            finalStripUrl = `${protocol}://${host}${finalStripUrl}`; 
         }
-
-        console.log("👉 URL finale pour strip :", finalStripUrl);
-
         const stripRes = await fetch(finalStripUrl, { cache: 'no-store' });
-        
-        if (!stripRes.ok) {
-           console.error("❌ Erreur fetch strip :", stripRes.status);
-        } else {
+        if (stripRes.ok) {
            const stripArrayBuffer = await stripRes.arrayBuffer();
            const rawBuffer = Buffer.from(stripArrayBuffer);
-           
-           // 👇 Conversion PNG avec proportions parfaites 👇
            const pngBuffer = await sharp(rawBuffer)
-             .resize(1125, 369, {
-               fit: 'contain',
-               background: { r: 0, g: 0, b: 0, alpha: 0 } // Fond transparent obligatoire
-             })
+             .resize(1125, 369, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
              .png()
              .toBuffer();
-           
            pass.addBuffer('strip.png', pngBuffer);
            pass.addBuffer('strip@2x.png', pngBuffer);
-           console.log("✅ Image strip.png parfaite générée et injectée !");
         }
       }
     } catch (stripError) {
-      console.error("❌ Le téléchargement du strip.png a crashé :", stripError);
+      console.error("❌ Le téléchargement du strip a crashé :", stripError);
     }
     
     const passBuffer = pass.getAsBuffer();

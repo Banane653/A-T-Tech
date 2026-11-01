@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
-import { useRouter, Link } from '@/navigation'; // Utilisation de nos imports intelligents
-import { ArrowLeft, Camera, Loader2 } from 'lucide-react';
+import { useRouter, Link } from '@/navigation'; 
+import { ArrowLeft, Camera, Loader2, QrCode, Keyboard } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 type CompanyInfo = { name: string; systemType: string };
@@ -17,6 +17,7 @@ type ScanStatus =
     | 'result';
 
 type CameraUiState = 'permission' | 'requesting' | 'active';
+type InputMode = 'qr' | 'manual'; // 👈 NOUVEAU
 
 const STAMP_LIMIT = 10;
 const PERMISSION_BUTTON_ID = 'html5-qrcode-button-camera-permission';
@@ -81,6 +82,12 @@ function ScannerViewfinderOverlay() {
 export default function ScannerPage() {
     const t = useTranslations('Scanner');
     
+    // 👇 NOUVEAUX ÉTATS POUR LE MODE MANUEL
+    const [inputMode, setInputMode] = useState<InputMode>('qr');
+    const [manualCode, setManualCode] = useState('');
+    const [usedShortCode, setUsedShortCode] = useState<string | null>(null);
+    // 👆
+
     const [status, setStatus] = useState<ScanStatus>('scanning');
     const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
     const companyInfoRef = useRef<CompanyInfo | null>(null);
@@ -99,13 +106,15 @@ export default function ScannerPage() {
     const scannerRef = useRef<Html5QrcodeScanner | null>(null);
     const router = useRouter();
 
-    const lookupCustomer = useCallback(async (walletId: string) => {
+    // 👇 lookupCustomer ACCEPTE MAINTENANT walletId OU shortCode
+    const lookupCustomer = useCallback(async (walletId?: string, shortCode?: string) => {
         setStatus('loading');
         try {
+            const bodyPayload = walletId ? { walletId, action: 'lookup' } : { shortCode, action: 'lookup' };
             const res = await fetch('/api/wallet/scan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ walletId, action: 'lookup' }),
+                body: JSON.stringify(bodyPayload),
             });
             const data = await res.json();
             if (!res.ok) {
@@ -124,6 +133,14 @@ export default function ScannerPage() {
             setTimeout(resetScanner, 3000);
         }
     }, [t]);
+
+    // 👇 SOUMISSION DU FORMULAIRE MANUEL
+    const handleManualSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (manualCode.length !== 5) return;
+        setUsedShortCode(manualCode);
+        await lookupCustomer(undefined, manualCode);
+    };
     
     const syncCameraUi = useCallback(() => {
         const permissionBtn = document.getElementById(
@@ -174,41 +191,52 @@ export default function ScannerPage() {
                     companyInfoRef.current = data.company;
                 }
             });
+    }, []);
 
-        const scanner = new Html5QrcodeScanner(
-            'reader',
-            {
-                fps: 10,
-                qrbox: (viewfinderWidth, viewfinderHeight) => {
-                    const edge = Math.min(viewfinderWidth, viewfinderHeight);
-                    const size = Math.floor(edge * 0.65);
-                    return { width: size, height: size };
+    // 👇 LA GESTION DU SCANNER DÉPEND MAINTENANT DE L'ONGLET SÉLECTIONNÉ
+    useEffect(() => {
+        if (inputMode === 'qr' && status === 'scanning') {
+            const scanner = new Html5QrcodeScanner(
+                'reader',
+                {
+                    fps: 10,
+                    qrbox: (viewfinderWidth, viewfinderHeight) => {
+                        const edge = Math.min(viewfinderWidth, viewfinderHeight);
+                        const size = Math.floor(edge * 0.65);
+                        return { width: size, height: size };
+                    },
+                    aspectRatio: 1,
+                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+                    videoConstraints: { facingMode: "environment" },
+                    rememberLastUsedCamera: false,
                 },
-                aspectRatio: 1,
-                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-                videoConstraints: { facingMode: "environment" },
-                rememberLastUsedCamera: false,
-            },
-            false
-        );
-        scannerRef.current = scanner;
+                false
+            );
+            scannerRef.current = scanner;
 
-        scanner.render(
-            async (decodedText) => {
-                scanner.pause(true);
-                setScannedId(decodedText);
-                await lookupCustomer(decodedText);
-            },
-            () => {}
-        );
+            scanner.render(
+                async (decodedText) => {
+                    scanner.pause(true);
+                    setScannedId(decodedText);
+                    await lookupCustomer(decodedText, undefined);
+                },
+                () => {}
+            );
 
-        return () => {
-            scanner.clear().catch(() => {});
-        };
-    }, [lookupCustomer]);
+            return () => {
+                scanner.clear().catch(() => {});
+            };
+        } else {
+            // Nettoyage de la caméra si on est en mode manuel
+            if (scannerRef.current) {
+                scannerRef.current.clear().catch(() => {});
+                scannerRef.current = null;
+            }
+        }
+    }, [inputMode, status, lookupCustomer]);
 
     useEffect(() => {
-        if (status !== 'scanning') return;
+        if (status !== 'scanning' || inputMode !== 'qr') return;
 
         const reader = document.getElementById('reader');
         if (!reader) return;
@@ -229,16 +257,21 @@ export default function ScannerPage() {
             observer.disconnect();
             window.clearInterval(interval);
         };
-    }, [status, syncCameraUi]);
+    }, [status, inputMode, syncCameraUi]);
 
     const handleAction = async (payload: Record<string, unknown>) => {
-        if (!scannedId) return;
+        // 👇 ON VÉRIFIE SI L'UN DES DEUX CODES A ÉTÉ FOURNI
+        if (!scannedId && !usedShortCode) return;
         setStatus('loading');
         try {
+            const requestBody = scannedId 
+                ? { walletId: scannedId, ...payload } 
+                : { shortCode: usedShortCode, ...payload };
+
             const res = await fetch('/api/wallet/scan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ walletId: scannedId, ...payload }),
+                body: JSON.stringify(requestBody),
             });
             const data = await res.json();
             if (res.ok) {
@@ -269,12 +302,14 @@ export default function ScannerPage() {
         setMessage(null);
         setAmount('');
         setScannedId(null);
+        setUsedShortCode(null); // 👈 NOUVEAU
+        setManualCode('');      // 👈 NOUVEAU
         setCustomer(null);
         setRewards([]);
         setPointsTab('earn');
         setStatus('scanning');
         setCameraUi('permission');
-        scannerRef.current?.resume();
+        // On ne resume() plus manuellement ici car le useEffect s'en chargera
     };
 
     const handleLogout = () => {
@@ -287,9 +322,10 @@ export default function ScannerPage() {
         : '';
 
     const isStamps = companyInfo?.systemType === 'STAMPS';
+    // 👇 LOGIQUE D'AFFICHAGE MISE À JOUR POUR GÉRER LE MODE QR
     const showPermissionOverlay =
-        status === 'scanning' && cameraUi !== 'active';
-    const showViewfinder = status === 'scanning' && cameraUi === 'active';
+        status === 'scanning' && inputMode === 'qr' && cameraUi !== 'active';
+    const showViewfinder = status === 'scanning' && inputMode === 'qr' && cameraUi === 'active';
 
     return (
         <main className="min-h-screen bg-gray-50 font-sans">
@@ -319,35 +355,87 @@ export default function ScannerPage() {
             </header>
 
             <div className="mx-auto w-full max-w-md p-4">
-                <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+                
+                {/* 👇 NOUVEAU : SYSTÈME D'ONGLETS POUR LE MODE DE SCAN */}
+                {status === 'scanning' && (
+                    <div className="flex bg-white rounded-t-3xl border-x border-t border-gray-200 overflow-hidden">
+                        <button 
+                            type="button"
+                            onClick={() => setInputMode('qr')}
+                            className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition ${inputMode === 'qr' ? 'bg-black text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+                        >
+                            <QrCode className="w-4 h-4" /> Scanner QR
+                        </button>
+                        <button 
+                            type="button"
+                            onClick={() => setInputMode('manual')}
+                            className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition ${inputMode === 'manual' ? 'bg-black text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+                        >
+                            <Keyboard className="w-4 h-4" /> Code
+                        </button>
+                    </div>
+                )}
+                {/* 👆 FIN DES ONGLETS */}
+
+                <div className={`overflow-hidden border border-gray-200 bg-white shadow-sm ${status === 'scanning' ? 'rounded-b-3xl' : 'rounded-3xl'}`}>
                     {companyInfo && (
                         <div className="border-b border-gray-100 bg-gray-50 py-2.5 text-center text-xs font-bold uppercase tracking-widest text-gray-500">
                             {isStamps ? t('mode.stamps') : t('mode.points')}
                         </div>
                     )}
 
-                    <div className="relative min-h-[400px] p-4">
-                        <div
-                            className={`relative overflow-hidden rounded-2xl bg-black ${
-                                status !== 'scanning' ? 'hidden' : 'block'
-                            }`}
-                            style={{ minHeight: 'min(70vh, 420px)' }}
-                        >
+                    <div className="relative min-h-[400px] p-4 flex flex-col justify-center">
+                        
+                        {/* MODE 1 : SCANNER QR (La div est conditionnée par inputMode) */}
+                        {status === 'scanning' && inputMode === 'qr' && (
                             <div
-                                id="reader"
-                                className="scanner-reader absolute inset-0 h-full w-full"
-                            />
-
-                            {showPermissionOverlay && (
-                                <ScannerPermissionPrompt
-                                    requesting={cameraUi === 'requesting'}
-                                    onAuthorize={requestCameraPermission}
+                                className="relative overflow-hidden rounded-2xl bg-black"
+                                style={{ minHeight: 'min(70vh, 420px)' }}
+                            >
+                                <div
+                                    id="reader"
+                                    className="scanner-reader absolute inset-0 h-full w-full"
                                 />
-                            )}
 
-                            {showViewfinder && <ScannerViewfinderOverlay />}
-                        </div>
+                                {showPermissionOverlay && (
+                                    <ScannerPermissionPrompt
+                                        requesting={cameraUi === 'requesting'}
+                                        onAuthorize={requestCameraPermission}
+                                    />
+                                )}
 
+                                {showViewfinder && <ScannerViewfinderOverlay />}
+                            </div>
+                        )}
+
+                        {/* MODE 2 : CODE MANUEL (Nouveau Pavé Numérique) */}
+                        {status === 'scanning' && inputMode === 'manual' && (
+                            <form onSubmit={handleManualSubmit} className="flex flex-col items-center justify-center py-10 px-4">
+                                <p className="text-sm font-bold text-gray-500 mb-8 text-center uppercase tracking-widest">
+                                    Code client (5 chiffres)
+                                </p>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    maxLength={5}
+                                    autoFocus
+                                    value={manualCode}
+                                    onChange={(e) => setManualCode(e.target.value.replace(/\D/g, ''))} // Ne garde que les chiffres
+                                    className="w-full max-w-[240px] text-center text-5xl font-black tracking-[0.2em] outline-none border-b-4 border-black pb-2 mb-10 placeholder-gray-200"
+                                    placeholder="00000"
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={manualCode.length !== 5}
+                                    className="w-full rounded-2xl bg-black py-5 text-lg font-black text-white transition hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Valider
+                                </button>
+                            </form>
+                        )}
+
+                        {/* ÉCRAN RÉSULTAT CLIENT (100% INCHANGÉ) */}
                         {status === 'customer' && customer && (
                             <div className="w-full space-y-5 animate-in fade-in">
                                 <div className="text-center">
@@ -501,6 +589,7 @@ export default function ScannerPage() {
                             </div>
                         )}
 
+                        {/* ÉCRAN DE CHARGEMENT / SUCCÈS (100% INCHANGÉ) */}
                         {(status === 'loading' || status === 'result') && (
                             <div
                                 className={`absolute inset-0 z-10 flex flex-col items-center justify-center rounded-3xl p-6 text-center ${

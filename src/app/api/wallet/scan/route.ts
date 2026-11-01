@@ -29,7 +29,6 @@ async function syncWallet(
         console.error('❌ Erreur synchro Google Wallet:', googleError);
     }
 
-    // 👇 2. Le déclencheur pour Apple Wallet 👇
     try {
         await sendAppleWalletPush(walletId);
     } catch (appleError) {
@@ -44,29 +43,47 @@ export async function POST(request: Request) {
 
         const body = await request.json();
         const {
-            walletId,
+            walletId, 
+            shortCode, 
             action = 'lookup',
             amount,
             description,
             rewardId,
         } = body as {
-            walletId: string;
+            walletId?: string;
+            shortCode?: string;
             action?: ScanAction;
             amount?: number;
             description?: string;
             rewardId?: string;
         };
 
-        if (!walletId) {
-            return NextResponse.json({ error: 'walletId requis' }, { status: 400 });
+        if (!walletId && !shortCode) {
+            return NextResponse.json({ error: 'Code client requis' }, { status: 400 });
         }
 
-        const customer = await prisma.customer.findUnique({
-            where: { walletId },
-            include: { company: true },
-        });
+        let customer = null;
+
+        if (walletId) {
+            customer = await prisma.customer.findUnique({
+                where: { walletId },
+                include: { company: true },
+            });
+        } else if (shortCode) {
+            customer = await prisma.customer.findFirst({
+                where: { 
+                    shortCode: shortCode, 
+                    companyId: auth.companyId 
+                },
+                include: { company: true },
+            });
+        }
 
         if (!customer) return NextResponse.json({ error: 'Carte non reconnue' }, { status: 404 });
+        
+        // On sécurise l'ID principal
+        const activeWalletId = customer.walletId;
+        
         if (customer.companyId !== auth.companyId) {
             return NextResponse.json({ error: "Ce client n'appartient pas à votre commerce" }, { status: 403 });
         }
@@ -134,17 +151,12 @@ export async function POST(request: Request) {
             }
         } else if (company.systemType === 'POINTS') {
             if (action === 'add_points') {
-                // 1. Montant en EUROS dépensés par le client
                 const eurosSpent = Number(amount) || 0;
                 if (eurosSpent <= 0) {
                     return NextResponse.json({ error: 'Montant en euros invalide' }, { status: 400 });
                 }
 
-                // 2. NOUVEAU CALCUL : pointsRatio représente désormais le coût en € d'UN point (ex: 5€ = 1pt)
-                // On s'assure que le ratio ne soit pas 0 pour éviter une division par zéro fatale.
                 const euroCostPerPoint = company.pointsRatio && company.pointsRatio > 0 ? company.pointsRatio : 1;
-                
-                // 👇 ON DIVISE AU LIEU DE MULTIPLIER 👇
                 const pointsToAdd = Math.floor(eurosSpent / euroCostPerPoint);
 
                 if (pointsToAdd <= 0) {
@@ -190,7 +202,7 @@ export async function POST(request: Request) {
 
         await prisma.$transaction([
             prisma.customer.update({
-                where: { walletId },
+                where: { walletId: activeWalletId }, // 👈 CORRECTION CRITIQUE ICI
                 data: { points: newPoints },
             }),
             prisma.transaction.create({
@@ -205,7 +217,7 @@ export async function POST(request: Request) {
             }),
         ]);
 
-        await syncWallet(walletId, newPoints, company, customer.firstName);
+        await syncWallet(activeWalletId, newPoints, company, customer.firstName); // 👈 Et ici
 
         return NextResponse.json({
             success: true,

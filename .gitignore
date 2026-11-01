@@ -39,3 +39,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+jdk-25_linux-x64_bin.tar.gz
+*.tar.gz

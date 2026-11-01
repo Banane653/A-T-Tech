@@ -71,6 +71,15 @@ export async function GET(request: Request) {
 
     if (!customer) {
       const walletId = `WLT-${Date.now()}`;
+      let newShortCode = '';
+      let isUnique = false;
+      while (!isUnique) {
+        newShortCode = Math.floor(10000 + Math.random() * 90000).toString(); // De 10000 à 99999
+        const existing = await prisma.customer.findFirst({
+          where: { companyId, shortCode: newShortCode }
+        });
+        if (!existing) isUnique = true;
+      }
       customer = await prisma.customer.create({
         data: {
           firstName: name,
@@ -189,8 +198,7 @@ export async function GET(request: Request) {
           format: 'PKBarcodeFormatQR',
           message: templateData.qr.value,
           messageEncoding: 'iso-8859-1',
-          altText: templateData.customer.walletId,
-        },
+          altText: customer.shortCode ? `CODE: ${customer.shortCode}` : templateData.customer.walletId,        },
       ],
     };
 

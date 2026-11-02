@@ -2,26 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { Loader2, Palette, Gift, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
+// Nouveaux imports Lucide pour les icônes des tampons
+import { Loader2, Palette, Gift, CheckCircle2, ArrowRight, ArrowLeft, Star, Coffee, Pizza, Sparkles } from 'lucide-react';
 
 export default function SetupWizard() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const sessionId = searchParams.get('session_id');
     const { locale } = useParams();
+    const sessionId = searchParams.get('session_id');
 
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     
-    // Les données du formulaire
+    // Ajout de cardTemplate avec 'stamps_stars' par défaut
     const [formData, setFormData] = useState({
         systemType: 'STAMPS',
-        cardTemplate: 'default',
+        cardTemplate: 'stamps_stars',
         primaryColor: '#000000',
         logoUrl: '',
     });
 
-    // Si on arrive ici sans session Stripe, on renvoie à l'accueil
     useEffect(() => {
         if (!sessionId) {
             router.push('/');
@@ -38,7 +38,6 @@ export default function SetupWizard() {
             });
 
             if (res.ok) {
-                // Configuration terminée ! On redirige vers la page de connexion
                 router.push(`/${locale}/login?setup=success`);
             } else {
                 console.error("Erreur lors de l'enregistrement");
@@ -56,7 +55,6 @@ export default function SetupWizard() {
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
                 
-                {/* Barre de progression */}
                 <div className="flex items-center justify-center mb-8 space-x-4">
                     <div className={`flex items-center gap-2 ${step >= 1 ? 'text-black font-bold' : 'text-gray-400'}`}>
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-black text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
@@ -73,7 +71,6 @@ export default function SetupWizard() {
 
                 <div className="bg-white py-10 px-6 shadow-xl sm:rounded-3xl sm:px-12 border border-gray-100">
                     
-                    {/* ÉTAPE 1 : CHOIX DU PROGRAMME */}
                     {step === 1 && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <div className="text-center mb-8">
@@ -82,9 +79,8 @@ export default function SetupWizard() {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Option Tampons */}
                                 <div 
-                                    onClick={() => setFormData({ ...formData, systemType: 'STAMPS' })}
+                                    onClick={() => setFormData({ ...formData, systemType: 'STAMPS', cardTemplate: 'stamps_stars' })}
                                     className={`cursor-pointer p-6 rounded-2xl border-2 transition-all ${formData.systemType === 'STAMPS' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}
                                 >
                                     <div className="flex justify-between items-start mb-4">
@@ -92,12 +88,11 @@ export default function SetupWizard() {
                                         <div className={`w-6 h-6 rounded-full border-2 ${formData.systemType === 'STAMPS' ? 'border-black bg-black' : 'border-gray-300'}`} />
                                     </div>
                                     <h3 className="text-xl font-bold mb-2">Carte à tampons</h3>
-                                    <p className="text-gray-500 text-sm">Le grand classique. Ex: 10 tampons = 1 café offert. Simple et redoutablement efficace.</p>
+                                    <p className="text-gray-500 text-sm">Le grand classique. Ex: 10 tampons = 1 café offert. Simple et efficace.</p>
                                 </div>
 
-                                {/* Option Points */}
                                 <div 
-                                    onClick={() => setFormData({ ...formData, systemType: 'POINTS' })}
+                                    onClick={() => setFormData({ ...formData, systemType: 'POINTS', cardTemplate: 'points_default' })}
                                     className={`cursor-pointer p-6 rounded-2xl border-2 transition-all ${formData.systemType === 'POINTS' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}
                                 >
                                     <div className="flex justify-between items-start mb-4">
@@ -105,9 +100,34 @@ export default function SetupWizard() {
                                         <div className={`w-6 h-6 rounded-full border-2 ${formData.systemType === 'POINTS' ? 'border-black bg-black' : 'border-gray-300'}`} />
                                     </div>
                                     <h3 className="text-xl font-bold mb-2">Système de points</h3>
-                                    <p className="text-gray-500 text-sm">Plus flexible. Ex: 1€ dépensé = 1 point. Permet de créer un catalogue de récompenses variées.</p>
+                                    <p className="text-gray-500 text-sm">Plus flexible. Ex: 1€ = 1 point. Permet de créer un catalogue de récompenses.</p>
                                 </div>
                             </div>
+
+                            {/* 🔥 Le sous-menu magique des tampons */}
+                            {formData.systemType === 'STAMPS' && (
+                                <div className="mt-8 pt-8 border-t border-gray-100 animate-in fade-in slide-in-from-top-4 duration-500">
+                                    <h4 className="text-lg font-bold mb-4 text-center">Quel motif pour vos tampons ?</h4>
+                                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                                        {[
+                                            { id: 'stamps_stars', name: 'Étoiles', icon: Star },
+                                            { id: 'stamps_coffee', name: 'Café', icon: Coffee },
+                                            { id: 'stamps_pizza', name: 'Pizza', icon: Pizza },
+                                            { id: 'stamps_gift', name: 'Cadeau', icon: Gift },
+                                            { id: 'stamps_nails', name: 'Beauté', icon: Sparkles }, // L'icône Sparkles remplace les ongles
+                                        ].map((tpl) => (
+                                            <div 
+                                                key={tpl.id}
+                                                onClick={() => setFormData({ ...formData, cardTemplate: tpl.id })}
+                                                className={`cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${formData.cardTemplate === tpl.id ? 'border-black bg-gray-50 shadow-sm' : 'border-gray-100 hover:border-gray-200'}`}
+                                            >
+                                                <tpl.icon className={`w-8 h-8 mb-2 ${formData.cardTemplate === tpl.id ? 'text-black' : 'text-gray-400'}`} />
+                                                <span className={`text-xs font-bold text-center ${formData.cardTemplate === tpl.id ? 'text-black' : 'text-gray-500'}`}>{tpl.name}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="mt-10 flex justify-end">
                                 <button 
@@ -120,7 +140,6 @@ export default function SetupWizard() {
                         </div>
                     )}
 
-                    {/* ÉTAPE 2 : DESIGN */}
                     {step === 2 && (
                         <div className="animate-in fade-in slide-in-from-right-8 duration-500">
                             <div className="text-center mb-8">
@@ -160,7 +179,6 @@ export default function SetupWizard() {
                                         onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
                                         className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black outline-none"
                                     />
-                                    <p className="text-xs text-gray-500 mt-2">Nous pourrons modifier cela plus tard si vous n'avez pas de lien sous la main.</p>
                                 </div>
                             </div>
 

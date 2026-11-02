@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { prisma } from '@/lib/prisma';
+import { createOdooInvoice } from '@/services/odoo.service';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
     apiVersion: '2026-10-28.endive',
@@ -33,24 +34,41 @@ export async function POST(request: Request) {
 
         // Si le paiement de l'abonnement est un succès total
         if (event.type === 'checkout.session.completed') {
-            const session = event.data.object as Stripe.Checkout.Session;
+         const session = event.data.object as Stripe.Checkout.Session;
+         const companyId = session.metadata?.companyId;
 
-            // On récupère le companyId qu'on avait glissé dans les métadonnées lors du clic sur "S'abonner"
-            const companyId = session.metadata?.companyId;
+         if (companyId) {
+             // 1. Mettre à jour la base de données Prisma
+             const updatedCompany = await prisma.company.update({
+                 where: { id: companyId },
+                 data: {
+                     subscriptionStatus: 'active',
+                     stripeCustomerId: session.customer as string,
+                     stripeSubscriptionId: session.subscription as string,
+                 },
+                 // On demande à Prisma de nous renvoyer les infos nécessaires pour la facture
+                 include: {
+                     users: {
+                         where: { role: 'ADMIN' },
+                         take: 1
+                     }
+                 }
+             });
+             console.log(`✅ Abonnement activé pour l'entreprise ${companyId}`);
 
-            if (companyId) {
-                // On met à jour l'entreprise dans la base de données !
-                await prisma.company.update({
-                    where: { id: companyId },
-                    data: {
-                        subscriptionStatus: 'active', // 🚀 Le compte est débloqué !
-                        stripeCustomerId: session.customer as string,
-                        stripeSubscriptionId: session.subscription as string,
-                    },
-                });
-                console.log(`✅ Abonnement activé pour l'entreprise ${companyId}`);
-            }
-        }
+             // 2. Générer la facture Odoo en arrière-plan
+             const adminUser = updatedCompany.users[0];
+             if (adminUser) {
+                 // On ne bloque pas l'exécution avec un "await" stricte pour répondre vite à Stripe
+                 createOdooInvoice(
+                     updatedCompany.name,
+                     adminUser.email,
+                     updatedCompany.vatNumber,
+                     session.amount_total || 0 // Stripe donne le montant exact payé en centimes
+                 ).catch(err => console.error("Échec silencieux Odoo:", err));
+             }
+         }
+     }
 
         // Gestion de l'annulation (si la carte expire ou si le client annule via le portail)
         if (event.type === 'customer.subscription.deleted') {

@@ -11,31 +11,41 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { companyName, vatNumber, name, email, password, plan } = body;
+        // On ajoute "username" à l'extraction
+        const { companyName, vatNumber, name, email, password, plan, username } = body;
 
         if (!companyName || !name || !email || !password) {
             return NextResponse.json({ error: 'Veuillez remplir tous les champs obligatoires.' }, { status: 400 });
         }
 
-        // 1. Vérifier si l'email existe déjà (le gérant a déjà un compte)
+        // 1. Vérifier si l'email existe déjà
         const existingUser = await prisma.merchantUser.findUnique({ where: { email } });
         if (existingUser) {
             return NextResponse.json({ error: 'Un compte existe déjà avec cet email.' }, { status: 400 });
         }
 
-        // 2. Hacher le mot de passe du gérant
+        // 2. Vérifier si le username est déjà pris (s'il a été rempli)
+        if (username) {
+            const existingUsername = await prisma.merchantUser.findUnique({ where: { username } });
+            if (existingUsername) {
+                return NextResponse.json({ error: 'Ce nom d\'utilisateur est déjà pris. Veuillez en choisir un autre.' }, { status: 400 });
+            }
+        }
+
+        // 3. Hacher le mot de passe
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 3. Créer l'entreprise (inactive) et son compte gérant (ADMIN)
+        // 4. Créer l'entreprise (inactive) et son compte gérant
         const company = await prisma.company.create({
             data: {
                 name: companyName,
                 vatNumber: vatNumber || null,
-                subscriptionStatus: 'inactive', // Bloqué tant que Stripe n'a pas validé
+                subscriptionStatus: 'inactive',
                 users: {
                     create: {
                         name,
                         email,
+                        username: username || null, // Ajout du username ici
                         password: hashedPassword,
                         role: 'ADMIN',
                     }

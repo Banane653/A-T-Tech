@@ -14,6 +14,7 @@ export default function OnboardingPage() {
         companyName: '',
         vatNumber: '',
         name: '',
+        username: '',
         email: '',
         password: '',
     });
@@ -115,6 +116,7 @@ export default function OnboardingPage() {
                             </div>
                         </div>
 
+                        {/* Bloc Nom & Username */}
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Votre Nom *</label>
@@ -127,6 +129,20 @@ export default function OnboardingPage() {
                                 />
                             </div>
                             <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Nom d'utilisateur (Optionnel)</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ex: patron_bistrot"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
+                                    value={formData.username}
+                                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Bloc Email & Mot de passe */}
+                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                            <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Email pro *</label>
                                 <input
                                     required
@@ -136,17 +152,16 @@ export default function OnboardingPage() {
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
                             </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Mot de passe *</label>
-                            <input
-                                required
-                                type="password"
-                                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                            />
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Mot de passe *</label>
+                                <input
+                                    required
+                                    type="password"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                />
+                            </div>
                         </div>
 
                         <ul className="text-sm text-gray-500 space-y-2 py-2">

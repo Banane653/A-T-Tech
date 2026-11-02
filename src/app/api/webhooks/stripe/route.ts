@@ -12,7 +12,10 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 export async function POST(request: Request) {
     try {
         const body = await request.text(); // On doit lire le corps brut (raw) pour la sécurité Stripe
-        const signature = headers().get('stripe-signature');
+        
+        // CORRECTION ICI : On attend (await) la liste des headers
+        const headersList = await headers();
+        const signature = headersList.get('stripe-signature');
 
         if (!signature) {
             return NextResponse.json({ error: 'Signature manquante' }, { status: 400 });

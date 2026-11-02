@@ -8,32 +8,17 @@ import PricingSection from '@/components/ui/pricing';
 import { useTranslations } from 'next-intl';
 
 export default function HomePage() {
-  const [demoPoints, setDemoPoints] = useState(0);
+  const [stamps, setStamps] = useState(7);
   const t = useTranslations('HomePage');
 
+  // Petite animation pour ajouter un tampon après 1.5s
   useEffect(() => {
-    let currentPoints = 0;
-    const targetPoints = 1240;
-    const increment = 30; 
-    const speed = 25; 
+    const timer = setTimeout(() => {
+      setStamps(8);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
-    const timer = setInterval(() => {
-      currentPoints += increment;
-      if (currentPoints >= targetPoints) {
-        setDemoPoints(targetPoints);
-        clearInterval(timer);
-      } else {
-        setDemoPoints(currentPoints);
-      }
-    }, speed);
-
-    return () => clearInterval(timer);
-  }, []); 
-
-  const handleAddPoints = () => {
-    setDemoPoints((prev) => prev + 100);
-  };
-  
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900 overflow-x-hidden">
       
@@ -69,7 +54,8 @@ export default function HomePage() {
           {t('hero.description')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="/contact" className="px-8 py-4 text-base font-bold text-white bg-black hover:bg-gray-800 rounded-full text-center transition shadow-lg shadow-black/20 hover:shadow-black/30">
+            {/* CHANGEMENT: /contact -> /onboarding */}
+            <Link href="/onboarding" className="px-8 py-4 text-base font-bold text-white bg-black hover:bg-gray-800 rounded-full text-center transition shadow-lg shadow-black/20 hover:shadow-black/30">
               {t('hero.cta.primary')}
             </Link>
             <a href="#how-it-works" className="px-8 py-4 text-base font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full text-center transition">
@@ -83,7 +69,7 @@ export default function HomePage() {
           </div>
         </div>
         
-        {/* Colonne de Droite : MOCKUP */}
+        {/* Colonne de Droite : MOCKUP TAMPONS */}
         <div className="relative flex justify-center items-center py-12 md:py-0">
           <Tilt 
             tiltMaxAngleX={10} 
@@ -112,11 +98,25 @@ export default function HomePage() {
                           <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center font-bold text-sm">VIP</div>
                       </div>
                       
-                      <div className="text-center my-6 z-10">
-                          <span className="text-6xl font-black tracking-tighter text-yellow-400 drop-shadow-md transition-all duration-300">
-                              {demoPoints.toLocaleString()}
-                          </span>
-                          <p className="text-xs font-medium mt-1 tracking-widest text-gray-400 uppercase">{t('mockup.pointsLabel')}</p>
+                      {/* GRILLE DE TAMPONS */}
+                      <div className="text-center my-4 z-10 flex flex-col items-center">
+                          <div className="grid grid-cols-5 gap-2 mb-3">
+                              {[...Array(10)].map((_, i) => (
+                                  <div 
+                                    key={i} 
+                                    className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-500 ${
+                                        i < stamps 
+                                        ? 'border-yellow-400 bg-yellow-400 text-black scale-110' 
+                                        : 'border-gray-600 text-transparent scale-100'
+                                    }`}
+                                  >
+                                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                      </svg>
+                                  </div>
+                              ))}
+                          </div>
+                          <p className="text-[10px] font-medium tracking-widest text-gray-400 uppercase">{t('mockup.stampsLabel')}</p>
                       </div>
                       
                       <div className="space-y-2 border-t border-gray-800 pt-4 z-10 flex justify-between items-end">
@@ -203,7 +203,8 @@ export default function HomePage() {
       <section className="py-24 bg-black text-white text-center px-6">
         <h2 className="text-4xl md:text-5xl font-bold mb-6 max-w-2xl mx-auto">{t('cta.title')}</h2>
         <p className="text-gray-400 mb-10 max-w-lg mx-auto">{t('cta.desc')}</p>
-        <Link href="/contact" className="inline-block px-8 py-4 text-base font-bold text-black bg-white hover:bg-gray-100 rounded-full transition shadow-lg shadow-white/10">
+        {/* CHANGEMENT: /contact -> /onboarding */}
+        <Link href="/onboarding" className="inline-block px-8 py-4 text-base font-bold text-black bg-white hover:bg-gray-100 rounded-full transition shadow-lg shadow-white/10">
           {t('cta.button')}
         </Link>
       </section>

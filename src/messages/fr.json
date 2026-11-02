@@ -14,18 +14,18 @@
         },
         "description": "Transformez chaque visite en raison de revenir. Créez une carte de fidélité à votre image en quelques minutes, sans aucune application à télécharger.",
         "cta": {
-          "primary": "Démarrer gratuitement",
+          "primary": "Créer ma carte",
           "secondary": "Comment ça marche"
         },
         "perks": {
-          "perk1": "✓ Sans carte bancaire",
+          "perk1": "✓ Apple & Google Wallet",
           "perk2": "✓ Prêt en 10 min",
           "perk3": "✓ Sans engagement"
         }
       },
       "mockup": {
         "cardType": "CARTE PRIVILÈGE",
-        "pointsLabel": "Points de fidélité",
+        "stampsLabel": "Carte de fidélité",
         "memberLabel": "Membre",
         "badge1": {
           "title": "Félicitations Sophie !",
@@ -82,7 +82,7 @@
       },
       "cta": {
         "title": "Vos meilleurs clients n'attendent qu'une raison de revenir.",
-        "desc": "Gratuit, à vos couleurs, en ligne en quelques minutes. Sans carte bancaire, sans engagement.",
+        "desc": "À vos couleurs, en ligne en quelques minutes. Sans engagement.",
         "button": "Créer ma première carte"
       }
     },

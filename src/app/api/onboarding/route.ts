@@ -74,7 +74,7 @@ export async function POST(request: Request) {
             metadata: {
                 companyId: company.id, // VITAL : Permettra au Webhook de savoir qui a payé !
             },
-            success_url: `${protocol}://${host}/dashboard?onboarding=success`,
+            success_url: `${protocol}://${host}/setup?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${protocol}://${host}/onboarding?canceled=true`,
         });
 

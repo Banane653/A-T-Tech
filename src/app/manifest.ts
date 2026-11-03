@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: '/login', // L'URL qui s'ouvre quand ils cliquent sur l'icône
     display: 'standalone',
     background_color: '#ffffff',
-    theme_color: '#FF6E00', // Le Deep Amber de ton branding qui colorera la barre d'état du téléphone
+    theme_color: '#ffffff', 
     icons: [
       {
         src: '/icons/icon-192x192.png',

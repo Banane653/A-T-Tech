@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Loader2, CheckCircle2, Building2, CreditCard } from 'lucide-react';
+import { useRouter } from '@/navigation'; // Utilisation de ton router personnalisé avec les locales
+import { useTranslations } from 'next-intl';
+import { Loader2, CheckCircle2, CreditCard } from 'lucide-react';
 
 export default function OnboardingPage() {
+    const t = useTranslations('Onboarding');
     const router = useRouter();
     const [plan, setPlan] = useState<'monthly' | 'yearly'>('monthly');
     const [loading, setLoading] = useState(false);
@@ -34,7 +36,7 @@ export default function OnboardingPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                setError(data.error || "Une erreur est survenue");
+                setError(data.error || t('errors.default'));
                 setLoading(false);
                 return;
             }
@@ -44,7 +46,7 @@ export default function OnboardingPage() {
                 window.location.href = data.url;
             }
         } catch (err) {
-            setError("Impossible de contacter le serveur.");
+            setError(t('errors.serverError'));
             setLoading(false);
         }
     };
@@ -52,9 +54,9 @@ export default function OnboardingPage() {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
             <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-                <h2 className="mt-6 text-3xl font-black text-gray-900">Créez votre commerce</h2>
+                <h2 className="mt-6 text-3xl font-black text-gray-900">{t('title')}</h2>
                 <p className="mt-2 text-sm text-gray-600">
-                    Démarrez votre programme de fidélité en 2 minutes.
+                    {t('subtitle')}
                 </p>
             </div>
 
@@ -71,7 +73,7 @@ export default function OnboardingPage() {
                                     plan === 'monthly' ? 'bg-white shadow-sm text-black' : 'text-gray-500 hover:text-gray-900'
                                 }`}
                             >
-                                Mensuel (10€/mois)
+                                {t('plans.monthly')}
                             </button>
                             <button
                                 type="button"
@@ -80,7 +82,7 @@ export default function OnboardingPage() {
                                     plan === 'yearly' ? 'bg-black text-white shadow-sm' : 'text-gray-500 hover:text-gray-900'
                                 }`}
                             >
-                                Annuel (100€/an) <span className="ml-1 text-xs text-green-400">(-16%)</span>
+                                {t('plans.yearly')} <span className="ml-1 text-xs text-green-400">{t('plans.discount')}</span>
                             </button>
                         </div>
                     </div>
@@ -94,22 +96,22 @@ export default function OnboardingPage() {
 
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Nom du commerce *</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">{t('fields.companyName')}</label>
                                 <input
                                     required
                                     type="text"
-                                    placeholder="Ex: Le Petit Bistrot"
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
+                                    placeholder={t('placeholders.companyName')}
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition text-black"
                                     value={formData.companyName}
                                     onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Numéro de TVA (Optionnel)</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">{t('fields.vatNumber')}</label>
                                 <input
                                     type="text"
-                                    placeholder="Ex: BE0123456789"
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
+                                    placeholder={t('placeholders.vatNumber')}
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition text-black"
                                     value={formData.vatNumber}
                                     onChange={(e) => setFormData({ ...formData, vatNumber: e.target.value })}
                                 />
@@ -119,21 +121,21 @@ export default function OnboardingPage() {
                         {/* Bloc Nom & Username */}
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Votre Nom *</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">{t('fields.name')}</label>
                                 <input
                                     required
                                     type="text"
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition text-black"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Nom d'utilisateur (Optionnel)</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">{t('fields.username')}</label>
                                 <input
                                     type="text"
-                                    placeholder="Ex: patron_bistrot"
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
+                                    placeholder={t('placeholders.username')}
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition text-black"
                                     value={formData.username}
                                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                                 />
@@ -143,21 +145,21 @@ export default function OnboardingPage() {
                         {/* Bloc Email & Mot de passe */}
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Email pro *</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">{t('fields.email')}</label>
                                 <input
                                     required
                                     type="email"
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition text-black"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Mot de passe *</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">{t('fields.password')}</label>
                                 <input
                                     required
                                     type="password"
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black focus:border-black outline-none transition text-black"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 />
@@ -165,8 +167,8 @@ export default function OnboardingPage() {
                         </div>
 
                         <ul className="text-sm text-gray-500 space-y-2 py-2">
-                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Essai gratuit & Factures automatiques</li>
-                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Annulable à tout moment</li>
+                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {t('perks.freeTrial')}</li>
+                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> {t('perks.cancelAnytime')}</li>
                         </ul>
 
                         <button
@@ -175,7 +177,7 @@ export default function OnboardingPage() {
                             className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-2xl shadow-sm text-lg font-black text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition disabled:opacity-70"
                         >
                             {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <CreditCard className="w-6 h-6" />}
-                            Continuer vers le paiement
+                            {loading ? t('buttons.loading') : t('buttons.submit')}
                         </button>
                     </form>
                 </div>

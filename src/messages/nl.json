@@ -497,21 +497,76 @@
       "previewDisclaimer": "De werkelijke weergave kan licht variëren afhankelijk van het telefoonmodel (iOS of Android).",
       "previewFallbackName": "Uw Bedrijf Naam"
     },
-    "Login": {
-      "title": "Manager Portaal",
-      "subtitle": "Log in op uw dashboard",
-      "fields": {
-        "identifier": "E-mail of Gebruikersnaam",
-        "password": "Wachtwoord"
+    "Onboarding": {
+      "title": "Maak je zaak aan",
+      "subtitle": "Start je loyauteitsprogramma in 2 minuten.",
+      "plans": {
+        "monthly": "Maandelijks (€10/maand)",
+        "yearly": "Jaarlijks (€100/jaar)",
+        "discount": "(-16%)"
       },
-      "forgotPassword": "Wachtwoord vergeten?",
+      "fields": {
+        "companyName": "Naam van de zaak *",
+        "vatNumber": "BTW-nummer (Optioneel)",
+        "name": "Jouw Naam *",
+        "Gebruikersnaam": "Gebruikersnaam (Optioneel)",
+        "email": "Professionele E-mail *",
+        "password": "Wachtwoord *"
+      },
+      "placeholders": {
+        "companyName": "Bijv: De Kleine Bistro",
+        "vatNumber": "Bijv: BE0123456789",
+        "username": "Bijv: bistro_eigenaar"
+      },
+      "perks": {
+        "freeTrial": "Gratis proefperiode & automatische facturen",
+        "cancelAnytime": "Altijd opzegbaar"
+      },
       "buttons": {
-        "submit": "Inloggen",
-        "loading": "Inloggen..."
+        "submit": "Doorgaan naar betaling",
+        "loading": "Laden..."
       },
       "errors": {
-        "invalidCredentials": "Ongeldige inloggegevens",
-        "serverError": "Kan de server niet bereiken"
+        "default": "Er is een fout opgetreden",
+        "serverError": "Kan geen verbinding maken met de server."
+      }
+    },
+    "Setup": {
+      "steps": {
+        "program": "Programma",
+        "design": "Ontwerp"
+      },
+      "step1": {
+        "title": "Kies je systeem",
+        "subtitle": "Hoe wil je je klanten belonen?",
+        "stamps": {
+          "title": "Stempelkaart",
+          "description": "De grote klassieker. Bijv: 10 stempels = 1 gratis koffie. Eenvoudig en effectief."
+        },
+        "points": {
+          "title": "Puntensysteem",
+          "description": "Flexibeler. Bijv: €1 = 1 punt. Hiermee kun je een beloningscatalogus maken."
+        },
+        "templatesTitle": "Welk symbool voor je stempels?",
+        "templates": {
+          "stamps_stars": "Sterren",
+          "stamps_coffee": "Koffie",
+          "stamps_pizza": "Pizza",
+          "stamps_gift": "Cadeau",
+          "stamps_nails": "Schoonheid"
+        }
+      },
+      "step2": {
+        "title": "Jouw visuele identiteit",
+        "subtitle": "Pas het uiterlijk van je digitale kaart aan.",
+        "primaryColor": "Hoofdkleur",
+        "logoUrl": "Logo-link (URL)",
+        "logoPlaceholder": "https://mijn-website.com/logo.png"
+      },
+      "buttons": {
+        "next": "Volgende",
+        "back": "Terug",
+        "finish": "Voltooien"
       }
     },
     "Register": {

@@ -523,6 +523,78 @@
         "serverConnection": "Impossible de joindre le serveur."
       }
     },
+    "Onboarding": {
+      "title": "Créez votre commerce",
+      "subtitle": "Démarrez votre programme de fidélité en 2 minutes.",
+      "plans": {
+        "monthly": "Mensuel (10€/mois)",
+        "yearly": "Annuel (100€/an)",
+        "discount": "(-16%)"
+      },
+      "fields": {
+        "companyName": "Nom du commerce *",
+        "vatNumber": "Numéro de TVA (Optionnel)",
+        "name": "Votre Nom *",
+        "username": "Nom d'utilisateur (Optionnel)",
+        "email": "Email pro *",
+        "password": "Mot de passe *"
+      },
+      "placeholders": {
+        "companyName": "Ex: Le Petit Bistrot",
+        "vatNumber": "Ex: BE0123456789",
+        "username": "Ex: patron_bistrot"
+      },
+      "perks": {
+        "freeTrial": "Essai gratuit & Factures automatiques",
+        "cancelAnytime": "Annulable à tout moment"
+      },
+      "buttons": {
+        "submit": "Continuer vers le paiement",
+        "loading": "Chargement..."
+      },
+      "errors": {
+        "default": "Une erreur est survenue",
+        "serverError": "Impossible de contacter le serveur."
+      }
+    },
+    "Setup": {
+      "steps": {
+        "program": "Programme",
+        "design": "Design"
+      },
+      "step1": {
+        "title": "Choisissez votre système",
+        "subtitle": "Comment souhaitez-vous récompenser vos clients ?",
+        "stamps": {
+          "title": "Carte à tampons",
+          "description": "Le grand classique. Ex: 10 tampons = 1 café offert. Simple et efficace."
+        },
+        "points": {
+          "title": "Système de points",
+          "description": "Plus flexible. Ex: 1€ = 1 point. Permet de créer un catalogue de récompenses."
+        },
+        "templatesTitle": "Quel motif pour vos tampons ?",
+        "templates": {
+          "stamps_stars": "Étoiles",
+          "stamps_coffee": "Café",
+          "stamps_pizza": "Pizza",
+          "stamps_gift": "Cadeau",
+          "stamps_nails": "Beauté"
+        }
+      },
+      "step2": {
+        "title": "Votre identité visuelle",
+        "subtitle": "Personnalisez l'apparence de votre carte digitale.",
+        "primaryColor": "Couleur principale",
+        "logoUrl": "Lien de votre logo (URL)",
+        "logoPlaceholder": "https://mon-site.com/logo.png"
+      },
+      "buttons": {
+        "next": "Suivant",
+        "back": "Retour",
+        "finish": "Terminer"
+      }
+    },
     "Register": {
       "subtitle": "Inscrivez-vous pour obtenir votre carte",
       "fields": {

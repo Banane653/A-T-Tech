@@ -497,7 +497,7 @@
       "previewDisclaimer": "Actual appearance may vary slightly depending on the phone model (iOS or Android).",
       "previewFallbackName": "Your Business"
     },
-      "Login": {
+    "Login": {
       "title": "Merchant Portal",
       "subtitle": "Log in to your dashboard",
       "fields": {
@@ -553,6 +553,78 @@
         "noToken": "No security token found.",
         "generic": "An error occurred.",
         "serverConnection": "Cannot reach the server."
+      }
+    },
+    "Onboarding": {
+      "title": "Create your business",
+      "subtitle": "Start your loyalty program in 2 minutes.",
+      "plans": {
+        "monthly": "Monthly (€10/mo)",
+        "yearly": "Yearly (€100/yr)",
+        "discount": "(-16%)"
+      },
+      "fields": {
+        "companyName": "Business Name *",
+        "vatNumber": "VAT Number (Optional)",
+        "name": "Your Name *",
+        "username": "Username (Optional)",
+        "email": "Work Email *",
+        "password": "Password *"
+      },
+      "placeholders": {
+        "companyName": "Ex: The Little Bistro",
+        "vatNumber": "Ex: BE0123456789",
+        "username": "Ex: bistro_owner"
+      },
+      "perks": {
+        "freeTrial": "Free trial & automatic invoices",
+        "cancelAnytime": "Cancel anytime"
+      },
+      "buttons": {
+        "submit": "Continue to payment",
+        "loading": "Loading..."
+      },
+      "errors": {
+        "default": "An error occurred",
+        "serverError": "Unable to contact the server."
+      }
+    },
+    "Setup": {
+      "steps": {
+        "program": "Program",
+        "design": "Design"
+      },
+      "step1": {
+        "title": "Choose your system",
+        "subtitle": "How would you like to reward your customers?",
+        "stamps": {
+          "title": "Stamp card",
+          "description": "The timeless classic. Ex: 10 stamps = 1 free coffee. Simple and effective."
+        },
+        "points": {
+          "title": "Points system",
+          "description": "More flexible. Ex: €1 = 1 point. Allows you to create a rewards catalog."
+        },
+        "templatesTitle": "Which icon for your stamps?",
+        "templates": {
+          "stamps_stars": "Stars",
+          "stamps_coffee": "Coffee",
+          "stamps_pizza": "Pizza",
+          "stamps_gift": "Gift",
+          "stamps_nails": "Beauty"
+        }
+      },
+      "step2": {
+        "title": "Your visual identity",
+        "subtitle": "Customize the appearance of your digital card.",
+        "primaryColor": "Primary color",
+        "logoUrl": "Logo URL",
+        "logoPlaceholder": "https://my-website.com/logo.png"
+      },
+      "buttons": {
+        "next": "Next",
+        "back": "Back",
+        "finish": "Finish"
       }
     },
     "Register": {

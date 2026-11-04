@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 // 1. CONFIGURATION DU VIEWPORT (Bloque le zoom au clic, crucial pour une app de caisse)
 export const viewport: Viewport = {
-  themeColor: '#FF6E00',
+  themeColor: '#ffffff',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

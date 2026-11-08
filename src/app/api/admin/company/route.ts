@@ -15,9 +15,10 @@ export async function GET() {
                 id: true, 
                 name: true, 
                 logoUrl: true,
+                brandColor: true, // 👈 L'ajout VITAL est ici
                 pointsRatio: true, 
                 systemType: true,
-                locations: true // 👈 On charge la NOUVELLE table des adresses multiples
+                locations: true 
             },
         });
         return NextResponse.json({ company });

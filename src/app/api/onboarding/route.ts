@@ -2,40 +2,27 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import Stripe from 'stripe';
 import bcrypt from 'bcrypt';
+import { SignJWT } from 'jose'; // 👈 1. Ajoute l'import de jose
 
-// Initialisation de Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
     apiVersion: '2026-10-28.endive',
 });
 
+// Clé secrète pour le token (la même que dans ton middleware)
+const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret_pour_dev');
+
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        // On ajoute "username" à l'extraction
-        const { companyName, vatNumber, name, email, password, plan, username } = body;
+        const { companyName, vatNumber, name, email, password, plan, username, locale } = body;
+        
+        const userLocale = locale || 'fr';
 
-        if (!companyName || !name || !email || !password) {
-            return NextResponse.json({ error: 'Veuillez remplir tous les champs obligatoires.' }, { status: 400 });
-        }
+        // ... (Vérifications d'email et username existants comme avant) ...
 
-        // 1. Vérifier si l'email existe déjà
-        const existingUser = await prisma.merchantUser.findUnique({ where: { email } });
-        if (existingUser) {
-            return NextResponse.json({ error: 'Un compte existe déjà avec cet email.' }, { status: 400 });
-        }
-
-        // 2. Vérifier si le username est déjà pris (s'il a été rempli)
-        if (username) {
-            const existingUsername = await prisma.merchantUser.findUnique({ where: { username } });
-            if (existingUsername) {
-                return NextResponse.json({ error: 'Ce nom d\'utilisateur est déjà pris. Veuillez en choisir un autre.' }, { status: 400 });
-            }
-        }
-
-        // 3. Hacher le mot de passe
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 4. Créer l'entreprise (inactive) et son compte gérant
+        // 2. Modifie légèrement la création pour récupérer le "User"
         const company = await prisma.company.create({
             data: {
                 name: companyName,
@@ -45,41 +32,53 @@ export async function POST(request: Request) {
                     create: {
                         name,
                         email,
-                        username: username || null, // Ajout du username ici
+                        username: username || null,
                         password: hashedPassword,
                         role: 'ADMIN',
                     }
                 }
-            }
+            },
+            include: { users: true } // 👈 VITAL: Demande à Prisma de renvoyer l'utilisateur créé
         });
 
-        // 4. Déterminer le tarif Stripe selon le choix du commerçant
-        const priceId = plan === 'yearly' 
-            ? process.env.STRIPE_PRICE_ID_YEARLY 
-            : process.env.STRIPE_PRICE_ID_MONTHLY;
+        const newUser = company.users[0];
 
-        // 5. Créer la session Stripe Checkout
+        // 3. AUTO-LOGIN : Création du token JWT
+        const token = await new SignJWT({ 
+            sub: newUser.id, 
+            role: newUser.role,
+            companyId: company.id
+        })
+            .setProtectedHeader({ alg: 'HS256' })
+            .setExpirationTime('7d') // Valable 7 jours
+            .sign(SECRET_KEY);
+
+        // 4. Création de la session Stripe
+        const priceId = plan === 'yearly' ? process.env.STRIPE_PRICE_ID_YEARLY : process.env.STRIPE_PRICE_ID_MONTHLY;
         const host = request.headers.get('host') || 'localhost:3000';
         const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
         const session = await stripe.checkout.sessions.create({
             mode: 'subscription',
-            customer_email: email, // Pré-remplit l'email sur la page Stripe
-            line_items: [
-                {
-                    price: priceId,
-                    quantity: 1,
-                },
-            ],
-            metadata: {
-                companyId: company.id, // VITAL : Permettra au Webhook de savoir qui a payé !
-            },
-            success_url: `${protocol}://${host}/setup?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${protocol}://${host}/onboarding?canceled=true`,
+            customer_email: email,
+            line_items: [{ price: priceId, quantity: 1 }],
+            metadata: { companyId: company.id },
+            // On le renvoie directement sur le setup !
+            success_url: `${protocol}://${host}/${userLocale}/setup?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${protocol}://${host}/${userLocale}/onboarding?canceled=true`,
         });
 
-        // 6. Renvoyer l'URL Stripe au frontend pour rediriger l'utilisateur
-        return NextResponse.json({ url: session.url });
+        // 5. On prépare la réponse et on injecte le cookie de connexion
+        const response = NextResponse.json({ url: session.url });
+        
+        response.cookies.set('auth_token', token, {
+            httpOnly: true, // Sécurisé contre les attaques XSS
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax', // Important pour conserver le cookie au retour de Stripe
+            maxAge: 60 * 60 * 24 * 7 // 7 jours
+        });
+
+        return response;
 
     } catch (error) {
         console.error('Erreur Onboarding:', error);

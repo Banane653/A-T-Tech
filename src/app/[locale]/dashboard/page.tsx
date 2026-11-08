@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import RegisterQrCode from '@/components/registerQrCode'; 
 import { useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 export default function AdminDashboard() {
     const t = useTranslations('MerchantTeam');
     const locale = useLocale();
+    const router = useRouter();
 
     const [employees, setEmployees] = useState([]);
     const [companyName, setCompanyName] = useState('');
@@ -35,6 +37,10 @@ export default function AdminDashboard() {
         const resCompany = await fetch('/api/admin/company');
         if (resCompany.ok) {
             const data = await resCompany.json();
+            if (!data.company.logoUrl || !data.company.brandColor) {
+                router.push(`/${locale}/setup`);
+                return; 
+            }
             setPointsRatio(data.company.pointsRatio);
             setSystemType(data.company.systemType);
         }

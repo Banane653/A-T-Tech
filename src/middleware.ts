@@ -15,7 +15,7 @@ const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_
 const publicRoutes = [
     '/', '/login', '/register', '/contact', 
     '/forgot-password', '/reset-password', 
-    '/legal/confidentialite', '/legal/cgv'
+    '/legal/confidentialite', '/legal/cgv', '/onboarding'
 ];
 
 export async function middleware(request: NextRequest) {

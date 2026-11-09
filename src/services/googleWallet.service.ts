@@ -4,7 +4,7 @@ import { getTemplateById } from '@/config/templates';
 
 // 1. CRÉATION DU MOULE (Inchangé)
 export async function createCompanyGoogleClass(company: { id: string, name: string, primaryColor: string, logoUrl: string | null }) {
-    // ... (Garde ton code actuel ici, il est parfait) ...
+    
     try {
         const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
         const auth = new google.auth.GoogleAuth({
@@ -53,8 +53,10 @@ export const generateGoogleWalletPass = (
     classId: string,
     systemType: string, 
     primaryColor: string,
+    textColor: string,
     cardTemplateId: string,
-    level: string = "Standard" // 👈 AJOUT: On prévoit le niveau du membre
+    level: string = "Standard",
+    maxStamps: number = 10 
 ) => {
     const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
     const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
@@ -63,8 +65,6 @@ export const generateGoogleWalletPass = (
     const template = getTemplateById(cardTemplateId);
     let heroImage = undefined;
 
-    // 👇 LA GRILLE DE TEXTE (Ce qui va s'afficher au milieu, côte à côte) 👇
-    // Google affiche ces modules sur une même ligne s'il y a la place
     let textModules = [
         { id: "member", header: "MEMBRE", body: firstName },
         { id: "level", header: "NIVEAU", body: level }
@@ -72,8 +72,9 @@ export const generateGoogleWalletPass = (
 
     if (systemType === 'STAMPS') {
         const shape = template.stampShape || 'star'; 
+        // 👇 AJOUT DE &max= ICI 👇
         let imageUrl = baseUrl.startsWith('https')
-            ? `${baseUrl}/api/images/stamps?count=${points}&color=${encodeURIComponent(primaryColor)}&shape=${shape}`
+            ? `${baseUrl}/api/images/stamps?count=${points}&color=${encodeURIComponent(primaryColor)}&stampColor=${encodeURIComponent(textColor)}&shape=${shape}&max=${maxStamps}`
             : `https://placehold.co/600x280/${primaryColor.replace('#', '')}/FFFFFF/png?text=${points}+${shape.toUpperCase()}`;
 
         heroImage = {
@@ -81,8 +82,6 @@ export const generateGoogleWalletPass = (
             contentDescription: { defaultValue: { language: "fr-FR", value: `Carte avec ${points} tampons` } }
         };
     } else {
-        // En mode point, on peut ajouter le solde si tu le souhaites
-        
         if (template.backgroundImage) {
             heroImage = {
                 sourceUri: { uri: `${baseUrl}${template.backgroundImage}` }, 
@@ -101,13 +100,12 @@ export const generateGoogleWalletPass = (
                 id: `${issuerId}.${walletId}`, 
                 classId: classId,
                 state: 'ACTIVE',
-                // (Optionnel : Affiche le petit compteur de points officiel de Google en haut à droite)
                 ...(systemType === 'POINTS' ? { loyaltyPoints: { label: 'Points', balance: { int: points } } } : {}),
                 heroImage: heroImage, 
-                textModulesData: textModules, // 👈 Les champs "Membre" et "Niveau"
+                textModulesData: textModules,
                 accountId: walletId,
                 accountName: firstName,
-                barcode: { type: 'QR_CODE', value: walletId, alternateText: walletId } // 👈 Le QR Code tout en bas
+                barcode: { type: 'QR_CODE', value: walletId, alternateText: walletId }
             }]
         }
     };
@@ -124,11 +122,12 @@ export const updateWalletPoints = async (
     newPoints: number, 
     systemType: string, 
     primaryColor: string,
+    textColor: string,
     cardTemplateId: string,
-    firstName: string,  // 👈 Nécessaire pour garder l'affichage du nom
-    level: string = "Standard" 
+    firstName: string,
+    level: string = "Standard",
+    maxStamps: number = 10
 ): Promise<boolean> => {
-    // ... (Même logique pour l'update, on s'assure que textModules garde Membre et Niveau) ...
     try {
         const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID;
         const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
@@ -138,7 +137,6 @@ export const updateWalletPoints = async (
         const template = getTemplateById(cardTemplateId);
         const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
         
-        // On réinjecte les textes pour qu'ils ne disparaissent pas
         let textModules = [
             { id: "member", header: "MEMBRE", body: firstName },
             { id: "level", header: "NIVEAU", body: level }
@@ -148,8 +146,9 @@ export const updateWalletPoints = async (
 
         if (systemType === 'STAMPS') {
             const shape = template.stampShape || 'star';
+            // 👇 AJOUT DE &max= ICI 👇
             const imageUrl = baseUrl.startsWith('https') 
-                ? `${baseUrl}/api/images/stamps?count=${newPoints}&color=${encodeURIComponent(primaryColor)}&shape=${shape}`
+                ? `${baseUrl}/api/images/stamps?count=${newPoints}&color=${encodeURIComponent(primaryColor)}&stampColor=${encodeURIComponent(textColor)}&shape=${shape}&max=${maxStamps}`
                 : `https://placehold.co/600x280/${primaryColor.replace('#', '')}/FFFFFF/png?text=${newPoints}+${shape.toUpperCase()}`;
 
             updateData = {

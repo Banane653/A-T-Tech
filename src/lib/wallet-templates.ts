@@ -3,7 +3,7 @@ import { getTemplateById } from '@/config/templates';
 
 type CompanyWithWalletConfig = Pick<
   Company,
-  'id' | 'name' | 'systemType' | 'primaryColor' | 'textColor' | 'logoUrl' | 'cardTemplate'
+  'id' | 'name' | 'systemType' | 'primaryColor' | 'textColor' | 'logoUrl' | 'cardTemplate' | 'maxStamps'
 >;
 
 // 👇 1. ON AJOUTE LE 'lastName' ICI 👇
@@ -103,37 +103,38 @@ export function getCardTemplateData(
     merchant.id,
   )}`;
 
+  // 👇 1. On déclare maxStamps globalement pour la fonction 👇
+  const maxStamps = merchant.maxStamps || 10;
+
   let heroImageUrl: string | null = null;
   if (merchant.systemType === 'STAMPS') {
     const shape = template.stampShape || 'star';
+    
     heroImageUrl = baseUrl.startsWith('https')
-      ? `${baseUrl}/api/images/stamps?count=${user.points}&color=${encodeURIComponent(
-          colors.background,
-        )}&shape=${shape}`
+      ? `${baseUrl}/api/images/stamps?count=${user.points}&color=${encodeURIComponent(colors.background)}&stampColor=${encodeURIComponent(colors.text)}&shape=${shape}&max=${maxStamps}`
       : `https://placehold.co/600x280/${colors.background.replace('#', '')}/FFFFFF/png?text=${user.points}+${shape.toUpperCase()}`;
   } else if (template.backgroundImage) {
     heroImageUrl = `${baseUrl}${template.backgroundImage}`;
   }
 
-  // 👇 4. LOGIQUE DE CALCUL DU NOM COMPLET 👇
+  // LOGIQUE DE CALCUL DU NOM COMPLET
   const fullName = user.lastName 
     ? `${user.firstName} ${user.lastName}` 
     : user.firstName;
 
-  // 👇 5. LOGIQUE DE CALCUL DU NIVEAU ET DES RÉCOMPENSES 👇
+  // LOGIQUE DE CALCUL DU NIVEAU ET DES RÉCOMPENSES
   let level = "Standard";
   let pointsToReward = "";
 
   if (merchant.systemType === 'STAMPS') {
-    // Calcul mathématique : Combien de tampons manquent avant la prochaine dizaine ?
-    const stampsNeeded = 10 - (user.points % 10); 
+    // Calcul mathématique : Combien de tampons manquent avant de remplir la carte ?
+    const stampsNeeded = maxStamps - (user.points % maxStamps); 
     
-    // Si le client a déjà rempli une carte (10 points ou plus), il devient Gold !
-    level = user.points >= 10 ? "Gold" : "Standard";
+    // Si le client a déjà rempli une carte, il devient Gold !
+    level = user.points >= maxStamps ? "Gold" : "Standard";
     pointsToReward = `${stampsNeeded} pour la récompense`;
   } else {
     const pointsNeeded = 500 - user.points;
-    // Si c'est un système de points classique
     level = user.points >= 500 ? "Gold" : "Standard";
     pointsToReward = `${pointsNeeded} points avant Gold`; 
   }
@@ -152,9 +153,9 @@ export function getCardTemplateData(
     loyalty: {
       systemType: merchant.systemType as 'STAMPS' | 'POINTS',
       points: user.points,
-      progressText: merchant.systemType === 'STAMPS' ? `${user.points} / 10` : `${user.points} points`,
+      progressText: merchant.systemType === 'STAMPS' ? `${user.points} / ${maxStamps}` : `${user.points} points`,
       balanceLabel: merchant.systemType === 'STAMPS' ? 'TAMPONS RÉCOLTÉS' : 'SOLDE FIDÉLITÉ',
-      balanceValue: merchant.systemType === 'STAMPS' ? `${user.points} / 10` : `${user.points}`,
+      balanceValue: merchant.systemType === 'STAMPS' ? `${user.points} / ${maxStamps}` : `${user.points}`,
       level,
       pointsToReward,
     },

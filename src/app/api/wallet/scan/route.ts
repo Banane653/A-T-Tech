@@ -5,14 +5,13 @@ import { prisma } from '@/lib/prisma';
 import { getScannerAuth } from '@/lib/auth';
 
 
-const STAMP_LIMIT = 10;
-
 type ScanAction = 'lookup' | 'add_stamp' | 'add_points' | 'spend_points';
 
 async function syncWallet(
     walletId: string,
     newPoints: number,
-    company: { systemType: string; primaryColor: string; cardTemplate: string },
+    // 👇 AJOUTE maxStamps: number DANS LA DÉFINITION DU TYPE ICI 👇
+    company: { systemType: string; primaryColor: string; textColor: string; cardTemplate: string; maxStamps: number }, 
     firstName: string
 ) {
     try {
@@ -21,9 +20,11 @@ async function syncWallet(
             newPoints,
             company.systemType,
             company.primaryColor,
+            company.textColor,
             company.cardTemplate,
             firstName,
-            "Standard"
+            "Standard",
+            company.maxStamps || 10 // 👈 Et ici c'est parfait, plus d'erreur !
         );
     } catch (googleError) {
         console.error('❌ Erreur synchro Google Wallet:', googleError);
@@ -92,6 +93,7 @@ export async function POST(request: Request) {
         }
 
         const company = customer.company;
+        const STAMP_LIMIT = company.maxStamps || 10;
         const customerLabel = `${customer.firstName}${customer.lastName ? ` ${customer.lastName}` : ''}`;
 
         if (action === 'lookup') {

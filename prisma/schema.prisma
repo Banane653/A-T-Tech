@@ -31,6 +31,7 @@ model Company {
   logoUrl         String?        
   cardTemplate    String         @default("default") 
   pointsRatio     Float          @default(1)
+  maxStamps       Int            @default(10)
   
   // --- NOUVEAU : Facturation & Stripe (Zéro coût fixe) ---
   vatNumber            String?   // Numéro de TVA (ex: BE0123456789) pour Peppol/Odoo

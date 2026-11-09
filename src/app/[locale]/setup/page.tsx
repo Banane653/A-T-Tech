@@ -1,25 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-// Nouveaux imports Lucide pour les icônes des tampons
 import { Loader2, Palette, Gift, CheckCircle2, ArrowRight, ArrowLeft, Star, Coffee, Pizza, Sparkles } from 'lucide-react';
 
 export default function SetupWizard() {
     const t = useTranslations('Setup');
     const router = useRouter();
-    const searchParams = useSearchParams();
     const { locale } = useParams();
-    const sessionId = searchParams.get('session_id');
 
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     
-    // Ajout de cardTemplate avec 'stamps_stars' par défaut
+    // 👇 Le state inclut désormais la forme (cardTemplate) ET le nombre (maxStamps)
     const [formData, setFormData] = useState({
         systemType: 'STAMPS',
         cardTemplate: 'stamps_stars',
+        maxStamps: 10, 
         primaryColor: '#000000',
         logoUrl: '',
     });
@@ -30,7 +28,7 @@ export default function SetupWizard() {
             const res = await fetch('/api/setup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formData, sessionId }),
+                body: JSON.stringify(formData), // 👈 On envoie tout le state, y compris maxStamps
             });
 
             if (res.ok) {
@@ -49,6 +47,7 @@ export default function SetupWizard() {
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
                 
+                {/* Barre de progression */}
                 <div className="flex items-center justify-center mb-8 space-x-4">
                     <div className={`flex items-center gap-2 ${step >= 1 ? 'text-black font-bold' : 'text-gray-400'}`}>
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-black text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
@@ -65,6 +64,7 @@ export default function SetupWizard() {
 
                 <div className="bg-white py-10 px-6 shadow-xl sm:rounded-3xl sm:px-12 border border-gray-100">
                     
+                    {/* ÉTAPE 1 : PROGRAMME DE FIDÉLITÉ */}
                     {step === 1 && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <div className="text-center mb-8">
@@ -72,6 +72,7 @@ export default function SetupWizard() {
                                 <p className="mt-2 text-gray-600">{t('step1.subtitle')}</p>
                             </div>
 
+                            {/* Choix principal : Tampons ou Points */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div 
                                     onClick={() => setFormData({ ...formData, systemType: 'STAMPS', cardTemplate: 'stamps_stars' })}
@@ -98,11 +99,13 @@ export default function SetupWizard() {
                                 </div>
                             </div>
 
-                            {/* 🔥 Le sous-menu magique des tampons */}
+                            {/* 🔥 Le sous-menu STAMPS (Design + Nombre) */}
                             {formData.systemType === 'STAMPS' && (
                                 <div className="mt-8 pt-8 border-t border-gray-100 animate-in fade-in slide-in-from-top-4 duration-500">
+                                    
+                                    {/* 1. Le choix de la forme (Icônes) */}
                                     <h4 className="text-lg font-bold mb-4 text-center text-black">{t('step1.templatesTitle')}</h4>
-                                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
                                         {[
                                             { id: 'stamps_stars', name: t('step1.templates.stamps_stars'), icon: Star },
                                             { id: 'stamps_coffee', name: t('step1.templates.stamps_coffee'), icon: Coffee },
@@ -120,6 +123,27 @@ export default function SetupWizard() {
                                             </div>
                                         ))}
                                     </div>
+
+                                    {/* 2. Le choix du nombre de tampons */}
+                                    <h4 className="text-lg font-bold mb-4 text-center text-black">Combien de cases sur votre carte ?</h4>
+                                    <div className="flex justify-center gap-4">
+                                        {[5, 9, 10].map((num) => (
+                                            <button
+                                                key={num}
+                                                onClick={() => setFormData({ ...formData, maxStamps: num })}
+                                                className={`px-6 py-3 rounded-xl font-bold text-lg border-2 transition-all ${
+                                                    formData.maxStamps === num 
+                                                    ? 'border-black bg-black text-white' 
+                                                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                                                }`}
+                                            >
+                                                {num}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <p className="text-center text-sm text-gray-500 mt-3">
+                                        Ex: Avec {formData.maxStamps} cases, le {(formData.maxStamps + 1)}ème achat déclenchera le cadeau.
+                                    </p>
                                 </div>
                             )}
 
@@ -134,6 +158,7 @@ export default function SetupWizard() {
                         </div>
                     )}
 
+                    {/* ÉTAPE 2 : DESIGN & COULEURS */}
                     {step === 2 && (
                         <div className="animate-in fade-in slide-in-from-right-8 duration-500">
                             <div className="text-center mb-8">

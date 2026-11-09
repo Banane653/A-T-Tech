@@ -20,19 +20,49 @@ export async function GET(request: Request) {
     
     const count = parseInt(searchParams.get('count') || '0');
     const color = searchParams.get('color') || '#000000';
+    const stampColorParam = searchParams.get('stampColor');
     const shape = searchParams.get('shape') || 'star';
+    const max = parseInt(searchParams.get('max') || '10'); // 👈 NOUVEAU
     const isDebug = searchParams.get('debug') === 'true'; 
-    const total = 10;
 
     const iconPath = getIconPath(shape);
     const WIDTH = 1125;
     const HEIGHT = 369;
 
     let icons = '';
-    for (let i = 0; i < total; i++) {
-        // 👇 CALCUL MODIFIÉ : On resserre l'écart à 170px (au lieu de 225px) et on commence à 222px pour centrer le bloc 👇
-        const x = 222.5 + (i % 5) * 170;
-        const y = 92.25 + Math.floor(i / 5) * 184.5;
+    
+    // Définir la grille en fonction de maxStamps
+    const cols = max <= 5 ? max : Math.ceil(max / 2);
+    
+    // Pour centrer : la largeur de la grille = (colonnes - 1) * espacement
+    const spacingX = max <= 5 ? 200 : 170; // 👈 Plus de place si c'est 5 cases !
+    const gridWidth = (cols - 1) * spacingX;
+    
+    const startX = (WIDTH - gridWidth) / 2;
+    const startY = max <= 5 ? HEIGHT / 2 : 92.25;
+
+    for (let i = 0; i < max; i++) {
+        let x, y;
+        
+        if (max <= 5) {
+             x = startX + i * spacingX;
+             y = startY;
+        } else if (max === 9) {
+             // 5 cases en haut, 4 cases en bas centrées
+             if (i < 5) {
+                 x = startX + i * spacingX;
+                 y = startY;
+             } else {
+                 const xOffset = spacingX / 2; // Décalage pour centrer
+                 x = startX + xOffset + (i - 5) * spacingX;
+                 y = startY + 184.5;
+             }
+        } else {
+             // Default (ex: 10) : 5 en haut, 5 en bas
+             x = startX + (i % 5) * spacingX;
+             y = startY + Math.floor(i / 5) * 184.5;
+        }
+
         const isFilled = i < count;
 
         icons += `

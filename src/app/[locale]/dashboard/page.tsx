@@ -37,7 +37,7 @@ export default function AdminDashboard() {
         const resCompany = await fetch('/api/admin/company');
         if (resCompany.ok) {
             const data = await resCompany.json();
-            if (!data.company.logoUrl || !data.company.brandColor) {
+            if (!data.company.logoUrl || !data.company.primaryColor) {
                 router.push(`/${locale}/setup`);
                 return; 
             }

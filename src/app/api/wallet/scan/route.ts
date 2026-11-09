@@ -11,7 +11,7 @@ async function syncWallet(
     walletId: string,
     newPoints: number,
     // 👇 AJOUTE maxStamps: number DANS LA DÉFINITION DU TYPE ICI 👇
-    company: { systemType: string; primaryColor: string; textColor: string; cardTemplate: string; maxStamps: number }, 
+    company: { systemType: string; primaryColor: string; textColor: string | null; cardTemplate: string; maxStamps: number }, 
     firstName: string
 ) {
     try {
@@ -20,7 +20,7 @@ async function syncWallet(
             newPoints,
             company.systemType,
             company.primaryColor,
-            company.textColor,
+            company.textColor || '#FFFFFF',
             company.cardTemplate,
             firstName,
             "Standard",

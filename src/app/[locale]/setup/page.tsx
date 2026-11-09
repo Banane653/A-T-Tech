@@ -24,12 +24,6 @@ export default function SetupWizard() {
         logoUrl: '',
     });
 
-    useEffect(() => {
-        if (!sessionId) {
-            router.push('/');
-        }
-    }, [sessionId, router]);
-
     const handleComplete = async () => {
         setLoading(true);
         try {
@@ -40,7 +34,7 @@ export default function SetupWizard() {
             });
 
             if (res.ok) {
-                router.push(`/${locale}/login?setup=success`);
+                router.push(`/${locale}/dashboard`);
             } else {
                 console.error("Erreur lors de l'enregistrement");
                 setLoading(false);
@@ -50,8 +44,6 @@ export default function SetupWizard() {
             setLoading(false);
         }
     };
-
-    if (!sessionId) return null;
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

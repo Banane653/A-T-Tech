@@ -11,7 +11,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { sessionId, systemType, cardTemplate, primaryColor, logoUrl, maxStamps } = body;
+        const { sessionId, systemType, cardTemplate, primaryColor, textColor, logoUrl, maxStamps } = body;
 
         // 2. 🔥 On identifie l'entreprise prioritairement via le cookie de connexion !
         const admin = await getAdminAuth();
@@ -58,6 +58,7 @@ export async function POST(request: Request) {
                 systemType,
                 cardTemplate, 
                 primaryColor,
+                textColor,
                 logoUrl: logoUrl || null,
                 maxStamps: Number(maxStamps) || 10,
                 googleClassId: finalGoogleClassId, 

@@ -19,6 +19,7 @@ export default function SetupWizard() {
         cardTemplate: 'stamps_stars',
         maxStamps: 10, 
         primaryColor: '#000000',
+        textColor: '#FFFFFF',
         logoUrl: '',
     });
 
@@ -167,9 +168,10 @@ export default function SetupWizard() {
                             </div>
 
                             <div className="space-y-8">
+                                {/* 1. Couleur de Fond */}
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-                                        <Palette className="w-5 h-5" /> {t('step2.primaryColor')}
+                                        <Palette className="w-5 h-5" /> Couleur de fond (Marque)
                                     </label>
                                     <div className="flex items-center gap-4">
                                         <input
@@ -187,6 +189,29 @@ export default function SetupWizard() {
                                     </div>
                                 </div>
 
+                                {/* 👇 2. NOUVEAU : Couleur du Texte et des Tampons 👇 */}
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                        <Palette className="w-5 h-5" /> Couleur du texte et des tampons
+                                    </label>
+                                    <div className="flex items-center gap-4">
+                                        <input
+                                            type="color"
+                                            value={formData.textColor}
+                                            onChange={(e) => setFormData({ ...formData, textColor: e.target.value })}
+                                            className="w-16 h-16 rounded cursor-pointer border-0 p-0 bg-transparent"
+                                        />
+                                        <input
+                                            type="text"
+                                            value={formData.textColor.toUpperCase()}
+                                            onChange={(e) => setFormData({ ...formData, textColor: e.target.value })}
+                                            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-black outline-none uppercase font-mono text-black"
+                                        />
+                                    </div>
+                                </div>
+                                {/* 👆 FIN DU NOUVEAU BLOC 👆 */}
+
+                                {/* 3. URL du Logo */}
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-3">
                                         {t('step2.logoUrl')}

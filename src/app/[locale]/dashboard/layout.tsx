@@ -29,6 +29,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             .then((res) => res.json())
             .then((data) => {
                 if (data.company) {
+                    //videur
+                    if (!data.company.logoUrl || !data.company.primaryColor) {
+                        router.push('/setup');
+                        return; // On arrête l'exécution ici
+                    }
+                    //fin videur
                     setSystemType(data.company.systemType);
                 }
             })

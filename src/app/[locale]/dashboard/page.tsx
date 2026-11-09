@@ -37,10 +37,6 @@ export default function AdminDashboard() {
         const resCompany = await fetch('/api/admin/company');
         if (resCompany.ok) {
             const data = await resCompany.json();
-            if (!data.company.logoUrl || !data.company.primaryColor) {
-                router.push(`/${locale}/setup`);
-                return; 
-            }
             setPointsRatio(data.company.pointsRatio);
             setSystemType(data.company.systemType);
         }

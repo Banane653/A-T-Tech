@@ -74,7 +74,7 @@ export const generateGoogleWalletPass = (
         const shape = template.stampShape || 'star'; 
         // 👇 AJOUT DE &max= ICI 👇
         let imageUrl = baseUrl.startsWith('https')
-            ? `${baseUrl}/api/images/stamps?count=${points}&color=${encodeURIComponent(primaryColor)}&stampColor=${encodeURIComponent(textColor)}&shape=${shape}&max=${maxStamps}`
+            ? `${baseUrl}/api/images/stamps?count=${points}&color=${encodeURIComponent(primaryColor)}&stampColor=${encodeURIComponent(textColor)}&shape=${shape}&max=${maxStamps}&t=${Date.now()}`
             : `https://placehold.co/600x280/${primaryColor.replace('#', '')}/FFFFFF/png?text=${points}+${shape.toUpperCase()}`;
 
         heroImage = {
@@ -148,7 +148,7 @@ export const updateWalletPoints = async (
             const shape = template.stampShape || 'star';
             // 👇 AJOUT DE &max= ICI 👇
             const imageUrl = baseUrl.startsWith('https') 
-                ? `${baseUrl}/api/images/stamps?count=${newPoints}&color=${encodeURIComponent(primaryColor)}&stampColor=${encodeURIComponent(textColor)}&shape=${shape}&max=${maxStamps}`
+                ? `${baseUrl}/api/images/stamps?count=${newPoints}&color=${encodeURIComponent(primaryColor)}&stampColor=${encodeURIComponent(textColor)}&shape=${shape}&max=${maxStamps}&t=${Date.now()}`
                 : `https://placehold.co/600x280/${primaryColor.replace('#', '')}/FFFFFF/png?text=${newPoints}+${shape.toUpperCase()}`;
 
             updateData = {

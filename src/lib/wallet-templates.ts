@@ -111,7 +111,7 @@ export function getCardTemplateData(
     const shape = template.stampShape || 'star';
     
     heroImageUrl = baseUrl.startsWith('https')
-      ? `${baseUrl}/api/images/stamps?count=${user.points}&color=${encodeURIComponent(colors.background)}&stampColor=${encodeURIComponent(colors.text)}&shape=${shape}&max=${maxStamps}`
+      ? `${baseUrl}/api/images/stamps?count=${user.points}&color=${encodeURIComponent(colors.background)}&stampColor=${encodeURIComponent(colors.text)}&shape=${shape}&max=${maxStamps}&t=${Date.now()}`
       : `https://placehold.co/600x280/${colors.background.replace('#', '')}/FFFFFF/png?text=${user.points}+${shape.toUpperCase()}`;
   } else if (template.backgroundImage) {
     heroImageUrl = `${baseUrl}${template.backgroundImage}`;

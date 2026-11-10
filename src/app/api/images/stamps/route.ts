@@ -1,6 +1,7 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
 
 const getIconPath = (shape: string) => {
     switch(shape) {
@@ -80,7 +81,7 @@ export async function GET(request: Request) {
 
     const svg = `
         <svg width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
-            ${isDebug ? `<rect width="${WIDTH}" height="${HEIGHT}" fill="#04442A" />` : ''}
+            <rect width="${WIDTH}" height="${HEIGHT}" fill="${color}" />
             ${icons}
         </svg>
     `;
